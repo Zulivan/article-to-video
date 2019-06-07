@@ -1,5 +1,7 @@
-# exclude everything
 node_modules
 
 actus/audio
 actus/images
+
+gamenews/images
+gamenews/audio
