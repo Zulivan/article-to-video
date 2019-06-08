@@ -159,8 +159,10 @@ module.exports = class VideoCompiler {
 
                             fs.writeFile('./' + resourcesfolder + '/images/speech' + index + '.json', JSON.stringify(output), function (errfile) {
                                 console.log('Vocal #' + index + ' has its video part!');
-                                fs.unlinkSync(path.join(self.Config.Root, self.Config.Folder, 'images', 'speech' + index + 'bg.jpg'));
-                                success(output);
+                                setTimeout(function () {
+                                    fs.unlinkSync(path.join(self.Config.Root, self.Config.Folder, 'images', 'speech' + index + 'bg.jpg'));
+                                    success(output);
+                                }, 1000):
                             });
                         });
                     } else {

@@ -84,7 +84,7 @@ module.exports = class AudioManager {
                             success(null);
                         };
                     }, 5000 * (index - self.MinusIndex));
-                }
+                };
             });
         });
     }

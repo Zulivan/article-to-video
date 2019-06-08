@@ -4,6 +4,8 @@ node_modules
 
 actus/audio
 actus/images
+actus/temp/lastmagazines.json
+actus/temp/captions.txt
 actus/video.mp4
 
 gamenews/images
