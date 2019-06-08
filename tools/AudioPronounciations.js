@@ -112,6 +112,10 @@ module.exports = class AudioManager {
 
             Promise.all(vocals).then((values) => {
                 values = values.filter(v => v != null);
+
+                if(values.length = this.accents.length){
+                    
+                }
             })
         })
     }

@@ -98,8 +98,11 @@ module.exports = class Bot {
         title = TextEditor.replaceByFilter(title, badChars, '\'');
 
         const titleword = title.split(" ");
+
         let propertitle = [];
+
         const uppercutter = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+        
         for (let i = 0; i < titleword.length; i++) {
             let alreadyadded = false;
             for (let j = 0; j < uppercutter.length; j++) {
@@ -271,7 +274,7 @@ module.exports = class Bot {
                                         if (files2[i].indexOf('.mp3') > -1) {
                                             fs.unlinkSync('./' + self.config.Folder + '/audio/' + file + '.mp3');
                                         } else if (files2[i].indexOf('.json') > -1) {
-                                            fs.unlinkSync('./' + self.config.Folder + '/images/' + files2[i]);
+                                            fs.unlinkSync('./' + self.config.Folder + '/audio/' + files2[i]);
                                         }
                                     };
                                     success(true);

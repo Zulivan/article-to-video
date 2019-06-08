@@ -27,7 +27,7 @@ module.exports = class Bot {
         });
     }
 
-    SaveMagazineProgress(index, value = false){
+    SaveProgress(index, value = false){
         const self = this;
         return new Promise((success, error) => {
             if(index){
@@ -57,8 +57,7 @@ module.exports = class Bot {
                 if(Magazine){
                     if(Magazine.title && Magazine.content){
                         self.Progression.magazineloaded = true;
-                        self.SaveMagazineProgress('content', Magazine).then(saved => {
-                            console.log(self.SaveMagazineProgress)
+                        self.SaveProgress('content', Magazine).then(saved => {
                             self.produceVideo(Magazine.title, Magazine.content);
                         });
                     }else{
@@ -143,7 +142,7 @@ module.exports = class Bot {
                 }else if(images){
                     images = images.filter(v => v != null);
                     console.log(images);
-                    self.SaveMagazineProgress('imagedownloaded', images).then((saved) => {
+                    self.SaveProgress('imagedownloaded', images).then((saved) => {
                         console.log('Downloaded all the required images');
                         self.audioRender(content);
                     });
@@ -174,7 +173,7 @@ module.exports = class Bot {
                 const tagsvid = self.Progression.content.propertitle.concat(self.Progression.content.propertitle.split(" "));
                 const thumbnail = images[Math.floor(Math.random() * images.length)];
 
-                self.SaveMagazineProgress('videodone', file).then((saved) => {
+                self.SaveProgress('videodone', file).then((saved) => {
                     console.log('Video has been made');
                     self.uploadVideo(file, self.Progression.content.title, subtitles, tagsvid, thumbnail);
                 });
@@ -212,8 +211,8 @@ module.exports = class Bot {
         const AM = new AudioManager(this.config, this.config.Root, this.config.Folder);
 
         AM.generateAudio(content).then((audio) => {
-            this.SaveMagazineProgress('renderedvoices', audio).then((saved) => {
-                this.SaveMagazineProgress('audiodone', true).then((saved) => {
+            this.SaveProgress('renderedvoices', audio).then((saved) => {
+                this.SaveProgress('audiodone', true).then((saved) => {
                     console.log('Successfully recorded all audio files!')
                     this.makeVideo(audio, images);
                 });
@@ -233,7 +232,7 @@ module.exports = class Bot {
             self.Progression.audiodone = false;
             self.Progression.videodone = false;
             self.Progression.renderedvoices = [];
-            self.SaveMagazineProgress().then((saved) => {
+            self.SaveProgress().then((saved) => {
                 console.log('Saved magazine progress')
                 if(endup){
                     process.exit();

@@ -8,7 +8,5 @@ const Config = {
     Tags: ['how to pronounce']
 };
 
-const Bot = require('./classes/Bot.js');
-const Actubot = new Bot(__dirname, Config);
-
-// Actubot
+const Bot = require('./classes/Pronounciation.js');
+const H2P = new Bot(__dirname, Config);

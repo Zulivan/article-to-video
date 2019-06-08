@@ -1,7 +1,11 @@
+package-lock.json
+
 node_modules
 
 actus/audio
 actus/images
+actus/video.mp4
 
 gamenews/images
 gamenews/audio
+gamenews/video.mp4
