@@ -32,6 +32,12 @@ module.exports = class Bot {
         });
     }
 
+    /**
+     * Saves current progress
+     * @param {string} index If set: sets an index to the specified value 
+     * @param {any} value 
+     */
+
     SaveMagazineProgress(index, value = false) {
         const self = this;
         return new Promise((success, error) => {
@@ -47,12 +53,16 @@ module.exports = class Bot {
         });
     }
 
+    /**
+     * Start the bot
+     */
+
     start() {
         const self = this;
         const MagazinesBrowser = require('../tools/MagazinesBrowser.js');
         const MB = new MagazinesBrowser(this.Config, this.Config.Directory, this.Config.Folder);
 
-        if (self.Progression.magazineloaded == true) {
+        if (self.Progression.magazineloaded) {
             console.log('Producing video: ' + this.Progression.content.title);
             this.produceVideo(this.Progression.content.title, this.Progression.content.content);
         } else {
@@ -75,6 +85,12 @@ module.exports = class Bot {
             });
         };
     }
+
+    /**
+     * Produces a video with the following title and content
+     * @param {string} title The title of the video
+     * @param {string} content The text that will be read by the bot
+     */
 
     produceVideo(title, content) {
         const self = this;
@@ -142,6 +158,12 @@ module.exports = class Bot {
 
     }
 
+   /**
+     * Makes a video by combining audio files and image files
+     * @param {object} audio Audio files
+     * @param {object} images Image files
+     */
+    
     makeVideo(audio, images) {
         const VideoCompiler = require('../tools/VideoCompiler.js');
         const VC = new VideoCompiler(this.Config, this.Config.Directory, this.Config.Folder);
@@ -162,6 +184,15 @@ module.exports = class Bot {
             }
         });
     }
+
+   /**
+     * Uploads a video on youtube
+     * @param {file} file Video file
+     * @param {string} title Video title
+     * @param {string} subtitles The content of the video which will be used as subtitles
+     * @param {object} tags Video tags
+     * @param {file} thumbnail Video thumbnail
+     */
 
     uploadVideo(file, title, subtitles, tags, thumbnail) {
         const YoutubeUploader = require('../tools/YoutubeUploader.js');
@@ -185,6 +216,12 @@ module.exports = class Bot {
         });
     }
 
+   /**
+     * Uploads a video on youtube
+     * @param {string} content Video content
+     * @param {object} images Image files
+     */
+
     audioRender(content, images) {
 
         const AudioManager = require('../tools/AudioManager.js');
@@ -204,6 +241,7 @@ module.exports = class Bot {
 
     /**
      * Resets the temporary files to start up a new working session on another magazine
+     * @param {boolean} NoDeletion Choose wether the files generated to make a video have to be deleted or not
      */
 
     resetFiles(NoDeletion = false) {
