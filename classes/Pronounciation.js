@@ -5,19 +5,19 @@ const {google} = require('googleapis');
 module.exports = class Bot {
     /**
      * Compiles the bot
-     * @param {string} Directory Root directory
+     * @param {string} Root Root directory
      * @param {object} Config Config params
      */
 
     constructor(Root, Config) {
-        this.config = Config || {};
-        this.config.WordsPerRecording = 15;
-        this.config.Root = Root;
-        this.oAuth = new google.auth.OAuth2(this.config.oAuth.Public, this.config.oAuth.Private, 'http://localhost:'+this.config.LocalPort+'/oauth2callback');
+        this.Config = Config || {};
+        this.Config.WordsPerRecording = 15;
+        this.Config.Root = Root;
+        this.oAuth = new google.auth.OAuth2(this.Config.oAuth.Public, this.Config.oAuth.Private, 'http://localhost:'+this.Config.LocalPort+'/oauth2callback');
         this.Progression = {};
-        fs.exists(path.join(this.config.Root, this.config.Folder, 'temp', 'progression.json'), (exists) => {
+        fs.exists(path.join(this.Config.Root, this.Config.Folder, 'temp', 'progression.json'), (exists) => {
             if(exists){
-                this.Progression = JSON.parse(fs.readFileSync(path.join(this.config.Root, this.config.Folder, 'temp', 'progression.json'), 'utf8'));
+                this.Progression = JSON.parse(fs.readFileSync(path.join(this.Config.Root, this.Config.Folder, 'temp', 'progression.json'), 'utf8'));
                 this.start();
             }else{
                 this.resetFiles().then((success) => {
@@ -45,7 +45,7 @@ module.exports = class Bot {
     start(){
         const self = this;
         const MagazinesBrowser = require('../tools/MagazinesBrowser.js');
-        const MB = new MagazinesBrowser(this.config, this.config.Root, this.config.Folder);
+        const MB = new MagazinesBrowser(this.Config, this.Config.Root, this.Config.Folder);
 
         if(self.Progression.magazineloaded == true){
             console.log('Producing video: '+this.Progression.content.title);
@@ -84,9 +84,9 @@ module.exports = class Bot {
         content = content.replace(/la mort/g, "la disparition");
         content = content.replace(/mort/g, "disparu");
 
-        content = this.config.Intro.Text+' '+content;
+        content = this.Config.Intro.Text+' '+content;
         
-        fs.writeFile('./'+this.config.Folder+'/temp/captions.txt', content, function(errwrite) {});
+        fs.writeFile('./'+this.Config.Folder+'/temp/captions.txt', content, function(errwrite) {});
         
         badChars = ['<', '>', '«', '»'];
 
@@ -131,7 +131,7 @@ module.exports = class Bot {
         
         const self = this;
         const ImagesFinder = require('../tools/ImagesFinder.js');
-        const IF = new ImagesFinder(this.config, this.config.Root, this.config.Folder);
+        const IF = new ImagesFinder(this.Config, this.Config.Root, this.Config.Folder);
         if(self.Progression.imagedownloaded.length == 0){
             IF.searchImages(propertitle).then((images, reset) => {
                 if(images == null){
@@ -164,7 +164,7 @@ module.exports = class Bot {
 
     makeVideo(audio, images){
         const VideoCompiler = require('../tools/VideoCompiler.js');
-        const VC = new VideoCompiler(this.config, this.config.Root, this.config.Folder);
+        const VC = new VideoCompiler(this.Config, this.Config.Root, this.Config.Folder);
         const self = this;
 
         VC.generateVideo(audio, images).then((file, reset) => {
@@ -185,7 +185,7 @@ module.exports = class Bot {
 
     uploadVideo(file, title, subtitles, tags, thumbnail){
         const YoutubeUploader = require('../tools/YoutubeUploader.js');
-        const YU = new YoutubeUploader(this.config, this.oAuth);
+        const YU = new YoutubeUploader(this.Config, this.oAuth);
         const self = this;
         YU.uploadVideo(file, title, subtitles, tags, thumbnail).then((id, reset) => {
             if(id){
@@ -208,7 +208,7 @@ module.exports = class Bot {
     audioRender(content, images){
 
         const AudioManager = require('../tools/AudioManager.js');
-        const AM = new AudioManager(this.config, this.config.Root, this.config.Folder);
+        const AM = new AudioManager(this.Config, this.Config.Root, this.Config.Folder);
 
         AM.generateAudio(content).then((audio) => {
             this.SaveProgress('renderedvoices', audio).then((saved) => {
