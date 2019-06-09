@@ -77,68 +77,38 @@ module.exports = class Bot {
     }
 
     produceVideo(title, content) {
+        const self = this;
         const TextEditor = require('../tools/TextEditor.js');
 
         let badChars = ['-', '<', '>', '@', '«', '»', '?', '#'];
 
-        content = TextEditor.HTMLtoUTF8(content);
-        content = TextEditor.clear(content);
-        content = TextEditor.replaceByFilter(content, badChars, '');
-
-        content = content.replace(/voici.fr/g, "FRANCE INFOS 24/7");
-        content = content.replace(/closer/g, "clauzeure");
-        content = content.replace(/la mort/g, "la disparition");
-        content = content.replace(/mort/g, "disparu");
-
+        content = TextEditor.HTMLtoUTF8(content).clear(content).replaceByFilter(content, badChars, '');
+        content = content.replace(/voici.fr/g, 'FRANCE INFOS 24/7').replace(/closer/g, 'clauzeure').replace(/la mort/g, 'la disparition').replace(/mort/g, 'disparu');
         content = this.Config.Intro.Text + '' + content;
 
         fs.writeFile('./' + this.Config.Folder + '/temp/captions.txt', content, function (errwrite) {});
 
         badChars = ['<', '>', '«', '»'];
 
-        title = TextEditor.HTMLtoUTF8(title);
-        title = TextEditor.clear(title);
-        title = TextEditor.replaceByFilter(title, badChars, '\'');
+        title = TextEditor.HTMLtoUTF8(title).clear(title).replaceByFilter(title, badChars, '\'');
 
-        const titleword = title.split(" ");
+        const propertitle = propertitle.join(' ').split(':').join('');
 
-        let propertitle = [];
+        if (title.length > 92) title = title.slice(0, 90) + '...';
 
-        const uppercutter = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+        this.Progression.content = {
+            propertitle: propertitle,
+            title: title,
+            content: content
+        };
 
-        for (let i = 0; i < titleword.length; i++) {
-            let alreadyadded = false;
-            for (let j = 0; j < uppercutter.length; j++) {
-                if (titleword[i].includes(uppercutter[j])) {
-                    if (!alreadyadded) {
-                        alreadyadded = true;
-                        propertitle.push(titleword[i])
-                    }
-                }
-            }
-        }
+        console.log('Title: ' + title);
+        console.log('----------------');
+        console.log('Research terms: ' + propertitle);
+        console.log('--------------------------------');
+        console.log('Content: ' + content);
+        console.log('--------------------------------');
 
-        propertitle = propertitle.join(" ");
-        propertitle = propertitle.split(":");
-        propertitle = propertitle.join("");
-
-        if (title.length > 92) {
-            title = title.slice(0, 90);
-            title = title + '...';
-        }
-
-        this.Progression.content.propertitle = propertitle;
-        this.Progression.content.title = title;
-        this.Progression.content.content = content;
-
-        console.log("Title: " + title);
-        console.log("----------------");
-        console.log("Research terms: " + propertitle);
-        console.log("--------------------------------");
-        console.log("Content: " + content);
-        console.log("--------------------------------");
-
-        const self = this;
         const ImagesFinder = require('../tools/ImagesFinder.js');
         const IF = new ImagesFinder(this.Config, this.Config.Directory, this.Config.Folder);
         if (self.Progression.imagedownloaded.length == 0) {
@@ -159,7 +129,7 @@ module.exports = class Bot {
             });
         } else if (self.Progression.videodone) {
             const subtitles = fs.createReadStream('./' + self.config.Folder + '/temp/captions.txt');
-            const tagsvid = self.Progression.content.propertitle.concat(self.Progression.content.propertitle.split(" "));
+            const tagsvid = self.Progression.content.propertitle.concat(self.Progression.content.propertitle.split(' '));
             const thumbnail = self.Progression.imagedownloaded[Math.floor(Math.random() * self.Progression.imagedownloaded.length)];
             const file = './' + self.config.Folder + '/video.mp4';
 
@@ -179,7 +149,7 @@ module.exports = class Bot {
         VC.generateVideo(audio, images).then((file, reset) => {
             if (file) {
                 const subtitles = fs.createReadStream('./' + self.config.Folder + '/temp/captions.txt');
-                const tagsvid = self.Progression.content.propertitle.concat(self.Progression.content.propertitle.split(" "));
+                const tagsvid = self.Progression.content.propertitle.concat(self.Progression.content.propertitle.split(' '));
                 const thumbnail = images[Math.floor(Math.random() * images.length)];
 
                 self.SaveMagazineProgress('videodone', file).then((saved) => {
