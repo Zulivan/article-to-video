@@ -4,10 +4,8 @@ const DEBUG = true;
 
 module.exports = class AudioManager {
     /**
-     * Initializes a MagazineBrowser instance (only used by Bot.js)
+     * Initialize
      * @param {object} config Config array
-     * @param {string} directory Directrory folder
-     * @param {string} folder Root directory
      */
 
     constructor(config = {}) {
@@ -36,6 +34,11 @@ module.exports = class AudioManager {
         this.AudioProcess = new AP(path.join(self.Config.Root, self.Config.Folder, 'audio'))
 
     }
+
+    /**
+     * Generates the pronounciation for a certain amount of accents of a specific word depending on the bot's configuration.
+     * @param {object} word Word to say
+     */
 
     generateAudio(word) {
         return new Promise((success, error) => {

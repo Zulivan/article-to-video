@@ -13,10 +13,10 @@ module.exports = class Bot {
 
     constructor(Root, Config) {
         this.Config = Config || {};
-        this.Config.WordsPerRecording = 15;
         this.Config.Directory = Root;
         this.oAuth = new google.auth.OAuth2(this.Config.oAuth.Public, this.Config.oAuth.Private, 'http://localhost:' + this.Config.LocalPort + '/oauth2callback');
         this.Progression = {};
+
         fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), (exists) => {
             if (exists) {
                 this.Progression = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), 'utf8'));
@@ -46,36 +46,17 @@ module.exports = class Bot {
 
     start() {
         const self = this;
-        const MagazinesBrowser = require('../tools/MagazinesBrowser.js');
-        const MB = new MagazinesBrowser(this.Config, this.Config.Directory, this.Config.Folder);
-
-        if (self.Progression.magazineloaded == true) {
+        if (self.Progression.audiodone) {
             console.log('Producing video: ' + this.Progression.content.title);
             this.produceVideo(this.Progression.content.title, this.Progression.content.content);
         } else {
-            console.log('There is no loaded magazine, searching for it..');
-            MB.getMagazine().then(Magazine => {
-                console.log('Found a fresh magazine..');
-                if (Magazine) {
-                    if (Magazine.title && Magazine.content) {
-                        self.Progression.magazineloaded = true;
-                        self.SaveProgress('content', Magazine).then(saved => {
-                            self.produceVideo(Magazine.title, Magazine.content);
-                        });
-                    } else {
-                        console.log('A loaded magazine doesnt have the needed parameters to proceed it');
-                    }
-                } else {
-                    console.log('No magazine');
-                }
-            });
+            console.log('Generating audio..');
+            audioRender();
         };
     }
 
     produceVideo(title, content) {
-        const ImagesFinder = require('../tools/ImagesFinder.js');
-
-        const IF = new ImagesFinder(this.Config, this.Config.Directory, this.Config.Folder);
+        const ImageCreator = require('../tools/ImageCreator.js');
 
         if (self.Progression.images.length == 0) {
             IF.searchImages(propertitle).then((images, reset) => {
@@ -149,35 +130,32 @@ module.exports = class Bot {
         });
     }
 
-    audioRender(content, images) {
+    audioRender(word) {
 
-        const AudioManager = require('../tools/AudioManager.js');
-        const AM = new AudioManager(this.Config, this.Config.Directory, this.Config.Folder);
+        const AudioManager = require('../tools/AudioPronounciations.js');
+        const AM = new AudioManager(this.Config);
 
-        AM.generateAudio(content).then((audio) => {
+        AM.generateAudio(word).then((audio) => {
             this.SaveProgress('renderedvoices', audio).then((saved) => {
                 this.SaveProgress('audiodone', true).then((saved) => {
                     console.log('Successfully recorded all audio files!')
-                    this.makeVideo(audio, images);
+                    // this.makeVideo(audio, images);
                 });
             });
         });
-
     }
-
-    /**
-     * Resets the temporary files to start up a new working session on another magazine
-     */
 
     resetFiles(endup = false) {
         const self = this;
         return new Promise((success, error) => {
-            self.Progression.images = [];
-            self.Progression.audiodone = false;
-            self.Progression.videodone = false;
-            self.Progression.renderedvoices = [];
+            self.Progression = {
+                audiodone = false,
+                videodone = false,
+                images: [],
+                renderedvoices = []
+            }
             self.SaveProgress().then((saved) => {
-                console.log('Saved magazine progress')
+                console.log('Saved progress')
                 if (endup) {
                     process.exit();
                 }
