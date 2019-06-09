@@ -5,7 +5,8 @@ const Config = {
         Private: 'sgPGM3qrMi_zQR3aAsRcSNeP'
     },
     Folder: 'h2p',
-    Tags: ['how to pronounce']
+    Word: 'Yeet',
+    Tags: ['pronounce '+this.Word, 'say '+this.Word, 'how to spell '+this.Word]
 };
 
 const Bot = require('./classes/Pronounciation.js');
