@@ -37,7 +37,7 @@ module.exports = class AudioProcess {
                                 if (err1) {
                                     self.debug(err1)
                                     success(null);
-                                } else { 
+                                } else {
                                     self.debug('Calculating mp3 duration')
                                     setTimeout(function () {
                                         mp3Duration(path.join(self.Folder, 'vocal' + index + '.mp3'), function (err2, duration) {
