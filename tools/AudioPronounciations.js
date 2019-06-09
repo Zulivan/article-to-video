@@ -1,5 +1,4 @@
 const path = require('path');
-const AP = require('../tools/AudioProcess.js');
 const DEBUG = true;
 
 module.exports = class AudioManager {
@@ -31,7 +30,8 @@ module.exports = class AudioManager {
             }
         };
 
-        this.AudioProcess = new AP(path.join(self.Config.Root, self.Config.Folder, 'audio'))
+        this.AP = require(path.join(this.Config.Directory, 'classes', 'AudioProcess.js'));
+        this.AudioProcess = new this.AP(path.join(this.Config.Directory, this.Config.Folder, 'audio'))
 
     }
 
