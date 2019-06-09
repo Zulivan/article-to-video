@@ -1,0 +1,1 @@
+// Generate an image with a simple text
