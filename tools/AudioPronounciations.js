@@ -13,7 +13,7 @@ module.exports = class AudioManager {
 
         this.Accents = {
             british: {
-                langcode: 'en-BR',
+                langcode: 'en',
                 name: 'British English'
             },
             american: {
@@ -41,21 +41,22 @@ module.exports = class AudioManager {
      */
 
     generateAudio(word) {
+        const self = this;
         return new Promise((success, error) => {
-            console.log('Generating ' + this.Accents.length + ' pronounciations for the word "' + word + '"!')
+            console.log('Generating ' + self.Accents.length + ' pronounciations for the word "' + word + '"!')
             console.log('=====================================================')
 
             let vocals = [];
 
-            for (let i in this.Accents) {
+            for (let i in self.Accents) {
                 vocals.push({
-                    lang: this.Accents[i].langcode,
+                    lang: self.Accents[i].langcode,
                     text: word,
-                    extra: this.Accents[i]
+                    extra: self.Accents[i]
                 });
             };
 
-            this.AudioProcess.createCompilation(vocals).then((res) => {
+            self.AudioProcess.createCompilation(vocals).then((res) => {
                 console.log('success')
                 success(res);
             });
