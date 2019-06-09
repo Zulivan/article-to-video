@@ -37,7 +37,7 @@ module.exports = class AudioProcess {
                                 if (err1) {
                                     self.debug(err1)
                                     success(null);
-                                } else {
+                                } else { 
                                     self.debug('Calculating mp3 duration')
                                     setTimeout(function () {
                                         mp3Duration(path.join(self.Folder, 'vocal' + index + '.mp3'), function (err2, duration) {
@@ -47,9 +47,9 @@ module.exports = class AudioProcess {
                                             } else {
                                                 self.debug('File saved with a duration of ' + duration + ' seconds.')
                                                 const output = {
-                                                    vocalid: index,
+                                                    id: index,
                                                     duration: duration,
-                                                    sentence: sentence,
+                                                    text: data.text,
                                                     extra: extra
                                                 };
                                                 fs.writeFile(path.join(self.Folder, 'vocal' + index + '.json'), JSON.stringify(output), function (errfile) {
@@ -80,7 +80,7 @@ module.exports = class AudioProcess {
                 console.error('ffmpeg stderr:', stderr)
                 throw err;
             }).on('end', function (output) {
-                success(values);
+                success(output);
             })
         });
     }
@@ -96,14 +96,14 @@ module.exports = class AudioProcess {
             let promises = [];
 
             for (let i = 0; i < audioToGenerate.length; i++) {
-                promises.push(self.audioChunk(audioToGenerate[i]), i);
+                promises.push(self.audioChunk(audioToGenerate[i], i));
             };
 
             Promise.all(promises).then((values) => {
                 values = values.filter(v => v != null);
 
-                if (total > values) {
-                    self.debug(total + ' > ' + values + ': restarting');
+                if (audioToGenerate.length > values) {
+                    self.debug(audioToGenerate.length + ' > ' + values + ': restarting');
                     return self.createCompilation(audioToGenerate);
                 } else {
                     fs.exists(path.join(this.Folder, 'compilation.mp3'), (exists) => {
@@ -118,7 +118,7 @@ module.exports = class AudioProcess {
                                         self.AudioFiles.push(path.join(this.Folder, 'vocal' + i + '.mp3'));
                                     }
 
-                                    self.generateCompilation(vocals).then((res) => {
+                                    self.generateCompilation(self.AudioFiles).then((res) => {
                                         success(values);
                                     })
                                 } else {
@@ -132,7 +132,7 @@ module.exports = class AudioProcess {
                                 self.AudioFiles.push(path.join(this.Folder, 'vocal' + i + '.mp3'));
                             };
 
-                            self.generateCompilation(vocals).then((res) => {
+                            self.generateCompilation(self.AudioFiles).then((res) => {
                                 success(values)
                             });
                         };
