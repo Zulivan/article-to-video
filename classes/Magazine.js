@@ -4,7 +4,7 @@ module.exports = class Magazine {
     /**
      * To initialize a magazine class
      */
-    
+
     constructor(index, uri, root) {
         this.id = index;
         this.uri = uri;
@@ -16,8 +16,8 @@ module.exports = class Magazine {
      * @param {function} func Function executed whenever this website is called by the Magazine browser
      */
 
-    setBrowser(func){
-        if (typeof(func) !== 'function') throw new TypeError('Expected func to be a function');
+    setBrowser(func) {
+        if (typeof (func) !== 'function') throw new TypeError('Expected func to be a function');
         this.browser = func;
     };
 
@@ -25,14 +25,18 @@ module.exports = class Magazine {
      * Gets the lastest posted article
      */
 
-    getArticle(){
+    getArticle() {
         return new Promise((resolve, reject) => {
-            if(this.browser){
+            if (this.browser) {
                 const browserfunc = this.browser;
-                request({encoding: 'utf8', method: 'GET', uri: this.uri}, function(error, _, html){
-                    if(!error){
+                request({
+                    encoding: 'utf8',
+                    method: 'GET',
+                    uri: this.uri
+                }, function (error, _, html) {
+                    if (!error) {
                         resolve(browserfunc(html));
-                    }else{
+                    } else {
                         reject(error);
                     };
                 });
@@ -45,14 +49,18 @@ module.exports = class Magazine {
      * @param {function} link Link of the article to read
      */
 
-    readArticle(link){
+    readArticle(link) {
         return new Promise((resolve, reject) => {
-            if(this.reader){
+            if (this.reader) {
                 const browserfunc = this.reader;
-                request({encoding: 'UTF-8', method: 'GET', uri: this.root+link}, function(error, _, html){
-                    if(!error){
+                request({
+                    encoding: 'UTF-8',
+                    method: 'GET',
+                    uri: this.root + link
+                }, function (error, _, html) {
+                    if (!error) {
                         resolve(browserfunc(html));
-                    }else{
+                    } else {
                         reject(error);
                     };
                 });
@@ -65,8 +73,8 @@ module.exports = class Magazine {
      * @param {function} func Function executed after all the modules are loaded
      */
 
-    setReader(func){
-        if (typeof(func) !== 'function') throw new TypeError('Expected func to be a function');
+    setReader(func) {
+        if (typeof (func) !== 'function') throw new TypeError('Expected func to be a function');
         this.reader = func;
     };
 };
