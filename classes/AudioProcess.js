@@ -22,15 +22,15 @@ module.exports = class AudioProcess {
     audioChunk(data, index) {
         const self = this;
         return new Promise((success, error) => {
-            fs.exists(path.join(this.Folder, 'vocal'+index+'.json'), (exists) => {
+            fs.exists(path.join(this.Folder, 'vocal' + index + '.json'), (exists) => {
                 if (exists) {
                     self.debug('File with id ' + index + '.mp3 is already recorded, adding its metadata to the audio files to process..');
                     self.MinusIndex += 1;
-                    const output = JSON.parse(fs.readFileSync(path.join(self.Folder, 'vocal'+index+'.json'), 'utf8'));
+                    const output = JSON.parse(fs.readFileSync(path.join(self.Folder, 'vocal' + index + '.json'), 'utf8'));
                     success(output);
                 } else {
                     setTimeout(function () {
-                        self.debug('Generating audio file #'+index+'...');
+                        self.debug('Generating audio file #' + index + '...');
                         try {
                             txtomp3.saveMP3(self.Config.LCode, sentence, path.join(self.Folder, 'vocal' + index + '.mp3'), function (err1, absoluteFilePath) {
                                 if (err1) {
@@ -41,7 +41,7 @@ module.exports = class AudioProcess {
                                     setTimeout(function () {
                                         mp3Duration(path.join(self.Folder, 'vocal' + index + '.mp3'), function (err2, duration) {
                                             if (err2 || duration == 0) {
-                                                self.debug('The file has a problem, error '+err2+', duration: '+duration);
+                                                self.debug('The file has a problem, error ' + err2 + ', duration: ' + duration);
                                                 success(null);
                                             } else {
                                                 self.debug('File saved with a duration of ' + duration + ' seconds.')
@@ -69,7 +69,7 @@ module.exports = class AudioProcess {
         });
     }
 
-    generateCompilation(files){
+    generateCompilation(files) {
         const self = this;
         return new Promise((success, error) => {
             audioconcat(files).concat(path.join(self.Folder, 'compilation.mp3')).on('start', function (command) {
@@ -109,14 +109,14 @@ module.exports = class AudioProcess {
                         if (exists) {
                             mp3Duration(path.join(this.Folder, 'compilation.mp3'), function (err2, duration) {
                                 if (duration == 0) {
-                                    self.debug('The compilation happens to be corrupted (Determined length: ' + duration+')');
-                                    
+                                    self.debug('The compilation happens to be corrupted (Determined length: ' + duration + ')');
+
                                     self.AudioFiles = [];
 
                                     for (let i = 0; i < values.length; i++) {
                                         self.AudioFiles.push(path.join(this.Folder, 'vocal' + i + '.mp3'));
                                     }
-        
+
                                     self.generateCompilation(vocals).then((res) => {
                                         success(values);
                                     })
