@@ -17,9 +17,9 @@ module.exports = class Bot {
         this.Config.Directory = Directory;
 
         this.oAuth = new google.auth.OAuth2(this.Config.oAuth.Public, this.Config.oAuth.Private, 'http://localhost:' + this.Config.LocalPort + '/oauth2callback');
-        
+
         this.Progression = {};
-        
+
         fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), (exists) => {
             if (exists) {
                 this.Progression = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), 'utf8'));
@@ -105,7 +105,7 @@ module.exports = class Bot {
         let propertitle = [];
 
         const uppercutter = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
-        
+
         for (let i = 0; i < titleword.length; i++) {
             let alreadyadded = false;
             for (let j = 0; j < uppercutter.length; j++) {
@@ -143,17 +143,17 @@ module.exports = class Bot {
         const IF = new ImagesFinder(this.Config, this.Config.Directory, this.Config.Folder);
         if (self.Progression.imagedownloaded.length == 0) {
             IF.searchImages(propertitle).then((images, reset) => {
-                if (images == null) {
-                    console.log('Reset engaged')
-                    this.resetFiles().then((success) => {
-                        process.exit();
-                    });
-                } else if (images) {
+                if (images) {
                     images = images.filter(v => v != null);
                     console.log(images);
                     self.SaveMagazineProgress('imagedownloaded', images).then((saved) => {
                         console.log('Downloaded all the required images');
                         self.audioRender(content);
+                    });
+                } else {
+                    console.log('Reset engaged')
+                    this.resetFiles().then((success) => {
+                        process.exit();
                     });
                 };
             });
