@@ -106,9 +106,9 @@ module.exports = class VideoCompiler {
         const self = this;
         return new Promise((success, error) => {
             const resourcesfolder = self.Config.Folder;
-            const sentence = audio.sentence;
+            const sentence = audio.text;
             const duration = audio.duration;
-            const index = audio.vocalid;
+            const index = audio.id;
             fs.exists(path.join(self.Config.Root, self.Config.Folder, 'images', 'speech' + index + '.json'), (exists) => {
                 if (exists) {
                     self.debug('Part for vocal #' + index + ' was already recorded, skipping..');
@@ -123,7 +123,7 @@ module.exports = class VideoCompiler {
 
                     success(output);
                 } else {
-                    self.debug('Making part ' + audio.vocalid + ' with text');
+                    self.debug('Making part ' + audio.id + ' with text');
 
                     const maxchars = 60;
 
