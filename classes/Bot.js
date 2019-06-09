@@ -79,14 +79,15 @@ module.exports = class Bot {
     produceVideo(title, content) {
         const self = this;
         const TextEditor = require('../tools/TextEditor.js');
+        const captions_path = path.join(this.Config.Folder, 'temp', 'captions.txt');
 
         let badChars = ['-', '<', '>', '@', '«', '»', '?', '#'];
 
         content = TextEditor.HTMLtoUTF8(content).clear(content).replaceByFilter(content, badChars, '');
         content = content.replace(/voici.fr/g, 'FRANCE INFOS 24/7').replace(/closer/g, 'clauzeure').replace(/la mort/g, 'la disparition').replace(/mort/g, 'disparu');
-        content = this.Config.Intro.Text + '' + content;
+        content = this.Config.Intro.Text + content;
 
-        fs.writeFile('./' + this.Config.Folder + '/temp/captions.txt', content, function (errwrite) {});
+        fs.writeFile(captions_path, content, function (errwrite) {});
 
         badChars = ['<', '>', '«', '»'];
 
@@ -128,10 +129,10 @@ module.exports = class Bot {
                 };
             });
         } else if (self.Progression.videodone) {
-            const subtitles = fs.createReadStream('./' + self.config.Folder + '/temp/captions.txt');
+            const subtitles = fs.createReadStream(captions_path);
             const tagsvid = self.Progression.content.propertitle.concat(self.Progression.content.propertitle.split(' '));
             const thumbnail = self.Progression.imagedownloaded[Math.floor(Math.random() * self.Progression.imagedownloaded.length)];
-            const file = './' + self.config.Folder + '/video.mp4';
+            const file = path.join(self.config.Folder, 'video.mp4');
 
             self.uploadVideo(file, self.Progression.content.title, subtitles, tagsvid, thumbnail);
         } else if (self.Progression.imagedownloaded) {
@@ -217,7 +218,7 @@ module.exports = class Bot {
                 content: null
             };
             self.SaveMagazineProgress().then((saved) => {
-                console.log('Saved magazine progress')
+                console.log('Saved progress')
                 if (NoDeletion) {
                     process.exit();
                 }
