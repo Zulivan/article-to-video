@@ -44,7 +44,7 @@ module.exports = class Bot {
             if (index) {
                 self.Progression[index] = value;
             };
-            fs.writeFile(path.join(self.Config.Directory, self.config.Folder, 'temp', 'progression.json'), JSON.stringify(self.Progression), function (errfile) {
+            fs.writeFile(path.join(self.Config.Directory, self.Config.Folder, 'temp', 'progression.json'), JSON.stringify(self.Progression), function (errfile) {
                 if (errfile) {
                     return error(errfile);
                 }
@@ -148,7 +148,7 @@ module.exports = class Bot {
             const subtitles = fs.createReadStream(captions_path);
             const tagsvid = self.Progression.content.propertitle.concat(self.Progression.content.propertitle.split(' '));
             const thumbnail = self.Progression.imagedownloaded[Math.floor(Math.random() * self.Progression.imagedownloaded.length)];
-            const file = path.join(self.config.Folder, 'video.mp4');
+            const file = path.join(self.Config.Folder, 'video.mp4');
 
             self.uploadVideo(file, self.Progression.content.title, subtitles, tagsvid, thumbnail);
         } else if (self.Progression.imagedownloaded) {
@@ -158,12 +158,12 @@ module.exports = class Bot {
 
     }
 
-   /**
+    /**
      * Makes a video by combining audio files and image files
      * @param {object} audio Audio files
      * @param {object} images Image files
      */
-    
+
     makeVideo(audio, images) {
         const VideoCompiler = require('../tools/VideoCompiler.js');
         const VC = new VideoCompiler(this.Config, this.Config.Directory, this.Config.Folder);
@@ -171,7 +171,7 @@ module.exports = class Bot {
 
         VC.generateVideo(audio, images).then((file, reset) => {
             if (file) {
-                const subtitles = fs.createReadStream('./' + self.config.Folder + '/temp/captions.txt');
+                const subtitles = fs.createReadStream('./' + self.Config.Folder + '/temp/captions.txt');
                 const tagsvid = self.Progression.content.propertitle.concat(self.Progression.content.propertitle.split(' '));
                 const thumbnail = images[Math.floor(Math.random() * images.length)];
 
@@ -185,7 +185,7 @@ module.exports = class Bot {
         });
     }
 
-   /**
+    /**
      * Uploads a video on youtube
      * @param {file} file Video file
      * @param {string} title Video title
@@ -216,7 +216,7 @@ module.exports = class Bot {
         });
     }
 
-   /**
+    /**
      * Uploads a video on youtube
      * @param {string} content Video content
      * @param {object} images Image files
@@ -260,33 +260,33 @@ module.exports = class Bot {
                 if (NoDeletion) {
                     process.exit();
                 }
-                fs.exists('./' + self.config.Folder + '/thumbnail.png', (exists0) => {
+                fs.exists('./' + self.Config.Folder + '/thumbnail.png', (exists0) => {
                     if (exists0) {
-                        fs.unlinkSync('./' + self.config.Folder + '/thumbnail.png');
+                        fs.unlinkSync('./' + self.Config.Folder + '/thumbnail.png');
                     };
-                    fs.exists('./' + self.config.Folder + '/video.mp4', (exists1) => {
+                    fs.exists('./' + self.Config.Folder + '/video.mp4', (exists1) => {
                         if (exists1) {
-                            fs.unlinkSync('./' + self.config.Folder + '/video.mp4');
+                            fs.unlinkSync('./' + self.Config.Folder + '/video.mp4');
                         };
-                        fs.exists('./' + self.config.Folder + '/temp/captions.txt', (exists2) => {
+                        fs.exists('./' + self.Config.Folder + '/temp/captions.txt', (exists2) => {
                             if (exists2) {
-                                fs.unlinkSync('./' + self.config.Folder + '/temp/captions.txt');
+                                fs.unlinkSync('./' + self.Config.Folder + '/temp/captions.txt');
                             };
-                            fs.readdir('./' + self.config.Folder + '/images', function (err, files1) {
+                            fs.readdir('./' + self.Config.Folder + '/images', function (err, files1) {
                                 for (let i in files1) {
                                     if (files1[i].indexOf('.jpg') > -1 || files1[i].indexOf('.bmp') > -1 || files1[i].indexOf('.png') > -1) {
-                                        fs.unlinkSync('./' + self.config.Folder + '/images/' + files1[i]);
+                                        fs.unlinkSync('./' + self.Config.Folder + '/images/' + files1[i]);
                                     } else if (files1[i].indexOf('.json') > -1) {
-                                        fs.unlinkSync('./' + self.config.Folder + '/images/' + files1[i]);
+                                        fs.unlinkSync('./' + self.Config.Folder + '/images/' + files1[i]);
                                     }
                                 };
-                                fs.readdir('./' + self.config.Folder + '/audio', function (err, files2) {
+                                fs.readdir('./' + self.Config.Folder + '/audio', function (err, files2) {
                                     for (let i in files2) {
                                         const file = files2[i].split('.')[0];
                                         if (files2[i].indexOf('.mp3') > -1) {
-                                            fs.unlinkSync('./' + self.config.Folder + '/audio/' + file + '.mp3');
+                                            fs.unlinkSync('./' + self.Config.Folder + '/audio/' + file + '.mp3');
                                         } else if (files2[i].indexOf('.json') > -1) {
-                                            fs.unlinkSync('./' + self.config.Folder + '/audio/' + files2[i]);
+                                            fs.unlinkSync('./' + self.Config.Folder + '/audio/' + files2[i]);
                                         }
                                     };
                                     success(true);
