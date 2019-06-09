@@ -14,15 +14,11 @@ module.exports = class AudioManager {
      * @param {string} folder Root directory
      */
 
-    constructor(config = {}, directory, folder = 'none') {
+    constructor(config = {}) {
 
         this.Config = config;
-        this.Config.Directory = directory;
-        if (!this.Config.Folder) {
-            this.Config.Folder = folder;
-        };
 
-        this.accents = {
+        this.Accents = {
             british: {
                 langcode: 'en-BR',
                 name: 'British English'
@@ -46,15 +42,18 @@ module.exports = class AudioManager {
     }
 
     generateAudio(word) {
-        const self = this;
         return new Promise((success, error) => {
-            console.log('Generating ' + this.accents.length + ' pronounciations for the word "' + word + '"!')
+            console.log('Generating ' + this.Accents.length + ' pronounciations for the word "' + word + '"!')
             console.log('=====================================================')
 
             let vocals = [];
 
-            for (let i in files1) {
-                vocals.push(self.audioChunk(files1[i]), word);
+            for (let i in this.Accents) {
+                vocals.push({
+                    lang: this.Accents[i].langcode,
+                    text: word,
+                    extra: this.Accents[i]
+                });
             };
 
             this.AudioProcess.createCompilation(vocals).then((res) => {
