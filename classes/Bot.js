@@ -99,7 +99,9 @@ module.exports = class Bot {
 
         let badChars = ['-', '<', '>', '@', '«', '»', '?', '#'];
 
-        content = TextEditor.HTMLtoUTF8(content).clear(content).replaceByFilter(content, badChars, '');
+        content = TextEditor.HTMLtoUTF8(content)
+        content = TextEditor.clear(content)
+        content = TextEditor.replaceByFilter(content, badChars, '');
         content = content.replace(/voici.fr/g, 'FRANCE INFOS 24/7').replace(/closer/g, 'clauzeure').replace(/la mort/g, 'la disparition').replace(/mort/g, 'disparu');
         content = this.Config.Intro.Text + content;
 
@@ -107,9 +109,26 @@ module.exports = class Bot {
 
         badChars = ['<', '>', '«', '»'];
 
-        title = TextEditor.HTMLtoUTF8(title).clear(title).replaceByFilter(title, badChars, '\'');
+        title = TextEditor.HTMLtoUTF8(title)
+        title = TextEditor.clear(title)
+        title = TextEditor.replaceByFilter(title, badChars, '\'');
 
-        const propertitle = propertitle.join(' ').split(':').join('');
+        const titleword = title.split(' ');
+        let propertitle = [];
+
+        const Alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+
+        for (let i = 0; i < titleword.length; i++) {
+            let already_added = false;
+            for (let j = 0; j < Alphabet.length; j++) {
+                if (titleword[i].includes(Alphabet[j]) && !already_added) {
+                    already_added = true;
+                    propertitle.push(titleword[i]);
+                }
+            }
+        }
+
+        propertitle = propertitle.join(' ').split(':').join('');
 
         if (title.length > 92) title = title.slice(0, 90) + '...';
 
