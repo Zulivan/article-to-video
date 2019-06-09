@@ -29,10 +29,11 @@ module.exports = class AudioProcess {
                     const output = JSON.parse(fs.readFileSync(path.join(self.Folder, 'vocal' + index + '.json'), 'utf8'));
                     success(output);
                 } else {
+                    const extra = data.extra || null;
                     setTimeout(function () {
                         self.debug('Generating audio file #' + index + '...');
                         try {
-                            txtomp3.saveMP3(self.Config.LCode, sentence, path.join(self.Folder, 'vocal' + index + '.mp3'), function (err1, absoluteFilePath) {
+                            txtomp3.saveMP3(data.lang, data.text, path.join(self.Folder, 'vocal' + index + '.mp3'), function (err1, absoluteFilePath) {
                                 if (err1) {
                                     self.debug(err1)
                                     success(null);
@@ -48,9 +49,9 @@ module.exports = class AudioProcess {
                                                 const output = {
                                                     vocalid: index,
                                                     duration: duration,
-                                                    sentence: sentence
+                                                    sentence: sentence,
+                                                    extra: extra
                                                 };
-
                                                 fs.writeFile(path.join(self.Folder, 'vocal' + index + '.json'), JSON.stringify(output), function (errfile) {
                                                     success(output);
                                                 });
