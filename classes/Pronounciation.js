@@ -14,12 +14,12 @@ module.exports = class Bot {
     constructor(Root, Config) {
         this.Config = Config || {};
         this.Config.WordsPerRecording = 15;
-        this.Config.Root = Root;
+        this.Config.Directory = Root;
         this.oAuth = new google.auth.OAuth2(this.Config.oAuth.Public, this.Config.oAuth.Private, 'http://localhost:' + this.Config.LocalPort + '/oauth2callback');
         this.Progression = {};
-        fs.exists(path.join(this.Config.Root, this.Config.Folder, 'temp', 'progression.json'), (exists) => {
+        fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), (exists) => {
             if (exists) {
-                this.Progression = JSON.parse(fs.readFileSync(path.join(this.Config.Root, this.Config.Folder, 'temp', 'progression.json'), 'utf8'));
+                this.Progression = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), 'utf8'));
                 this.start();
             } else {
                 this.resetFiles().then((success) => {
@@ -35,7 +35,7 @@ module.exports = class Bot {
             if (index) {
                 self.Progression[index] = value;
             };
-            fs.writeFile(path.join(self.config.Root, self.config.Folder, 'temp', 'progression.json'), JSON.stringify(self.Progression), function (errfile) {
+            fs.writeFile(path.join(self.Config.Directory, self.config.Folder, 'temp', 'progression.json'), JSON.stringify(self.Progression), function (errfile) {
                 if (errfile) {
                     return error(errfile);
                 }
@@ -47,7 +47,7 @@ module.exports = class Bot {
     start() {
         const self = this;
         const MagazinesBrowser = require('../tools/MagazinesBrowser.js');
-        const MB = new MagazinesBrowser(this.Config, this.Config.Root, this.Config.Folder);
+        const MB = new MagazinesBrowser(this.Config, this.Config.Directory, this.Config.Folder);
 
         if (self.Progression.magazineloaded == true) {
             console.log('Producing video: ' + this.Progression.content.title);
@@ -75,7 +75,7 @@ module.exports = class Bot {
     produceVideo(title, content) {
         const ImagesFinder = require('../tools/ImagesFinder.js');
 
-        const IF = new ImagesFinder(this.Config, this.Config.Root, this.Config.Folder);
+        const IF = new ImagesFinder(this.Config, this.Config.Directory, this.Config.Folder);
 
         if (self.Progression.images.length == 0) {
             IF.searchImages(propertitle).then((images, reset) => {
@@ -108,7 +108,7 @@ module.exports = class Bot {
 
     makeVideo(audio, images) {
         const VideoCompiler = require('../tools/VideoCompiler.js');
-        const VC = new VideoCompiler(this.Config, this.Config.Root, this.Config.Folder);
+        const VC = new VideoCompiler(this.Config, this.Config.Directory, this.Config.Folder);
         const self = this;
 
         VC.generateVideo(audio, images).then((file, reset) => {
@@ -152,7 +152,7 @@ module.exports = class Bot {
     audioRender(content, images) {
 
         const AudioManager = require('../tools/AudioManager.js');
-        const AM = new AudioManager(this.Config, this.Config.Root, this.Config.Folder);
+        const AM = new AudioManager(this.Config, this.Config.Directory, this.Config.Folder);
 
         AM.generateAudio(content).then((audio) => {
             this.SaveProgress('renderedvoices', audio).then((saved) => {
