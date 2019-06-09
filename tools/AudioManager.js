@@ -22,7 +22,7 @@ module.exports = class AudioManager {
         this.Config.MaxChars = 60;
         this.MinusIndex = 0;
         this.vocalfiles = [];
-        
+
         this.AudioProcess = new AP(path.join(self.Config.Root, self.Config.Folder, 'audio'))
 
     }
