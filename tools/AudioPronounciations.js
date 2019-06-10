@@ -1,6 +1,4 @@
 const path = require('path');
-const DEBUG = true;
-
 module.exports = class AudioManager {
     /**
      * Initialize

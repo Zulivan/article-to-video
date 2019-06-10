@@ -43,14 +43,14 @@ module.exports = class AudioManager {
             self.Content = content;
             const total = self.getVocalsAmount(content);
 
-            console.log('Generating ~' + total + ' different vocals using googles voice!')
+            console.log('Generating ~' + total + ' different vocals using Google\'s voice!')
             console.log('=====================================================')
 
             let vocals = [];
 
             for (let i = 0; i < total; i++) {
                 const WpR = self.Config.WordsPerRecording;
-                const sentence_array = content.slice(index * WpR, index * WpR + WpR);
+                const sentence_array = content.split(' ').slice(i * WpR, i * WpR + WpR);
                 let sentence = sentence_array.join(' ') + '.';
                 if (sentence_array.length < 12) {
                     sentence = sentence + ' Merci d\'avoir regardé!';
@@ -62,7 +62,6 @@ module.exports = class AudioManager {
             };
 
             this.AudioProcess.createCompilation(vocals).then((res) => {
-                console.log('success')
                 success(res);
             });
         });

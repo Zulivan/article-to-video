@@ -15,6 +15,7 @@ module.exports = class VideoCompiler {
     constructor(config = {}) {
 
         this.Config = config;
+        
     }
 
     debug(text) {
@@ -103,15 +104,15 @@ module.exports = class VideoCompiler {
             const sentence = audio.text;
             const duration = audio.duration;
             const index = audio.id;
-            fs.exists(path.join(self.Config.Root, self.Config.Folder, 'images', 'speech' + index + '.json'), (exists) => {
+            fs.exists(path.join(__dirname, self.Config.Folder, 'images', 'speech' + index + '.json'), (exists) => {
                 if (exists) {
                     self.debug('Part for vocal #' + index + ' was already recorded, skipping..');
                     let output;
                     try {
-                        output = JSON.parse(fs.readFileSync(path.join(self.Config.Root, self.Config.Folder, 'images', 'speech' + index + '.json'), 'utf8'));
+                        output = JSON.parse(fs.readFileSync(path.join(__dirname, self.Config.Folder, 'images', 'speech' + index + '.json'), 'utf8'));
                     } catch (e) {
                         self.debug('JSON file is corrupted, regenerating.');
-                        fs.unlinkSync(path.join(self.Config.Root, self.Config.Folder, 'images', 'speech' + index + '.json'));
+                        fs.unlinkSync(path.join(__dirname, self.Config.Folder, 'images', 'speech' + index + '.json'));
                         process.exit();
                     }
 
@@ -193,7 +194,7 @@ module.exports = class VideoCompiler {
                                         imagebuffer.write(directoryfinal);
 
                                         fs.writeFile('./' + resourcesfolder + '/images/speech' + index + '.json', JSON.stringify(output), function (errfile) {
-                                            fs.unlinkSync(path.join(self.Config.Root, self.Config.Folder, 'images', 'speech' + index + 'bg.jpg'));
+                                            fs.unlinkSync(directorybgfinal);
                                             console.log('Vocal #' + index + ' has its video part!');
                                             success(output);
                                         });

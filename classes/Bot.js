@@ -185,7 +185,7 @@ module.exports = class Bot {
 
     makeVideo(audio, images) {
         const VideoCompiler = require('../tools/VideoCompiler.js');
-        const VC = new VideoCompiler(this.Config, this.Config.Directory, this.Config.Folder);
+        const VC = new VideoCompiler(this.Config);
         const self = this;
 
         VC.generateVideo(audio, images).then((file, reset) => {
