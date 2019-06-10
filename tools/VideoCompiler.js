@@ -8,19 +8,13 @@ const DEBUG = true;
 
 module.exports = class VideoCompiler {
     /**
-     * Initializes a MagazineBrowser instance (only used by Bot.js)
+     * VideoCompiler, makes images according to their vocal id and produces the video
      * @param {object} config Config array
-     * @param {string} directory Directrory folder
-     * @param {string} folder Root directory
      */
 
-    constructor(config = {}, directory, folder = 'none') {
+    constructor(config = {}) {
 
         this.Config = config;
-        this.Config.Directory = directory;
-        if (!this.Config.Folder) {
-            this.Config.Folder = folder;
-        };
     }
 
     debug(text) {
