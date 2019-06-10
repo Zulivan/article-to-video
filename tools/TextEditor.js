@@ -28,6 +28,8 @@ module.exports = {
         '&ecirc;': 'ê'
     }, {
         '&euml;': 'ë'
+    }, {
+        '&nbsp;': ' '
     }],
 
     replaceByFilter(input, filter, replace) {
