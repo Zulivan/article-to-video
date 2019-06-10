@@ -47,8 +47,8 @@ module.exports = class Bot {
     start() {
         const self = this;
         if (self.Progression.audiodone) {
-            console.log('Producing video: ' + this.Progression.content.title);
-            this.produceVideo(this.Progression.content.title, this.Progression.content.content);
+            console.log('Producing video: ' + this.Config.Word);
+            this.produceVideo(this.Config.Word);
         } else {
             console.log('Generating audio..');
             self.audioRender(this.Config.Word);
@@ -57,6 +57,8 @@ module.exports = class Bot {
 
     produceVideo(title, content) {
         const ImageCreator = require('../tools/ImageCreator.js');
+
+        ImageCreator.simple();
 
         if (self.Progression.videodone) {
             const subtitles = fs.createReadStream('./' + self.Config.Folder + '/temp/captions.txt');
