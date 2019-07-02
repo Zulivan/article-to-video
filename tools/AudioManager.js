@@ -11,9 +11,9 @@ module.exports = class AudioManager {
 
         this.Config = config;
 
-        this.Config.WordsPerRecording = 15;
-        this.Config.MaxChars = 60;
-        this.MinusIndex = 0;
+        this.Config.WordsPerRecording = this.Config.WordsPerRecording || 15;
+        this.Config.MaxChars = this.Config.MaxChar || 60;
+        this.MinusIndex = this.MinusIndex || 0;
         this.vocalfiles = [];
 
         this.AP = require(path.join(this.Config.Directory, 'classes', 'AudioProcess.js'));
@@ -26,8 +26,8 @@ module.exports = class AudioManager {
     }
 
     getVocalsAmount(content) {
-        let amt = 1;
-        content = content.split(" ").length;
+        let amt = 0;
+        content = content.split(' ').length;
         const maxwords = this.Config.WordsPerRecording;
         if (content / maxwords - Math.floor(content / maxwords) > 0) {
             amt = Math.floor(content / maxwords) + 1;

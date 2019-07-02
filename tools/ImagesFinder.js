@@ -36,14 +36,16 @@ module.exports = class ImagesFinder {
                 headers: {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
                 },
-                uri: 'https://api.qwant.com/api/search/images?count=15&t=images&safesearch=1&locale=fr_FR&uiv=%204&q='+query
+                uri: 'https://api.qwant.com/api/search/images?count=15&t=images&safesearch=1&locale=fr_FR&uiv=%204&q='+encodeURI(query)
             };
             request(requestOptions, function(err, _, body){
                 if(err){
                     const nothing = [];
+					console.log('ERROR; '+err);
                     success(nothing);
                 }else{
                     const items = body.data.result.items || [];
+					console.log(body.data)
                     success(items);
                 };
             })

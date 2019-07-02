@@ -45,32 +45,8 @@ module.exports = class Bot {
     }
 
     start() {
-        const self = this;
-        if (self.Progression.audiodone) {
-            console.log('Producing video: ' + this.Config.Word);
-            this.produceVideo(this.Config.Word);
-        } else {
-            console.log('Generating audio..');
-            self.audioRender(this.Config.Word);
-        };
-    }
-
-    produceVideo(title, content) {
-        const ImageCreator = require('../tools/ImageCreator.js');
-
-        ImageCreator.simple();
-
-        if (self.Progression.videodone) {
-            const subtitles = fs.createReadStream('./' + self.Config.Folder + '/temp/captions.txt');
-            const tagsvid = self.Progression.content.propertitle.concat(self.Progression.content.propertitle.split(" "));
-            const file = './' + self.Config.Folder + '/video.mp4';
-
-            self.uploadVideo(file, self.Progression.content.title, subtitles, tagsvid, thumbnail);
-        } else if (self.Progression.images) {
-            console.log('All images were previously downloaded, generating audio..');
-            self.audioRender(content, self.Progression.images);
-        }
-
+        console.log('Generating audio..');
+        this.audioRender(this.Config.Word);
     }
 
     makeVideo(audio, images) {
@@ -116,6 +92,20 @@ module.exports = class Bot {
         });
     }
 
+    generateImages(audio) {
+        console.log('Generating images');
+
+        const ImageCreator = require('../tools/H2P_ImageMaker.js');
+        const IM = new ImageCreator(this.Config);
+
+        IM.generateImages(audio).then((images) => {
+
+
+            console.log(images);
+
+        })
+    }
+
     audioRender(word) {
 
         const AudioManager = require('../tools/AudioPronounciations.js');
@@ -124,8 +114,8 @@ module.exports = class Bot {
         AM.generateAudio(word).then((audio) => {
             this.SaveProgress('renderedvoices', audio).then((saved) => {
                 this.SaveProgress('audiodone', true).then((saved) => {
-                    console.log('Successfully recorded all audio files!')
-                    // this.makeVideo(audio, images);
+                    console.log('Successfully recorded all audio files!');
+                    this.generateImages(audio);
                 });
             });
         });

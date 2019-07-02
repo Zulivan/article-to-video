@@ -9,7 +9,6 @@ module.exports = class AudioProcess {
     constructor(Folder) {
 
         this.Folder = Folder;
-
         this.AudioFiles = [];
         this.MinusIndex = 0;
 

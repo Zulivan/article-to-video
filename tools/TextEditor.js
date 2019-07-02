@@ -1,6 +1,10 @@
 module.exports = {
 
     htmlCodes: [{
+        '&#8239;': ' '
+    }, {
+        '&ocirc;': 'ô'
+    }, {
         '&ccedil;': 'ç'
     }, {
         '&rsquo;': '\''
