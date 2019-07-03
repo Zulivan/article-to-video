@@ -60,11 +60,11 @@ module.exports = class Bot {
     start() {
         const self = this;
         const MagazinesBrowser = require('../tools/MagazinesBrowser.js');
-        const MB = new MagazinesBrowser(this.Config, this.Config.Directory, this.Config.Folder);
+        const MB = new MagazinesBrowser(self.Config, self.Config.Directory, self.Config.Folder);
 
         if (self.Progression.magazineloaded) {
-            console.log('Producing video: ' + this.Progression.content.title);
-            this.produceVideo(this.Progression.content.title, this.Progression.content.content);
+            console.log('Producing video: ' + self.Progression.content.title);
+            self.produceVideo(self.Progression.content.title, self.Progression.content.content);
         } else {
             console.log('There is no loaded magazine, searching for it..');
             MB.getMagazine().then(Magazine => {
@@ -180,28 +180,33 @@ module.exports = class Bot {
     /**
      * Makes a video by combining audio files and image files
      * @param {object} audio Audio files
-     * @param {object} images Image files
      */
 
-    makeVideo(audio, images) {
+    makeVideo(audio, img_srcs) {
         const VideoCompiler = require('../tools/VideoCompiler.js');
         const VC = new VideoCompiler(this.Config);
+
+        const ImageMaker = require('../tools/NEWS_ImageMaker.js');
+        const IM = new ImageMaker(this.Config);
         const self = this;
 
-        VC.generateVideo(audio, images).then((file, reset) => {
-            if (file) {
-                const subtitles = fs.createReadStream('./' + self.Config.Folder + '/temp/captions.txt');
-                const tagsvid = self.Progression.content.propertitle.concat(self.Progression.content.propertitle.split(' '));
-                const thumbnail = images[Math.floor(Math.random() * images.length)];
+        IM.generateImages(audio, img_srcs).then((images) => {
+            VC.generateVideo(audio, images).then((file, reset) => {
+                if (file) {
+                    const subtitles = fs.createReadStream('./' + self.Config.Folder + '/temp/captions.txt');
+                    const tagsvid = self.Progression.content.propertitle.concat(self.Progression.content.propertitle.split(' '));
+                    const thumbnail = images[Math.floor(Math.random() * images.length)];
+    
+                    self.SaveMagazineProgress('videodone', file).then((saved) => {
+                        console.log('Video has been made');
+                        self.uploadVideo(file, self.Progression.content.title, subtitles, tagsvid, thumbnail);
+                    });
+                } else {
+                    process.exit();
+                }
+            });
+        })
 
-                self.SaveMagazineProgress('videodone', file).then((saved) => {
-                    console.log('Video has been made');
-                    self.uploadVideo(file, self.Progression.content.title, subtitles, tagsvid, thumbnail);
-                });
-            } else {
-                process.exit();
-            }
-        });
     }
 
     /**

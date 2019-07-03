@@ -19,24 +19,25 @@ module.exports = class ImageMaker {
      * @param {object} audio_content Audio content
      */
 
-    generateImages(audio_content) {
+    generateImages(audio_content, image_srcs) {
         const self = this;
         return new Promise((success, error) => {
-            console.log('Generating ' + audio_content.length + ' backgrounds for the word "' + audio_content[0].text + '"!')
+            console.log('Generating ' + audio_content.length + ' images!')
             console.log('=====================================================')
 
             let images = [];
 
             for (let i in audio_content) {
                 images.push({
-                    type: 'h2p',
+                    type: 'news',
+                    id: audio_content[i].id,
                     text: audio_content[i].text,
-                    accent: audio_content[i].extra.name
+                    duration: audio_content[i].duration,
+                    array: image_srcs
                 });
             };
 
             self.IM.generateImages(images).then((res) => {
-                console.log('success')
                 success(res);
             });
 

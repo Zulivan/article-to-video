@@ -46,17 +46,43 @@ module.exports = class Bot {
 
     start() {
         console.log('Generating audio..');
-        this.audioRender(this.Config.Word);
+        this.step1(this.Config.Word);
     }
 
-    makeVideo(audio, images) {
+    step1(word) {
+
+        const AudioManager = require('../tools/AudioPronounciations.js');
+        const AM = new AudioManager(this.Config);
+
+        AM.generateAudio(word).then((audio) => {
+            this.SaveProgress('renderedvoices', audio).then((saved) => {
+                this.SaveProgress('audiodone', true).then((saved) => {
+                    console.log('Successfully recorded all audio files!');
+                    this.step2(audio);
+                });
+            });
+        });
+    }
+
+    step2(audio) {
+        console.log('Generating images');
+        const self = this;
+        const ImageCreator = require('../tools/H2P_ImageMaker.js');
+        const IM = new ImageCreator(this.Config);
+
+        IM.generateImages(audio).then((images) => {
+            console.log('DONE')
+            self.step3(audio, images);
+        })
+    }
+
+    step3(audio, images) {
         const VideoCompiler = require('../tools/VideoCompiler.js');
         const VC = new VideoCompiler(this.Config, this.Config.Directory, this.Config.Folder);
         const self = this;
 
         VC.generateVideo(audio, images).then((file, reset) => {
             if (file) {
-                const subtitles = fs.createReadStream('./' + self.Config.Folder + '/temp/captions.txt');
                 const tagsvid = self.Progression.content.propertitle.concat(self.Progression.content.propertitle.split(" "));
                 const thumbnail = images[Math.floor(Math.random() * images.length)];
 
@@ -89,35 +115,6 @@ module.exports = class Bot {
                     process.exit();
                 }, 5 * 60 * 1000);
             };
-        });
-    }
-
-    generateImages(audio) {
-        console.log('Generating images');
-
-        const ImageCreator = require('../tools/H2P_ImageMaker.js');
-        const IM = new ImageCreator(this.Config);
-
-        IM.generateImages(audio).then((images) => {
-
-
-            console.log(images);
-
-        })
-    }
-
-    audioRender(word) {
-
-        const AudioManager = require('../tools/AudioPronounciations.js');
-        const AM = new AudioManager(this.Config);
-
-        AM.generateAudio(word).then((audio) => {
-            this.SaveProgress('renderedvoices', audio).then((saved) => {
-                this.SaveProgress('audiodone', true).then((saved) => {
-                    console.log('Successfully recorded all audio files!');
-                    this.generateImages(audio);
-                });
-            });
         });
     }
 

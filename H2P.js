@@ -9,5 +9,5 @@ const Config = {
     Tags: ['pronounce '+this.Word, 'say '+this.Word, 'how to spell '+this.Word]
 };
 
-const Bot = require('./classes/Pronounciation.js');
+const Bot = require('./classes/H2P.js/index.js');
 const H2P = new Bot(__dirname, Config);
