@@ -31,7 +31,8 @@ module.exports = class ImageMaker {
                 images.push({
                     type: 'h2p',
                     text: audio_content[i].text,
-                    accent: audio_content[i].extra.name
+                    accent: audio_content[i].extra.name,
+                    duration: audio_content[i].duration
                 });
             };
 

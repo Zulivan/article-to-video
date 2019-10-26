@@ -50,15 +50,15 @@ module.exports = class Bot {
     }
 
     step1(word) {
-
         const AudioManager = require('../tools/AudioPronounciations.js');
         const AM = new AudioManager(this.Config);
-
-        AM.generateAudio(word).then((audio) => {
-            this.SaveProgress('renderedvoices', audio).then((saved) => {
-                this.SaveProgress('audiodone', true).then((saved) => {
-                    console.log('Successfully recorded all audio files!');
-                    this.step2(audio);
+        this.resetFiles().then((success) => {
+            AM.generateAudio(word).then((audio) => {
+                this.SaveProgress('renderedvoices', audio).then((saved) => {
+                    this.SaveProgress('audiodone', true).then((saved) => {
+                        console.log('Successfully recorded all audio files!');
+                        this.step2(audio);
+                    });
                 });
             });
         });
@@ -71,50 +71,28 @@ module.exports = class Bot {
         const IM = new ImageCreator(this.Config);
 
         IM.generateImages(audio).then((images) => {
-            console.log('DONE')
             self.step3(audio, images);
         })
     }
 
     step3(audio, images) {
         const VideoCompiler = require('../tools/VideoCompiler.js');
-        const VC = new VideoCompiler(this.Config, this.Config.Directory, this.Config.Folder);
         const self = this;
+        const VC = new VideoCompiler(this.Config, this.Config.Directory, this.Config.Folder);
 
         VC.generateVideo(audio, images).then((file, reset) => {
             if (file) {
-                const tagsvid = self.Progression.content.propertitle.concat(self.Progression.content.propertitle.split(" "));
-                const thumbnail = images[Math.floor(Math.random() * images.length)];
-
-                self.SaveProgress('videodone', file).then((saved) => {
-                    console.log('Video has been made');
-                    self.uploadVideo(file, self.Progression.content.title, subtitles, tagsvid, thumbnail);
-                });
+                setTimeout(function () {
+                    self.resetFiles().then((success) => {
+                        console.log('Reset done another video is going to be made in 5 minutes');
+                        setTimeout(function () {
+                            process.exit();
+                        }, 5 * 60 * 1000)
+                    });
+                }, 5 * 60 * 1000);
             } else {
                 process.exit();
             }
-        });
-    }
-
-    uploadVideo(file, title, subtitles, tags, thumbnail) {
-        const YoutubeUploader = require('../tools/YoutubeUploader.js');
-        const YU = new YoutubeUploader(this.Config, this.oAuth);
-        const self = this;
-        YU.uploadVideo(file, title, subtitles, tags, thumbnail).then((id, reset) => {
-            if (id) {
-                console.log('Uploaded video on youtube with id:' + id);
-                self.resetFiles().then((success) => {
-                    console.log('Reset done another video is going to be made in 5 minutes');
-                    setTimeout(function () {
-                        process.exit();
-                    }, 5 * 60 * 1000)
-                });
-            } else {
-                console.log('Video upload returned an error, retrying in 5 minutes..')
-                setTimeout(function () {
-                    process.exit();
-                }, 5 * 60 * 1000);
-            };
         });
     }
 
@@ -146,20 +124,11 @@ module.exports = class Bot {
                             };
                             fs.readdir('./' + self.Config.Folder + '/images', function (err, files1) {
                                 for (let i in files1) {
-                                    if (files1[i].indexOf('.jpg') > -1 || files1[i].indexOf('.bmp') > -1 || files1[i].indexOf('.png') > -1) {
-                                        fs.unlinkSync('./' + self.Config.Folder + '/images/' + files1[i]);
-                                    } else if (files1[i].indexOf('.json') > -1) {
-                                        fs.unlinkSync('./' + self.Config.Folder + '/images/' + files1[i]);
-                                    }
+                                    fs.unlinkSync('./' + self.Config.Folder + '/images/' + files1[i]);
                                 };
                                 fs.readdir('./' + self.Config.Folder + '/audio', function (err, files2) {
                                     for (let i in files2) {
-                                        const file = files2[i].split('.')[0];
-                                        if (files2[i].indexOf('.mp3') > -1) {
-                                            fs.unlinkSync('./' + self.Config.Folder + '/audio/' + file + '.mp3');
-                                        } else if (files2[i].indexOf('.json') > -1) {
-                                            fs.unlinkSync('./' + self.Config.Folder + '/images/' + files2[i]);
-                                        }
+                                        fs.unlinkSync('./' + self.Config.Folder + '/audio/' + files2[i]);
                                     };
                                     success(true);
                                 });

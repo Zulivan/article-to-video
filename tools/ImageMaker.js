@@ -29,11 +29,11 @@ module.exports = class ImageMaker {
     }
 
     news(_, image) {
-        const self = this;
-        const index = image.id;
-
         const maxchars = 60;
+        const self = this;
+
         const resourcesfolder = self.Config.Folder;
+        const index = image.id;
         const sentence = image.text;
         const duration = image.duration;
         const images = image.array;
@@ -43,6 +43,7 @@ module.exports = class ImageMaker {
         let loopsdone = 0;
         let recoveryindex = 0;
         let roundedmultiple = 1;
+
         return new Promise((success, error) => {
             const jsonsave = path.join(self.Config.Directory, resourcesfolder, 'images', 'image' + index + '.json');
             fs.exists(jsonsave, (exists) => {
@@ -136,43 +137,40 @@ module.exports = class ImageMaker {
 
     h2p(id, image) {
         const self = this;
+
         const text = image.text;
         const accent = image.accent;
-        const duration = image.duration
+        const duration = image.duration;
+        
+        const background_path = path.join(self.Config.Folder, 'preset', 'background.jpg');
+        const output_path = path.join(self.Config.Folder, 'images', 'image' + id + '.jpg');
+        const save_file = path.join(self.Config.Folder, 'images', 'image' + id + '.json');
+
         return new Promise((success, error) => {
-            const resourcesfolder = path.join(self.Config.Folder, 'images');
-            const directoryfinal = path.join(resourcesfolder, 'image' + id + '.jpg');
-            const background_path = path.join(self.Config.Folder, 'preset', 'background.jpg');
-            const jsonsave = path.join(resourcesfolder, 'image' + id + '.json');
-            fs.exists(jsonsave, (exists) => {
+            fs.exists(save_file, (exists) => {
                 if (exists) {
                     self.debug('File with id ' + id + '.jpg is already done, adding its metadata to the image files to process..');
-                    const output = JSON.parse(fs.readFileSync(jsonsave, 'utf8'));
-                    success(output);
+                    success(JSON.parse(fs.readFileSync(save_file, 'utf8')));
                 } else {
                     jimp.loadFont(jimp.FONT_SANS_128_WHITE).then(function (font) {
                         jimp.read(background_path, function (err, imagebuffer) {
-                            imagebuffer.quality(60);
-                            imagebuffer.print(font, 0, 210, {
+                            imagebuffer.quality(60).print(font, 0, 210, {
                                 text: text,
                                 alignmentX: jimp.HORIZONTAL_ALIGN_CENTER
-                            }, 1100, 720);
-                            imagebuffer.print(font, 0, 500, {
+                            }, 1100, 720).print(font, 0, 500, {
                                 text: accent,
                                 alignmentX: jimp.HORIZONTAL_ALIGN_CENTER
-                            }, 1100, 720);
+                            }, 1100, 720).write(output_path);
 
                             const output = {
                                 vocal: id,
                                 values: {
-                                    path: directoryfinal,
+                                    path: output_path,
                                     loop: duration
                                 }
                             };
 
-                            imagebuffer.write(directoryfinal);
-
-                            fs.writeFile(jsonsave, JSON.stringify(output), function (errfile) {
+                            fs.writeFile(save_file, JSON.stringify(output), function (errfile) {
                                 console.log('Vocal #' + id + ' has its video part!');
                                 success(output);
                             });

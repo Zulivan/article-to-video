@@ -10,21 +10,21 @@ module.exports = class AudioManager {
         this.Config = config;
 
         this.Accents = {
-            british: {
-                langcode: 'en',
-                name: 'British English'
-            },
-            american: {
-                langcode: 'en-US',
-                name: 'American English'
-            },
             australian: {
                 langcode: 'en-AU',
                 name: 'Australian English'
             },
+            british: {
+                langcode: 'en',
+                name: 'British English'
+            },
             indian: {
                 langcode: 'en-IN',
                 name: 'Indian English'
+            },
+            american: {
+                langcode: 'en-US',
+                name: 'American English'
             }
         };
 

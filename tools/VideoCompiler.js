@@ -1,8 +1,7 @@
-const fs = require('fs');
+const videoStitch = require('video-stitch');
+const concat = videoStitch.concat;
 const videoshow = require('videoshow');
 const mp3Duration = require('mp3-duration');
-const path = require('path');
-const jimp = require('jimp');
 
 const DEBUG = true;
 
@@ -41,7 +40,7 @@ module.exports = class VideoCompiler {
             const resourcesfolder = self.Config.Folder;
             console.log(imgrendered);
             mp3Duration('./' + resourcesfolder + '/audio/compilation.mp3', function (err, duration) {
-                const videolength = Math.floor(duration + 8);
+                const videolength = Math.floor(duration + 10);
                 if (duration < 1) {
                     console.log('This video length is ' + duration + ' seconds, it is set as suspected of being glitched, resetting...')
                     success(null);
@@ -56,11 +55,12 @@ module.exports = class VideoCompiler {
                     videoBitrate: 1024,
                     videoCodec: 'libx264',
                     pixelFormat: 'yuv420p',
-                    size: '640x?',
+                    size: '1280x720',
                     audioBitrate: '128k',
                     audioChannels: 1,
                     format: 'mp4'
                 };
+                imgrendered[imgrendered.length - 1].loop = imgrendered[imgrendered.length - 1].loop + 2
                 setTimeout(function () {
                     console.log('Videoshow is starting')
                     videoshow(imgrendered, options)
@@ -72,8 +72,28 @@ module.exports = class VideoCompiler {
                             console.log(err)
                             success(false);
                         }).on('end', function (output) {
-                            console.log('The video is done.')
-                            success('./' + resourcesfolder + '/video.mp4')
+                            console.log('The video is done, now looping it 3 times.')
+							concat({
+								silent: false, // optional. if set to false, gives detailed output on console
+								overwrite: true // optional. by default, if file already exists, ffmpeg will ask for overwriting in console and that pause the process. if set to true, it will force overwriting. if set to false it will prevent overwriting.
+							  })
+							  .clips([
+								{
+								  'fileName': './' + resourcesfolder + '/video.mp4'
+								},
+								{
+								  'fileName': './' + resourcesfolder + '/video.mp4'
+								},
+								{
+								  'fileName': './' + resourcesfolder + '/video.mp4'
+								}
+							  ])
+							  .output('./' + resourcesfolder + '/compilation.mp4') //optional absolute file name for output file
+							  .concat().then((outputFileName) => {
+								console.log('Merging finished !');
+								success('./' + resourcesfolder + '/compilation.mp4');
+							  });
+
                         })
                 }, 5000)
             });
