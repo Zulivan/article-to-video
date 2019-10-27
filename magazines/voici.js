@@ -15,14 +15,14 @@ Public.setBrowser(function(content){
 });
 
 Public.setReader(function(content){
-    let videotitle =  null;
+    let videotitle = null;
     let videocontent = null;
     let parsed = JSON.parse(JSON.stringify(content.toString()));
     let scraper = cheerio.load(content);
     let contentsplit = [];
 
-    if(parsed.indexOf('<h1 class="articleChapo-mainTitle montserrat">') > -1) {
-        videotitle = parsed.slice(parsed.indexOf('<h1 class="articleChapo-mainTitle montserrat">'), (parsed.length - 1)).replace('<h1 class="articleChapo-mainTitle montserrat">', '');
+    if(parsed.indexOf('<h1 class="articleChapo-mainTitle">') > -1) {
+        videotitle = parsed.slice(parsed.indexOf('<h1 class="articleChapo-mainTitle">'), (parsed.length - 1)).replace('<h1 class="articleChapo-mainTitle montserrat">', '');
         videotitle = videotitle.slice(videotitle, videotitle.indexOf('</h1>'));
         videotitle = videotitle.split('</h1>');
         videotitle = videotitle.join('');
@@ -30,17 +30,16 @@ Public.setReader(function(content){
 
     parsed = JSON.parse(JSON.stringify(content.toString()));
 
-
     // scraper('.articleChapo-mainTitle.montserrat').filter(function(){
     //     videotitle = scraper(this).first().text()
     // });
 
     // scraper('.articleGrid.twoColsGrid.pageGrid').each(function(i, elm) {
+
     scraper('.articleContent-main').each(function(i, elm) {
         contentsplit.push(scraper(this).text())
         videocontent = contentsplit[contentsplit.length - 1]
     });
-
     return {title: videotitle, content: videocontent};
 });
 
