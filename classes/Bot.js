@@ -18,17 +18,27 @@ module.exports = class Bot {
 
         this.oAuth = new google.auth.OAuth2(this.Config.oAuth.Public, this.Config.oAuth.Private, 'http://localhost:' + this.Config.LocalPort + '/oauth2callback');
 
-        this.Progression = {};
+        this.Progression = {
+            imagedownloaded: [],
+            renderedvoices: [],
+            magazineloaded: false,
+            videodone: false,
+            audiodone: false,
+            content: null
+        };
 
         fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), (exists) => {
             if (exists) {
-                this.Progression = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), 'utf8'));
-                this.start();
-            } else {
-                this.resetFiles().then((success) => {
-                    process.exit();
-                });
+                try {
+                    this.Progression = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), 'utf8'));
+                } catch(e) {
+                    console.log('The progression file is corrupted, reset done.')
+                }
+            }else{
+                console.log('No progression file found, generating one.')
             }
+
+            this.start();
         });
     }
 
@@ -77,10 +87,10 @@ module.exports = class Bot {
                             self.produceVideo(Magazine.title, Magazine.content);
                         });
                     } else {
-                        console.log('A loaded magazine doesnt have the needed parameters to proceed it');
+                        console.log('A loaded magazine doesn\'t have the needed parameters to proceed with it');
                     }
                 } else {
-                    console.log('No magazine');
+                    console.log('No magazine found');
                 }
             });
         };

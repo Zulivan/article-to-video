@@ -57,10 +57,12 @@ module.exports = class ImageMaker {
                     } else {
                         roundedmultiple = Math.floor(chars.length / maxchars);
                     }
-                    const blocktop = 720 - 25 * roundedmultiple - 10;
-                    self.debug('Pushing it up chars length ' + chars.length + ' and ' + roundedmultiple + ' times');
-                    const randomimage = images[Math.floor(Math.random() * images.length)];
+                    self.debug(chars.length + ' characters counted, they will be typed on ' + roundedmultiple + ' lines.');
                     let sentencet = '';
+
+                    const randomimage = images[Math.floor(Math.random() * images.length)];
+                    const blocktop = 720 - 25 * roundedmultiple - 10;
+
                     const directory = randomimage.path;
                     const directoryfinal = './' + resourcesfolder + '/images/image' + index + '.jpg';
                     const directorybgfinal = './' + resourcesfolder + '/images/image' + index + 'bg.jpg';

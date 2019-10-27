@@ -10,7 +10,7 @@ module.exports = class MagazineBrowser {
      * @param {string} magazines Magazines
      */
 
-    constructor(config, directory, folder = 'nothing') {
+    constructor(config, directory, folder = 'none') {
 
         this.Loader = {
             toLoad: 0,
@@ -43,28 +43,9 @@ module.exports = class MagazineBrowser {
         this.LoadMagazines();
     }
 
-    /**
-     * Load a magazine by its file
-     * @param {string} file Magazine file
-     */
-
-    LoadMagazine(file) {
-        let magazine = require(path.join(this.Config.Directory, 'magazines', file));
-        if (!magazine.id) return;
-        magazine.filename = file;
-        if (this.Magazines[magazine.id]) {
-            console.log('[' + this.Loader.loaded + '/' + this.Loader.toLoad + '] File: ' + file + '; Error: this magazine has the same id as another make sure it\'s not a duped file.');
-            return;
-        };
-        if (this.MagazinesList.indexOf(magazine.id) > -1) {
-            this.Magazines[this.Magazines.length] = magazine;
-            this.LoadedMagazine(magazine);
-        };
-    };
-
-    /**
-     * Loads every magazine
-     */
+   /**
+    * Loads every magazine
+    */
 
     LoadMagazines() {
         fs.readdirSync('magazines').forEach(file => {
@@ -85,6 +66,25 @@ module.exports = class MagazineBrowser {
                 };
             };
         });
+    };
+
+    /**
+     * Load a magazine with its file
+     * @param {string} file Magazine file
+     */
+
+    LoadMagazine(file) {
+        let magazine = require(path.join(this.Config.Directory, 'magazines', file));
+        if (!magazine.id) return;
+        magazine.filename = file;
+        if (this.Magazines[magazine.id]) {
+            console.log('[' + this.Loader.loaded + '/' + this.Loader.toLoad + '] File: ' + file + '; Error: this magazine has the same id as another make sure it\'s not a duped file.');
+            return;
+        };
+        if (this.MagazinesList.indexOf(magazine.id) > -1) {
+            this.Magazines[this.Magazines.length] = magazine;
+            this.LoadedMagazine(magazine);
+        };
     };
 
     /**
@@ -116,7 +116,6 @@ module.exports = class MagazineBrowser {
         return new Promise((success, error) => {
             let keys = [];
             self.loadAllMagazinesLinks().then(magazines => {
-                console.log('BIG FIRST');
                 for (let i in self.MagazinesHistory) {
                     keys.push(i);
                 }
@@ -125,11 +124,11 @@ module.exports = class MagazineBrowser {
                     let magazine = self.Magazines[history.id];
                     if (!history.read) {
                         console.log('Found article url: ' + history.uri);
-                        magazine.readArticle(history.uri).then(content => {
-                            console.log('read article: ' + content);
+                        magazine.readArticle(history.uri).then(data => {
+                            console.log('read article: ' + data.title + 'content: ' +data.content );
                             magazine.read = true;
                             self.SaveMagazinesHistory();
-                            success(content);
+                            success(data);
                         });
                     };
                 });
