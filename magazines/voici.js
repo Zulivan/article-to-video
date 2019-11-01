@@ -26,6 +26,7 @@ Public.setReader(function(content){
         videotitle = videotitle.slice(videotitle, videotitle.indexOf('</h1>'));
         videotitle = videotitle.split('</h1>');
         videotitle = videotitle.join('');
+        videotitle = videotitle.replace('<h1 class="articleChapo-mainTitle">','');
     }
 
     parsed = JSON.parse(JSON.stringify(content.toString()));
