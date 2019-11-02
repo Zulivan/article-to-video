@@ -49,7 +49,13 @@ module.exports = class ImageMaker {
             fs.exists(jsonsave, (exists) => {
                 if (exists) {
                     self.debug('File with id ' + index + '.jpg is already done, adding its metadata to the image files to process..');
-                    const output = JSON.parse(fs.readFileSync(jsonsave, 'utf8'));
+                    let output = null;
+                    try {
+                        output = JSON.parse(fs.readFileSync(jsonsave, 'utf8'));
+                    } catch(e) {
+                        error(true)
+                        self.debug('JSON is corrupted, aborting...')
+                    }
                     success(output);
                 } else {
                     if (chars.length / maxchars - Math.floor(chars.length / maxchars) > 0) {

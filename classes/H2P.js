@@ -50,7 +50,7 @@ module.exports = class Bot {
     }
 
     step1(word) {
-        const AudioManager = require('../tools/AudioPronounciations.js');
+        const AudioManager = require('../tools/AudioPronunciation.js');
         const AM = new AudioManager(this.Config);
         this.resetFiles().then((success) => {
             AM.generateAudio(word).then((audio) => {

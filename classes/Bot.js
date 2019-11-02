@@ -69,8 +69,8 @@ module.exports = class Bot {
 
     start() {
         const self = this;
-        const MagazinesBrowser = require('../tools/MagazinesBrowser.js');
-        const MB = new MagazinesBrowser(self.Config, self.Config.Directory, self.Config.Folder);
+        const MagazineBrowser = require('../tools/MagazineBrowser.js');
+        const MB = new MagazineBrowser(self.Config, self.Config.Directory, self.Config.Folder);
 
         if (self.Progression.magazineloaded) {
             console.log('Producing video: ' + self.Progression.content.title);
