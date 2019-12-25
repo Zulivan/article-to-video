@@ -41,7 +41,7 @@ module.exports = class AudioManager {
     generateAudio(word) {
         const self = this;
         return new Promise((success, error) => {
-            console.log('Generating ' + self.Accents.length + ' pronounciations for the word "' + word + '"!')
+            console.log('Generating ' + Object.keys(self.Accents).length  + ' pronounciations for the word "' + word + '"!')
             console.log('=====================================================')
 
             let vocals = [];
