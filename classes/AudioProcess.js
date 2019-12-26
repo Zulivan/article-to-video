@@ -1,7 +1,7 @@
 const fs = require('fs');
 const audioconcat = require('audioconcat');
 const mp3Duration = require('mp3-duration');
-const txtomp3 = require('text-to-mp3');
+const tts = require('gtranslate-tts');
 const path = require('path');
 const DEBUG = true;
 
@@ -32,34 +32,33 @@ module.exports = class AudioProcess {
                     setTimeout(function () {
                         self.debug('Generating audio file #' + index + '...');
                         try {
-                            txtomp3.saveMP3(data.lang, data.text, path.join(self.Folder, 'vocal' + index + '.mp3'), function (err1, absoluteFilePath) {
-                                if (err1) {
-                                    self.debug(err1)
-                                    success(null);
-                                } else {
-                                    self.debug('Calculating mp3 duration')
-                                    setTimeout(function () {
-                                        mp3Duration(path.join(self.Folder, 'vocal' + index + '.mp3'), function (err2, duration) {
-                                            if (err2 || duration == 0) {
-                                                self.debug('The file has a problem, error ' + err2 + ', duration: ' + duration);
-                                                success(null);
-                                            } else {
-                                                self.debug('File saved with a duration of ' + duration + ' seconds.')
-                                                const output = {
-                                                    id: index,
-                                                    duration: duration,
-                                                    text: data.text,
-                                                    extra: extra
-                                                };
-                                                fs.writeFile(path.join(self.Folder, 'vocal' + index + '.json'), JSON.stringify(output), function (errfile) {
-                                                    success(output);
-                                                });
+                            tts.saveMP3(data.text, path.join(self.Folder, 'vocal' + index + '.mp3'), data.lang).then((absoluteFilePath) => {
+                                self.debug('Calculating mp3 duration...')
+                                setTimeout(function () {
+                                    mp3Duration(absoluteFilePath, function (err2, duration) {
+                                        if (err2 || duration == 0) {
+                                            self.debug('The file has a problem, error ' + err2 + ', duration: ' + duration);
+                                            success(null);
+                                        } else {
+                                            self.debug('File saved with a duration of ' + duration + ' seconds.')
+                                            const output = {
+                                                id: index,
+                                                duration: duration,
+                                                text: data.text,
+                                                extra: extra
                                             };
-                                        });
-                                    }, 1000);
-                                };
+                                            fs.writeFile(path.join(self.Folder, 'vocal' + index + '.json'), JSON.stringify(output), function (errfile) {
+                                                success(output);
+                                            });
+                                        };
+                                    });
+                                }, 1000);
+                            }, function (err1) {
+                                self.debug(err1)
+                                success(null);
                             });
                         } catch (error) {
+                            self.debug(error)
                             console.log('Error while downloading, returning a null value');
                             success(null);
                         };
