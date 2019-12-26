@@ -193,15 +193,36 @@ module.exports = class Bot {
      * @param {object} audio Audio files
      */
 
-    makeVideo(audio, img_srcs) {
+    makeBackgroundImages(audio, img_srcs) {
+        const ImageMaker = require('../classes/ImageMaker.js');
+        const IM = new ImageMaker(this.Config);
+
+        console.log('Generating ' + audio.length + ' images!');
+        console.log('=====================================================');
+
+        let image_infos = [];
+
+        for (let i in audio) {
+            image_infos.push({
+                type: 'news',
+                id: audio[i].id,
+                text: audio[i].text,
+                duration: audio[i].duration,
+                array: img_srcs
+            });
+        };
+
+        IM.generateImages(image_infos).then((images) => {
+            makeVideo(audio, images)
+        });
+
+    }
+
+    makeVideo(audio, images){
+
         const VideoCompiler = require('../tools/VideoCompiler.js');
         const VC = new VideoCompiler(this.Config);
 
-        const ImageMaker = require('../tools/NEWS_ImageMaker.js');
-        const IM = new ImageMaker(this.Config);
-        const self = this;
-
-        IM.generateImages(audio, img_srcs).then((images) => {
             VC.generateVideo(audio, images).then((file, reset) => {
                 if (file) {
                     const subtitles = fs.createReadStream('./' + self.Config.Folder + '/temp/captions.txt');
@@ -216,7 +237,7 @@ module.exports = class Bot {
                     process.exit();
                 }
             });
-        })
+
 
     }
 

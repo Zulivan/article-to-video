@@ -67,12 +67,26 @@ module.exports = class Bot {
     step2(audio) {
         console.log('Generating images');
         const self = this;
-        const ImageCreator = require('../tools/H2P_ImageMaker.js');
-        const IM = new ImageCreator(this.Config);
+        const ImageMaker = require(path.join(this.Config.Directory, 'classes', 'ImageMaker.js'));
+        const IM = new ImageMaker(this.Config);
 
-        IM.generateImages(audio).then((images) => {
+        console.log('Generating ' + audio.length + ' backgrounds for the word "' + audio[0].text + '"!')
+        console.log('=====================================================')
+
+        let image_infos = [];
+
+        for (let i in audio) {
+            image_infos.push({
+                type: 'h2p',
+                text: audio[i].text,
+                accent: audio[i].extra.name,
+                duration: audio[i].duration
+            });
+        };
+
+        IM.generateImages(image_infos).then((images) => {
             self.step3(audio, images);
-        })
+        });
     }
 
     step3(audio, images) {

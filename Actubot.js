@@ -4,6 +4,9 @@ const Config = {
         Public: '786080127763-qmrkld41cf5vreqpsb74bncblmt303n6.apps.googleusercontent.com',
         Private: 'sgPGM3qrMi_zQR3aAsRcSNeP'
     },
+    Video: {
+        CompliationLoop: false
+    },
     Folder: 'actus',
     Name: 'FRANCE INFOS 24/7',
     Tags: ['#news'],
