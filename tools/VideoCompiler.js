@@ -38,17 +38,17 @@ module.exports = class VideoCompiler {
         const self = this;
         return new Promise((success, error) => {
             const resourcesfolder = self.Config.Folder;
-            console.log(imgrendered);
+            self.debug(imgrendered);
             mp3Duration('./' + resourcesfolder + '/audio/compilation.mp3', function (err, duration) {
                 const videolength = Math.floor(duration + 10);
                 if (duration < 1) {
-                    console.log('This video length is ' + duration + ' seconds, it is set as suspected of being glitched, resetting...')
+                    self.debug('This video length is ' + duration + ' seconds, it is set as suspected of being glitched, resetting...')
                     success(null);
                 } else {
-                    console.log('The vocals made by synthesized voice were compiled and its duration is ' + videolength + ' seconds!')
+                    self.debug('The vocals made by synthesized voice were compiled and its duration is ' + videolength + ' seconds!')
                 }
                 const options = {
-                    fps: 20,
+                    fps: 30,
                     loop: (videolength / imgrendered.length),
                     transition: false,
                     transitionDuration: 0,
@@ -62,38 +62,39 @@ module.exports = class VideoCompiler {
                 };
                 imgrendered[imgrendered.length - 1].loop = imgrendered[imgrendered.length - 1].loop + 2
                 setTimeout(function () {
-                    console.log('Videoshow is starting')
+                    self.debug('Videoshow is starting...')
                     videoshow(imgrendered, options)
                         .audio('./' + resourcesfolder + '/audio/compilation.mp3')
                         .save('./' + resourcesfolder + '/video.mp4')
                         .on('start', function (command) {
-                            console.log('The video is in preparation...')
+                            self.debug('The video is in preparation...')
                         }).on('error', function (err) {
-                            console.log(err)
+                            self.debug(err)
                             success(false);
                         }).on('end', function (output) {
-                            console.log('The video is done, now looping it 3 times.')
-							concat({
-								silent: false, // optional. if set to false, gives detailed output on console
-								overwrite: true // optional. by default, if file already exists, ffmpeg will ask for overwriting in console and that pause the process. if set to true, it will force overwriting. if set to false it will prevent overwriting.
-							  })
-							  .clips([
-								{
-								  'fileName': './' + resourcesfolder + '/video.mp4'
-								},
-								{
-								  'fileName': './' + resourcesfolder + '/video.mp4'
-								},
-								{
-								  'fileName': './' + resourcesfolder + '/video.mp4'
-								}
-							  ])
-							  .output('./' + resourcesfolder + '/compilation.mp4') //optional absolute file name for output file
-							  .concat().then((outputFileName) => {
-								console.log('Merging finished !');
-								success('./' + resourcesfolder + '/compilation.mp4');
-							  });
+                            if (self.Config.CompliationLoop) {
 
+                                let clipsToConcat = [];
+
+                                for (i = 0; i < self.Config.CompliationLoop; i++) {
+                                    clipsToConcat.push({
+                                        'fileName': './' + resourcesfolder + '/video.mp4'
+                                    })
+                                }
+                                self.debug('The video is done, now looping it ' + self.Config.CompliationLoop + ' times.')
+                                concat({
+                                        silent: true, // optional. if set to false, gives detailed output on console
+                                        overwrite: true // optional. by default, if file already exists, ffmpeg will ask for overwriting in console and that pause the process. if set to true, it will force overwriting. if set to false it will prevent overwriting.
+                                    })
+                                    .clips(clipsToConcat)
+                                    .output('./' + resourcesfolder + '/compilation.mp4') //optional absolute file name for output file
+                                    .concat().then((outputFileName) => {
+                                        self.debug('Merging finished !');
+                                        success('./' + resourcesfolder + '/compilation.mp4');
+                                    });
+                            } else {
+                                self.debug('Video successfully generated at: ' + output)
+                            };
                         })
                 }, 5000)
             });
