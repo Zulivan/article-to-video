@@ -8,6 +8,10 @@ const DEBUG = true;
 module.exports = class AudioProcess {
     constructor(Folder) {
 
+        if (!fs.existsSync(Folder)){
+            fs.mkdirSync(Folder);
+        }
+
         this.Folder = Folder;
         this.AudioFiles = [];
         this.MinusIndex = 0;
@@ -29,6 +33,9 @@ module.exports = class AudioProcess {
                     success(output);
                 } else {
                     const extra = data.extra || null;
+                    data.text = data.text.replace(/é/g, "ai");
+                    data.text = data.text.replace(/è/g, "ai");
+                    data.text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                     setTimeout(function () {
                         self.debug('Generating audio file #' + index + '...');
                         try {

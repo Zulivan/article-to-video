@@ -104,17 +104,18 @@ module.exports = class Bot {
 
     produceVideo(title, content) {
         const self = this;
+
         const TextEditor = require('../tools/TextEditor.js');
-        const captions_path = path.join(this.Config.Folder, 'temp', 'captions.txt');
 
         let badChars = ['-', '<', '>', '@', '«', '»', '?', '#'];
 
-        content = TextEditor.HTMLtoUTF8(content)
-        content = TextEditor.clear(content)
+        content = TextEditor.HTMLtoUTF8(content);
+        content = TextEditor.clear(content); 
         content = TextEditor.replaceByFilter(content, badChars, '');
         content = content.replace(/voici.fr/g, 'FRANCE INFOS 24/7').replace(/closer/g, 'clauzeure').replace(/la mort/g, 'la disparition').replace(/mort/g, 'disparu');
         content = this.Config.Intro.Text + content;
 
+        const captions_path = path.join(this.Config.Folder, 'temp', 'captions.txt');
         fs.writeFile(captions_path, content, function (errwrite) {});
 
         badChars = ['<', '>', '«', '»'];
