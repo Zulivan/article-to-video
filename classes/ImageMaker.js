@@ -52,7 +52,7 @@ module.exports = class ImageMaker {
                     let output = null;
                     try {
                         output = JSON.parse(fs.readFileSync(jsonsave, 'utf8'));
-                    } catch(e) {
+                    } catch (e) {
                         error(true)
                         self.debug('JSON is corrupted, aborting...')
                     }
@@ -149,7 +149,7 @@ module.exports = class ImageMaker {
         const text = image.text;
         const accent = image.accent;
         const duration = image.duration;
-        
+
         const background_path = path.join(self.Config.Folder, 'preset', 'background.jpg');
         const output_path = path.join(self.Config.Folder, 'images', 'image' + id + '.jpg');
         const save_file = path.join(self.Config.Folder, 'images', 'image' + id + '.json');
