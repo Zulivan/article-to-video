@@ -1,10 +1,12 @@
+const fs = require('fs');
+const path = require('path');
 const request = require('request');
 const download = require('image-downloader');
 const jimp = require('jimp');
 
 const DEBUG = true;
 
-module.exports = class ImagesFinder {
+module.exports = class ImageFinder {
     /**
      * Initializes a MagazineBrowser instance (only used by Bot.js)
      * @param {string} directory Root directory
@@ -17,17 +19,24 @@ module.exports = class ImagesFinder {
 
         this.Config = config || {};
         this.Config.Directory = directory;
+
         if (!this.Config.Folder) {
             this.Config.Folder = folder;
         };
 
+        this.Path = path.join(this.Config.Folder, 'images');
+
+        if (!fs.existsSync(this.Path)) {
+            fs.mkdirSync(this.Path);
+        }
     }
 
     debug(text) {
-        if (DEBUG) console.log(text);
+        if (DEBUG) console.log('Image Finder: ' + text);
     }
 
     queryImages(query) {
+        const self = this;
         return new Promise((success, error) => {
             let requestOptions = {
                 encoding: 'utf8',
@@ -40,12 +49,10 @@ module.exports = class ImagesFinder {
             };
             request(requestOptions, function (err, _, body) {
                 if (err) {
-                    const nothing = [];
-                    console.log('ERROR; ' + err);
-                    success(nothing);
+                    console.error('ERROR; ' + err);
+                    success([]);
                 } else {
                     const items = body.data.result.items || [];
-                    console.log(body.data)
                     success(items);
                 };
             })
@@ -54,33 +61,31 @@ module.exports = class ImagesFinder {
 
     imageProcess(index, array) {
         const self = this;
-        self.debug('Image process: starting..')
+        self.debug('Starting..')
         return new Promise((success, error) => {
             const link = array[index].media;
             if (link.indexOf('.jpg') > -1 || link.indexOf('.bmp') > -1 || link.indexOf('.png') > -1) {
-                self.debug('Image process: downloading image called ' + link + '..');
+                self.debug('Downloading image called ' + link + '..');
                 const options = {
                     url: link,
-                    dest: './' + self.Config.Folder + '/images'
+                    dest: self.Path
                 };
                 download.image(options).then(({
                     filename,
                     image
                 }) => {
-                    self.debug('Image process: downloaded image called ' + filename + '..');
-                    const NewFileName = self.getRandomArbitrary(0, 989769) + '.jpg';
-                    const NewImgDirectory = './' + self.Config.Folder + '/images/' + NewFileName;
-                    const OldImgDirectory = './' + self.Config.Folder + '/images/' + filename.split('\\')[filename.split('\\').length - 1];
+                    self.debug('Downloaded image called ' + filename + '..');
+                    const NewFileName = self.getRandomArbitrary(0, 999999) + '.jpg';
+                    const NewImgDirectory = path.join(this.Path, NewFileName);
+                    const OldImgDirectory = path.join(this.Path, filename.split('\\')[filename.split('\\').length - 1]);
 
                     if (filename.indexOf('.jpg') > -1 || filename.indexOf('.bmp') > -1 || filename.indexOf('.png') > -1) {
                         setTimeout(function () {
                             jimp.loadFont(jimp.FONT_SANS_64_BLACK).then(function (font) {
-                                jimp.read(OldImgDirectory, function (err, imagebuffer) {
+                                jimp.read(OldImgDirectory).then( function(imagebuffer) {
                                     imagebuffer.resize(1080, 720).blur(1).flip(true, false).print(font, 2, 2, self.Config.Name).write(NewImgDirectory);
-                                    self.debug('Image process: saved image  ' + filename + ' through: ' + JSON.stringify({
-                                        path: NewImgDirectory,
-                                        name: NewFileName
-                                    }));
+
+                                    self.debug('Saved image ' + filename + ' through: ' + NewImgDirectory);
                                     success({
                                         path: NewImgDirectory,
                                         name: NewFileName
@@ -107,21 +112,22 @@ module.exports = class ImagesFinder {
     searchImages(title) {
         const self = this;
         return new Promise((success, reset) => {
-            self.debug('search Images: starting');
+            self.debug('Trying queries to find results...');
             const searchterm = title.split(":");
             let ImgToProcess = [];
             self.queryImages(title).then((returnimg) => {
-                self.debug('search Images: query on title: ' + title);
+                self.debug('Query on title: ' + title);
                 if (returnimg.length > 0) {
-                    self.debug('search Images: processing relevant results');
+                    self.debug('Processing relevant results');
                     for (let i = 0; i < returnimg.length; i++) {
                         ImgToProcess.push(self.imageProcess(i, returnimg));
                     };
                     Promise.all(ImgToProcess).then((values) => {
+                        console.log(values)
                         success(values);
                     });
                 } else if (searchterm.length > 0) {
-                    self.debug('search Images: no image found previously, query on ' + searchterm[0]);
+                    self.debug('No image found previously. Querying on ' + searchterm[0]);
                     self.queryImages(searchterm[0]).then((returnimg2) => {
                         if (returnimg2.length > 0) {
                             for (let i = 0; i < returnimg2.length; i++) {
@@ -131,7 +137,7 @@ module.exports = class ImagesFinder {
                                 success(values);
                             });
                         } else if (searchterm.length > 1) {
-                            self.debug('search Images: no image found previously query on ' + searchterm[1]);
+                            self.debug('No image found previously. Querying on ' + searchterm[1]);
                             self.queryImages(searchterm[1]).then((returnimg3) => {
                                 if (returnimg3.length > 0) {
                                     for (let i = 0; i < returnimg3.length; i++) {

@@ -31,10 +31,10 @@ module.exports = class Bot {
             if (exists) {
                 try {
                     this.Progression = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), 'utf8'));
-                } catch(e) {
+                } catch (e) {
                     console.log('The progression file is corrupted, reset done.')
                 }
-            }else{
+            } else {
                 console.log('No progression file found, generating one.')
             }
 
@@ -48,7 +48,7 @@ module.exports = class Bot {
      * @param {any} value 
      */
 
-    SaveMagazineProgress(index, value = false) {
+    SaveMagazineProgression(index, value = false) {
         const self = this;
         return new Promise((success, error) => {
             if (index) {
@@ -82,8 +82,8 @@ module.exports = class Bot {
                 if (Magazine) {
                     if (Magazine.title && Magazine.content) {
                         self.Progression.magazineloaded = true;
-                        self.SaveMagazineProgress('content', Magazine).then(saved => {
-                            console.log(self.SaveMagazineProgress)
+                        self.SaveMagazineProgression('content', Magazine).then(saved => {
+                            console.log(self.SaveMagazineProgression)
                             self.produceVideo(Magazine.title, Magazine.content);
                         });
                     } else {
@@ -103,14 +103,12 @@ module.exports = class Bot {
      */
 
     produceVideo(title, content) {
-        const self = this;
-
         const TextEditor = require('../tools/TextEditor.js');
 
         let badChars = ['-', '<', '>', '@', '«', '»', '?', '#'];
 
         content = TextEditor.HTMLtoUTF8(content);
-        content = TextEditor.clear(content); 
+        content = TextEditor.clear(content);
         content = TextEditor.replaceByFilter(content, badChars, '');
         content = content.replace(/voici.fr/g, 'FRANCE INFOS 24/7').replace(/closer/g, 'clauzeure').replace(/la mort/g, 'la disparition').replace(/mort/g, 'disparu');
         content = this.Config.Intro.Text + content;
@@ -156,34 +154,46 @@ module.exports = class Bot {
         console.log('Content: ' + content);
         console.log('--------------------------------');
 
-        const ImagesFinder = require('../tools/ImagesFinder.js');
-        const IF = new ImagesFinder(this.Config, this.Config.Directory, this.Config.Folder);
-        if (self.Progression.imagedownloaded.length == 0) {
+        const ImageFinder = require('../tools/ImageFinder.js');
+        const IF = new ImageFinder(this.Config, this.Config.Directory, this.Config.Folder);
+
+        if (this.Progression.videodone) {
+            const subtitles = fs.createReadStream(captions_path);
+            const tagsvid = this.Progression.content.propertitle.concat(this.Progression.content.propertitle.split(' '));
+            const thumbnail = this.Progression.imagedownloaded[Math.floor(Math.random() * this.Progression.imagedownloaded.length)];
+            const file = path.join(this.Config.Folder, 'video.mp4');
+            const title = this.Progression.content.title;
+
+            console.log('Video is done:' + title)
+            //this.uploadVideo(file, title, subtitles, tagsvid, thumbnail);
+        } else if (this.Progression.imagedownloaded.length == 0) {
+            console.log('LOOKING FOR IAMGS')
             IF.searchImages(propertitle).then((images, reset) => {
+
+                console.log(images)
+
                 if (images) {
+
                     images = images.filter(v => v != null);
                     console.log(images);
-                    self.SaveMagazineProgress('imagedownloaded', images).then((saved) => {
+                    this.SaveMagazineProgression('imagedownloaded', images).then((saved) => {
                         console.log('Downloaded all the required images');
-                        self.audioRender(content);
+                        this.audioRender(content, images);
                     });
+
                 } else {
-                    console.log('Reset engaged')
+
+                    console.log('No images found, running reset')
                     this.resetFiles().then((success) => {
                         process.exit();
                     });
-                };
-            });
-        } else if (self.Progression.videodone) {
-            const subtitles = fs.createReadStream(captions_path);
-            const tagsvid = self.Progression.content.propertitle.concat(self.Progression.content.propertitle.split(' '));
-            const thumbnail = self.Progression.imagedownloaded[Math.floor(Math.random() * self.Progression.imagedownloaded.length)];
-            const file = path.join(self.Config.Folder, 'video.mp4');
 
-            self.uploadVideo(file, self.Progression.content.title, subtitles, tagsvid, thumbnail);
-        } else if (self.Progression.imagedownloaded) {
+                };
+
+            });
+        } else {
             console.log('All images were previously downloaded, generating audio..');
-            self.audioRender(content, self.Progression.imagedownloaded);
+            this.audioRender(content, this.Progression.imagedownloaded);
         }
 
     }
@@ -213,30 +223,30 @@ module.exports = class Bot {
         };
 
         IM.generateImages(image_infos).then((images) => {
-            makeVideo(audio, images)
+            console.log(images)
+            this.makeVideo(audio, images)
         });
 
     }
 
-    makeVideo(audio, images){
+    makeVideo(audio, images) {
 
         const VideoCompiler = require('../tools/VideoCompiler.js');
         const VC = new VideoCompiler(this.Config);
+        VC.generateVideo(audio, images).then((file, reset) => {
+            if (file) {
+                const subtitles = fs.createReadStream('./' + self.Config.Folder + '/temp/captions.txt');
+                const tagsvid = self.Progression.content.propertitle.concat(self.Progression.content.propertitle.split(' '));
+                const thumbnail = images[Math.floor(Math.random() * images.length)];
 
-            VC.generateVideo(audio, images).then((file, reset) => {
-                if (file) {
-                    const subtitles = fs.createReadStream('./' + self.Config.Folder + '/temp/captions.txt');
-                    const tagsvid = self.Progression.content.propertitle.concat(self.Progression.content.propertitle.split(' '));
-                    const thumbnail = images[Math.floor(Math.random() * images.length)];
-    
-                    self.SaveMagazineProgress('videodone', file).then((saved) => {
-                        console.log('Video has been made');
-                        self.uploadVideo(file, self.Progression.content.title, subtitles, tagsvid, thumbnail);
-                    });
-                } else {
-                    process.exit();
-                }
-            });
+                self.SaveMagazineProgression('videodone', file).then((saved) => {
+                    console.log('Video has been made');
+                    self.uploadVideo(file, self.Progression.content.title, subtitles, tagsvid, thumbnail);
+                });
+            } else {
+                process.exit();
+            }
+        });
 
 
     }
@@ -284,9 +294,8 @@ module.exports = class Bot {
         const AM = new AudioManager(this.Config, this.Config.Directory, this.Config.Folder);
 
         AM.generateAudio(content).then((audio) => {
-            console.log(audio)
-            this.SaveMagazineProgress('renderedvoices', audio).then((saved) => {
-                this.SaveMagazineProgress('audiodone', true).then((saved) => {
+            this.SaveMagazineProgression('renderedvoices', audio).then((saved) => {
+                this.SaveMagazineProgression('audiodone', true).then((saved) => {
                     console.log('Successfully recorded all audio files!')
                     this.makeVideo(audio, images);
                 });
@@ -311,11 +320,13 @@ module.exports = class Bot {
                 audiodone: false,
                 content: null
             };
-            self.SaveMagazineProgress().then((saved) => {
+            self.SaveMagazineProgression().then((saved) => {
                 console.log('Saved progress')
                 if (NoDeletion) {
                     process.exit();
                 }
+                fs.unlinkSync('./' + self.Config.Folder + '/images');
+                fs.unlinkSync('./' + self.Config.Folder + '/audio');
                 fs.exists('./' + self.Config.Folder + '/thumbnail.png', (exists0) => {
                     if (exists0) {
                         fs.unlinkSync('./' + self.Config.Folder + '/thumbnail.png');
@@ -328,26 +339,7 @@ module.exports = class Bot {
                             if (exists2) {
                                 fs.unlinkSync('./' + self.Config.Folder + '/temp/captions.txt');
                             };
-                            fs.readdir('./' + self.Config.Folder + '/images', function (err, files1) {
-                                for (let i in files1) {
-                                    if (files1[i].indexOf('.jpg') > -1 || files1[i].indexOf('.bmp') > -1 || files1[i].indexOf('.png') > -1) {
-                                        fs.unlinkSync('./' + self.Config.Folder + '/images/' + files1[i]);
-                                    } else if (files1[i].indexOf('.json') > -1) {
-                                        fs.unlinkSync('./' + self.Config.Folder + '/images/' + files1[i]);
-                                    }
-                                };
-                                fs.readdir('./' + self.Config.Folder + '/audio', function (err, files2) {
-                                    for (let i in files2) {
-                                        const file = files2[i].split('.')[0];
-                                        if (files2[i].indexOf('.mp3') > -1) {
-                                            fs.unlinkSync('./' + self.Config.Folder + '/audio/' + file + '.mp3');
-                                        } else if (files2[i].indexOf('.json') > -1) {
-                                            fs.unlinkSync('./' + self.Config.Folder + '/audio/' + files2[i]);
-                                        }
-                                    };
-                                    success(true);
-                                });
-                            });
+                            success(true);
                         });
                     });
                 });

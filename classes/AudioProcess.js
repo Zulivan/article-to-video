@@ -8,7 +8,7 @@ const DEBUG = true;
 module.exports = class AudioProcess {
     constructor(Folder) {
 
-        if (!fs.existsSync(Folder)){
+        if (!fs.existsSync(Folder)) {
             fs.mkdirSync(Folder);
         }
 

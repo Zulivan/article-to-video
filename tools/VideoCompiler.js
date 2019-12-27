@@ -2,6 +2,7 @@ const videoStitch = require('video-stitch');
 const concat = videoStitch.concat;
 const videoshow = require('videoshow');
 const mp3Duration = require('mp3-duration');
+const path = require('path');
 
 const DEBUG = true;
 
@@ -37,9 +38,11 @@ module.exports = class VideoCompiler {
     makeVideo(imgrendered) {
         const self = this;
         return new Promise((success, error) => {
+
             const resourcesfolder = self.Config.Folder;
+
             self.debug(imgrendered);
-            mp3Duration('./' + resourcesfolder + '/audio/compilation.mp3', function (err, duration) {
+            mp3Duration(path.join(resourcesfolder, 'audio', 'compilation.mp3'), function (err, duration) {
                 const videolength = Math.floor(duration + 10);
                 if (duration < 1) {
                     self.debug('This video length is ' + duration + ' seconds, it is set as suspected of being glitched, resetting...')
@@ -64,8 +67,8 @@ module.exports = class VideoCompiler {
                 setTimeout(function () {
                     self.debug('Videoshow is starting...')
                     videoshow(imgrendered, options)
-                        .audio('./' + resourcesfolder + '/audio/compilation.mp3')
-                        .save('./' + resourcesfolder + '/video.mp4')
+                        .audio(path.join(resourcesfolder, 'audio', 'compilation.mp3'))
+                        .save(path.join(resourcesfolder, 'video.mp4'))
                         .on('start', function (command) {
                             self.debug('The video is in preparation...')
                         }).on('error', function (err) {
@@ -78,7 +81,7 @@ module.exports = class VideoCompiler {
 
                                 for (i = 0; i < self.Config.CompliationLoop; i++) {
                                     clipsToConcat.push({
-                                        'fileName': './' + resourcesfolder + '/video.mp4'
+                                        'fileName': path.join(resourcesfolder, 'video.mp4')
                                     })
                                 }
                                 self.debug('The video is done, now looping it ' + self.Config.CompliationLoop + ' times.')
@@ -87,10 +90,10 @@ module.exports = class VideoCompiler {
                                         overwrite: true // optional. by default, if file already exists, ffmpeg will ask for overwriting in console and that pause the process. if set to true, it will force overwriting. if set to false it will prevent overwriting.
                                     })
                                     .clips(clipsToConcat)
-                                    .output('./' + resourcesfolder + '/compilation.mp4') //optional absolute file name for output file
+                                    .output(path.join(resourcesfolder, 'compilation.mp4')) //optional absolute file name for output file
                                     .concat().then((outputFileName) => {
                                         self.debug('Merging finished !');
-                                        success('./' + resourcesfolder + '/compilation.mp4');
+                                        success(path.join(resourcesfolder, 'compilation.mp4'));
                                     });
                             } else {
                                 self.debug('Video successfully generated at: ' + output)
