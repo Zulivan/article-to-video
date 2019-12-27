@@ -38,10 +38,7 @@ module.exports = class VideoCompiler {
     makeVideo(imgrendered) {
         const self = this;
         return new Promise((success, error) => {
-
             const resourcesfolder = self.Config.Folder;
-
-            self.debug(imgrendered);
             mp3Duration(path.join(resourcesfolder, 'audio', 'compilation.mp3'), function (err, duration) {
                 const videolength = Math.floor(duration + 10);
                 if (duration < 1) {

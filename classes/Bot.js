@@ -297,7 +297,7 @@ module.exports = class Bot {
             this.SaveMagazineProgression('renderedvoices', audio).then((saved) => {
                 this.SaveMagazineProgression('audiodone', true).then((saved) => {
                     console.log('Successfully recorded all audio files!')
-                    this.makeVideo(audio, images);
+                    this.makeBackgroundImages(audio, images);
                 });
             });
         });
