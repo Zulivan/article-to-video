@@ -165,7 +165,7 @@ module.exports = class Bot {
             const title = this.Progression.content.title;
 
             console.log('Video is done:' + title)
-            //this.uploadVideo(file, title, subtitles, tagsvid, thumbnail);
+            this.uploadVideo(file, title, subtitles, tagsvid, thumbnail);
         } else if (this.Progression.imagedownloaded.length == 0) {
             IF.searchImages(propertitle).then((images, reset) => {
 
@@ -209,10 +209,10 @@ module.exports = class Bot {
         console.log('Generating ' + audio.length + ' images!');
         console.log('=====================================================');
 
-        let image_infos = [];
+        let image_info = [];
 
         for (let i in audio) {
-            image_infos.push({
+            image_info.push({
                 type: 'news',
                 id: audio[i].id,
                 text: audio[i].text,
@@ -221,12 +221,18 @@ module.exports = class Bot {
             });
         };
 
-        IM.generateImages(image_infos).then((images) => {
+        IM.generateImages(image_info).then((images) => {
             console.log(images)
             this.makeVideo(audio, images)
         });
 
     }
+
+    /**
+     * Makes a video using audio files and image files
+     * @param {object} audio Audio files
+     * @param {object} images Image information
+     */
 
     makeVideo(audio, images) {
 
@@ -282,7 +288,7 @@ module.exports = class Bot {
     }
 
     /**
-     * Uploads a video on youtube
+     * Generates audio using Google's voice
      * @param {string} content Video content
      * @param {object} images Image files
      */
