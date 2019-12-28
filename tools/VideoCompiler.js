@@ -90,10 +90,12 @@ module.exports = class VideoCompiler {
                                     .output(path.join(resourcesfolder, 'compilation.mp4')) //optional absolute file name for output file
                                     .concat().then((outputFileName) => {
                                         self.debug('Merging finished !');
+                                        self.debug('Video successfully generated at: ' + outputFileName);
                                         success(path.join(resourcesfolder, 'compilation.mp4'));
                                     });
                             } else {
-                                self.debug('Video successfully generated at: ' + output)
+                                self.debug('Video successfully generated at: ' + output);
+                                success(path.join(resourcesfolder, 'video.mp4'));
                             };
                         })
                 }, 5000)

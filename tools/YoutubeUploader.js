@@ -9,9 +9,9 @@ const {
 
 const DEBUG = true;
 
-module.exports = class AudioManager {
+module.exports = class YoutubeUploader {
     /**
-     * Initializes a MagazineBrowser instance (only used by Bot.js)
+     * Initializes Uploader instance
      * @param {object} config Config array
      * @param {string} client Google's oAuth client 
      */

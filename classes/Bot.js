@@ -167,7 +167,6 @@ module.exports = class Bot {
             console.log('Video is done:' + title)
             //this.uploadVideo(file, title, subtitles, tagsvid, thumbnail);
         } else if (this.Progression.imagedownloaded.length == 0) {
-            console.log('LOOKING FOR IAMGS')
             IF.searchImages(propertitle).then((images, reset) => {
 
                 console.log(images)
