@@ -32,7 +32,7 @@ module.exports = class YoutubeUploader {
         return new Promise((success, error) => {
             self.logIn().then((logged_in, reset) => {
                 if (logged_in && !self.uploading) {
-                    this.uploading = true;
+                    self.uploading = true;
                     console.log('Uploading...');
                     const youtube = google.youtube({
                         version: 'v3',

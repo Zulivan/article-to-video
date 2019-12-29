@@ -238,6 +238,7 @@ module.exports = class Bot {
 
         const VideoCompiler = require('../tools/VideoCompiler.js');
         const VC = new VideoCompiler(this.Config);
+        const self = this;
         VC.generateVideo(audio, images).then((file, reset) => {
             if (file) {
                 const subtitles = fs.createReadStream('./' + self.Config.Folder + '/temp/captions.txt');

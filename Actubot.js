@@ -1,8 +1,8 @@
 const Config = {
     LocalPort: 5000,
     oAuth: {
-        Public: '786080127763-qmrkld41cf5vreqpsb74bncblmt303n6.apps.googleusercontent.com',
-        Private: 'sgPGM3qrMi_zQR3aAsRcSNeP'
+        Public: '786080127763-t7f9qpknu5mk8ddkoe6u17qp8glfalj2.apps.googleusercontent.com',
+        Private: 'SoSz4zAFYi2YmoNu-ObCLSvK'
     },
     Video: {
         CompliationLoop: false
