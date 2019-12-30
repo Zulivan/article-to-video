@@ -69,7 +69,7 @@ module.exports = class Bot {
 
     start() {
         const self = this;
-        const MagazineBrowser = require('../tools/MagazineBrowser.js');
+        const MagazineBrowser = require('../classes/MagazineBrowser.js');
         const MB = new MagazineBrowser(self.Config, self.Config.Directory, self.Config.Folder);
 
         if (self.Progression.magazineloaded) {
@@ -168,25 +168,17 @@ module.exports = class Bot {
             this.uploadVideo(file, title, subtitles, tagsvid, thumbnail);
         } else if (this.Progression.imagedownloaded.length == 0) {
             IF.searchImages(propertitle).then((images, reset) => {
-
-                console.log(images)
-
                 if (images) {
-
                     images = images.filter(v => v != null);
-                    console.log(images);
                     this.SaveMagazineProgression('imagedownloaded', images).then((saved) => {
                         console.log('Downloaded all the required images');
                         this.audioRender(content, images);
                     });
-
                 } else {
-
                     console.log('No images found, running reset')
                     this.resetFiles().then((success) => {
                         process.exit();
                     });
-
                 };
 
             });
@@ -222,8 +214,8 @@ module.exports = class Bot {
         };
 
         IM.generateImages(image_info).then((images) => {
-            console.log(images)
-            this.makeVideo(audio, images)
+            console.log(images);
+            this.makeVideo(audio, images);
         });
 
     }
@@ -253,8 +245,6 @@ module.exports = class Bot {
                 process.exit();
             }
         });
-
-
     }
 
     /**
@@ -331,8 +321,8 @@ module.exports = class Bot {
                 if (NoDeletion) {
                     process.exit();
                 }
-                fs.unlinkSync('./' + self.Config.Folder + '/images');
-                fs.unlinkSync('./' + self.Config.Folder + '/audio');
+                fs.rmdirSync('./' + self.Config.Folder + '/images');
+                fs.rmdirSync('./' + self.Config.Folder + '/audio');
                 fs.exists('./' + self.Config.Folder + '/thumbnail.png', (exists0) => {
                     if (exists0) {
                         fs.unlinkSync('./' + self.Config.Folder + '/thumbnail.png');

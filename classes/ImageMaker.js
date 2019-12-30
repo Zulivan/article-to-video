@@ -28,6 +28,24 @@ module.exports = class ImageMaker {
         });
     }
 
+    generateThumbnail(image_name) {
+        const self = this;
+        const thumbnail_final_dir = path.join(self.Config.Directory, self.Config.Folder, 'images', 'final_thumbnail.png');
+        return new Promise((success, error) => {
+            jimp.read(path.join(self.Config.Directory, self.Config.Folder, 'preset', 'thumbnail.png')).then(overlay => {
+                jimp.read(path.join(self.Config.Directory, self.Config.Folder, 'images', image_name)).then(background => {
+                        background.composite(overlay, 0, 0).resize(1280, 720).quality(60).write(thumbnail_final_dir);
+                        success(thumbnail_final_dir);
+                    })
+                    .catch(err => {
+                        error('Cannnot generate thumbnail: ' + err);
+                    });
+            }).catch(err => {
+                error('Cannot load thumbnail overlay. Did you make it?');
+            });
+        });
+    }
+
     news(_, image) {
         const maxchars = 60;
         const self = this;
@@ -110,12 +128,12 @@ module.exports = class ImageMaker {
                                                     loopsdone = loopsdone + 1;
                                                     sentencet = "";
                                                     recoveryindex = i;
-                                                }
-                                            }
+                                                };
+                                            };
 
                                             if (chars.length >= (loopsdone * maxchars)) {
                                                 imagebuffer.print(font2, 12, blocktop + 25 * loopsdone, chars.slice(recoveryindex, chars.length - 1).join("") + ".")
-                                            }
+                                            };
 
                                             const output = {
                                                 vocal: index,
@@ -184,8 +202,8 @@ module.exports = class ImageMaker {
                             });
                         });
                     });
-                }
+                };
             });
         });
-    }
+    };
 }

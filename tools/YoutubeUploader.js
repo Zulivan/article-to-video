@@ -1,6 +1,7 @@
 const fs = require('fs');
 const Lien = require('lien');
 const prettyBytes = require('pretty-bytes'); //Not used
+const ImageMaker = require('../classes/ImageMaker.js');
 const jimp = require('jimp');
 const open = require('open');
 const {
@@ -26,7 +27,7 @@ module.exports = class YoutubeUploader {
 
     }
 
-    uploadVideo(file, title, subtitles, tags = ['#news', 'france infos', 'nouvelles', 'actualités'], thumbnail, description = 'Les nouvelles les plus palpitantes sur cette chaine youtube gratuitement', magazine = 'FRANCE INFOS 24/7') {
+    uploadVideo(file, title, subtitles, tags = ['#news', 'france infos', 'nouvelles', 'actualités'], randomimage, description = 'Les nouvelles les plus palpitantes sur cette chaine youtube gratuitement', magazine = 'FRANCE INFOS 24/7') {
         const self = this;
         const resourcesfolder = self.Config.Folder;
         return new Promise((success, error) => {
@@ -80,31 +81,25 @@ module.exports = class YoutubeUploader {
                             }, (errcc, data) => {
                                 if (!errcc) {
                                     console.log('--- Youtube Caption Uploaded! ---')
-                                    const randomimage = thumbnail;
-                                    const thumbimage = './' + resourcesfolder + '/images/' + randomimage.name;
-                                    const imagedirectory = './' + resourcesfolder + '/thumbnail.png';
-                                    jimp.read('./' + resourcesfolder + '/preset/thumbnail.png', function (importerror, overlay) {
-                                        jimp.read(thumbimage, function (importerror2, background) {
-                                            background.composite(overlay, 0, 0).resize(1280, 720).quality(60).write(imagedirectory);
-                                            setTimeout(function () {
-                                                let req3 = youtube.thumbnails.set({
-                                                    videoId: video.id,
-                                                    media: {
-                                                        body: fs.createReadStream(imagedirectory)
-                                                    }
-                                                }, (errthumbnail, data) => {
-                                                    if (!errthumbnail) {
-                                                        console.log('---------------------------------');
-                                                        console.log('--- Youtube Thumbnail Uploaded! ---');
-                                                        success(video.id);
-                                                    } else {
-                                                        console.log(errthumbnail)
-                                                        success(false);
-                                                    }
-                                                });
-                                            }, 5000)
-                                        })
-                                    })
+                                    const IM = new ImageMaker(this.Config);
+                                    console.log(randomimage.name);
+                                    IM.generateThumbnail(randomimage.name).then((thumbnail_dir, errimg) => {
+                                        let req3 = youtube.thumbnails.set({
+                                            videoId: video.id,
+                                            media: {
+                                                body: fs.createReadStream(thumbnail_dir)
+                                            }
+                                        }, (errthumbnail, data) => {
+                                            if (!errthumbnail) {
+                                                console.log('---------------------------------');
+                                                console.log('--- Youtube Thumbnail Uploaded! ---');
+                                                success(video.id);
+                                            } else {
+                                                console.log(errthumbnail)
+                                                success(false);
+                                            }
+                                        });
+                                    });
                                 } else {
                                     console.log(errcc)
                                     console.log(tags)

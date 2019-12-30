@@ -123,7 +123,6 @@ module.exports = class ImageFinder {
                         ImgToProcess.push(self.imageProcess(i, returnimg));
                     };
                     Promise.all(ImgToProcess).then((values) => {
-                        console.log(values)
                         success(values);
                     });
                 } else if (searchterm.length > 0) {
