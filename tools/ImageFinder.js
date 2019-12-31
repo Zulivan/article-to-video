@@ -8,11 +8,10 @@ const DEBUG = true;
 
 module.exports = class ImageFinder {
     /**
-     * Initializes a MagazineBrowser instance (only used by Bot.js)
-     * @param {string} directory Root directory
-     * @param {string} folder Magazines folder
-     * @param {string} config Config array
-     * @param {string} magazines Magazines
+     * Initializes an ImageFinder instance
+     * @param {object} config Config array
+     * @param {string} directory Magazines folder
+     * @param {string} folder Folder
      */
 
     constructor(config, directory, folder = 'nothing') {
@@ -62,45 +61,46 @@ module.exports = class ImageFinder {
     imageProcess(index, array) {
         const self = this;
         self.debug('Starting..')
-        return new Promise((success, error) => {
+        return new Promise((resolve, reject) => {
             const link = array[index].media;
             if (link.indexOf('.jpg') > -1 || link.indexOf('.bmp') > -1 || link.indexOf('.png') > -1) {
                 self.debug('Downloading image called ' + link + '..');
-                const options = {
+
+                download.image({
                     url: link,
                     dest: self.Path
-                };
-                download.image(options).then(({
-                    filename,
-                    image
+                }).then(({
+                    filename,img
                 }) => {
                     self.debug('Downloaded image called ' + filename + '..');
+
                     const NewFileName = self.getRandomArbitrary(0, 999999) + '.jpg';
                     const NewImgDirectory = path.join(this.Path, NewFileName);
                     const OldImgDirectory = path.join(this.Path, filename.split('\\')[filename.split('\\').length - 1]);
 
                     if (filename.indexOf('.jpg') > -1 || filename.indexOf('.bmp') > -1 || filename.indexOf('.png') > -1) {
                         setTimeout(function () {
-                            jimp.loadFont(jimp.FONT_SANS_64_BLACK).then(function (font) {
-                                jimp.read(OldImgDirectory).then( function(imagebuffer) {
+                            jimp.loadFont(jimp.FONT_SANS_64_BLACK).then(font => {
+                                jimp.read(OldImgDirectory).then(imagebuffer => {
                                     imagebuffer.resize(1080, 720).blur(1).flip(true, false).print(font, 2, 2, self.Config.Name).write(NewImgDirectory);
-
                                     self.debug('Saved image ' + filename + ' through: ' + NewImgDirectory);
-                                    success({
+                                    resolve({
                                         path: NewImgDirectory,
                                         name: NewFileName
                                     });
                                 }).catch((err) => {
-                                    success(null);
+                                    console.log('Cannot read image buffer: ' + err)
+                                    resolve(null);
                                 });
                             });
                         }, 2000);
                     };
                 }).catch((err) => {
-                    success(null);
+                    console.log('Download failed: ' + err);
+                    resolve(null);
                 });
             } else {
-                success(null);
+                resolve(null);
             };
         });
     }
@@ -111,14 +111,14 @@ module.exports = class ImageFinder {
 
     searchImages(title) {
         const self = this;
-        return new Promise((success, reset) => {
+        return new Promise((success) => {
             self.debug('Trying queries to find results...');
             const searchterm = title.split(":");
             let ImgToProcess = [];
             self.queryImages(title).then((returnimg) => {
                 self.debug('Query on title: ' + title);
                 if (returnimg.length > 0) {
-                    self.debug('Processing relevant results');
+                    self.debug('Processing ' + returnimg.length + ' results...');
                     for (let i = 0; i < returnimg.length; i++) {
                         ImgToProcess.push(self.imageProcess(i, returnimg));
                     };
@@ -140,9 +140,9 @@ module.exports = class ImageFinder {
                             self.queryImages(searchterm[1]).then((returnimg3) => {
                                 if (returnimg3.length > 0) {
                                     for (let i = 0; i < returnimg3.length; i++) {
-                                        ImgToProcess.push(self.imageProcess(i, returnimg3));
+                                        ImgToProcess.push(self.then(i, returnimg3));
                                     }
-                                    Promise.all(ImgToProcess).then((values) => {
+                                    Promise.all(ImgToProcess).finally((values) => {
                                         success(values);
                                     });
                                 } else {
