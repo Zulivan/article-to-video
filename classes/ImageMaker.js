@@ -32,6 +32,7 @@ module.exports = class ImageMaker {
         const self = this;
         const thumbnail_final_dir = path.join(self.Config.Directory, self.Config.Folder, 'images', 'final_thumbnail.png');
         return new Promise((success, error) => {
+            console.log(path.join(self.Config.Directory, self.Config.Folder, 'preset', 'thumbnail.png'));
             jimp.read(path.join(self.Config.Directory, self.Config.Folder, 'preset', 'thumbnail.png')).then(overlay => {
                 jimp.read(path.join(self.Config.Directory, self.Config.Folder, 'images', image_name)).then(background => {
                         background.composite(overlay, 0, 0).resize(1280, 720).quality(60).write(thumbnail_final_dir);

@@ -30,13 +30,6 @@ Public.setReader(function(content){
     }
 
     parsed = JSON.parse(JSON.stringify(content.toString()));
-
-    // scraper('.articleChapo-mainTitle.montserrat').filter(function(){
-    //     videotitle = scraper(this).first().text()
-    // });
-
-    // scraper('.articleGrid.twoColsGrid.pageGrid').each(function(i, elm) {
-
     scraper('.articleContent-main').each(function(i, elm) {
         contentsplit.push(scraper(this).text())
         videocontent = contentsplit[contentsplit.length - 1]

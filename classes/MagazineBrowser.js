@@ -43,9 +43,9 @@ module.exports = class MagazineBrowser {
         this.LoadMagazines();
     }
 
-   /**
-    * Loads every magazine
-    */
+    /**
+     * Loads every magazine
+     */
 
     LoadMagazines() {
         fs.readdirSync('magazines').forEach(file => {
@@ -125,7 +125,7 @@ module.exports = class MagazineBrowser {
                     if (!history.read) {
                         console.log('Found article url: ' + history.uri);
                         magazine.readArticle(history.uri).then(data => {
-                            console.log('read article: ' + data.title + 'content: ' +data.content );
+                            console.log('Article title: \r\n' + data.title + '\r\nArticle content: \r\n' + data.content);
                             magazine.read = true;
                             self.SaveMagazinesHistory();
                             success(data);
@@ -140,7 +140,7 @@ module.exports = class MagazineBrowser {
         const self = this;
         return new Promise((success, error) => {
             if (id < self.Magazines.length) {
-                self.Magazines[id].getArticle().then(resolve => {
+                self.Magazines[id].getArticle().then((resolve, err) => {
                     if (resolve) {
                         self.MagazinesHistory[self.Magazines[id].id] = self.MagazinesHistory[self.Magazines[id].id] || {
                             id: id
@@ -153,13 +153,20 @@ module.exports = class MagazineBrowser {
                             self.MagazinesHistory[self.Magazines[id].id].uri = resolve;
                             success(false);
                         };
-                    } else {
+                    }else{
                         self.MagazinesHistory[self.Magazines[id].id].read = false;
-                        self.MagazinesHistory[self.Magazines[id].id].uri = 'none';
+                        self.MagazinesHistory[self.Magazines[id].id].uri = '/';
                         success(null);
-                    };
+                    }
+                    console.log('Found an article for magazine: ' + self.Magazines[id].id);
+                    console.log('Outpoint: ' + resolve);
                     self.SaveMagazinesHistory();
-                })
+                }).catch((err) => {
+                    console.log(err);
+                    self.MagazinesHistory[self.Magazines[id].id].read = false;
+                    self.MagazinesHistory[self.Magazines[id].id].uri = '/';
+                    success(null);
+                });
             } else {
                 success(null);
             };
@@ -169,7 +176,7 @@ module.exports = class MagazineBrowser {
     loadAllMagazinesLinks() {
         const self = this;
         const Magazines = self.Magazines;
-        console.log('Load all magazines')
+        console.log('Loaded all magazines..')
         console.log(Magazines)
         return new Promise((success, error) => {
             let magazinescmd = [];

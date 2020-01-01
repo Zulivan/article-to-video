@@ -19,9 +19,22 @@ const Config = {
     Magazines: ['voici', 'gala', 'vminutes-people', 'vminutes-divers', 'vminutes-sports', 'figaro', 'valeursactuelles']
 };
 
-const ImageMaker = require('./classes/ImageMaker.js');
-const IM = new ImageMaker(Config);
+const MagazineBrowser = require('./classes/MagazineBrowser.js');
+const MB = new MagazineBrowser(Config, Config.Directory, Config.Folder);
 
-IM.generateThumbnail('314063.jpg').then((thumbnail_dir, errimg) => {
-    console.log(thumbnail_dir)
+MB.getMagazine().then(Magazine => {
+    console.log(Magazine.title)
+    console.log(Magazine.content)
 });
+
+
+//testThumbnailGeneration()
+
+function testThumbnailGeneration(){
+    const ImageMaker = require('./classes/ImageMaker.js');
+    const IM = new ImageMaker(Config);
+
+    IM.generateThumbnail('314063.jpg').then((thumbnail_dir, errimg) => {
+        console.log(thumbnail_dir)
+    });
+};

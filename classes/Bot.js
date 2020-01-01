@@ -87,7 +87,7 @@ module.exports = class Bot {
                             self.produceVideo(Magazine.title, Magazine.content);
                         });
                     } else {
-                        console.log('A loaded magazine doesn\'t have the needed parameters to proceed with it');
+                        console.log('The loaded magazine doesn\'t have the needed parameters to proceed with it');
                     }
                 } else {
                     console.log('No magazine found');

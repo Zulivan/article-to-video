@@ -2,7 +2,7 @@ const request = require('request');
 
 module.exports = class Magazine {
     /**
-     * To initialize a magazine class
+     * Initializes a magazine class
      */
 
     constructor(index, uri, root) {
@@ -32,12 +32,16 @@ module.exports = class Magazine {
                 request({
                     encoding: 'utf8',
                     method: 'GET',
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
+                    },
                     uri: this.uri
                 }, function (error, _, html) {
-                    if (!error) {
-                        resolve(browserfunc(html));
-                    } else {
+                    if (error) {
+                        console.log(error)
                         reject(error);
+                    }else{
+                        resolve(browserfunc(html));
                     };
                 });
             };
@@ -56,12 +60,16 @@ module.exports = class Magazine {
                 request({
                     encoding: 'UTF-8',
                     method: 'GET',
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
+                    },
                     uri: this.root + link
                 }, function (error, _, html) {
-                    if (!error) {
-                        resolve(browserfunc(html));
-                    } else {
+                    if (error) {
+                        console.log(error)
                         reject(error);
+                    }else{
+                        resolve(browserfunc(html));
                     };
                 });
             };
