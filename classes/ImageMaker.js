@@ -42,7 +42,7 @@ module.exports = class ImageMaker {
                         error('Cannnot generate thumbnail: ' + err);
                     });
             }).catch(err => {
-                error('Cannot load thumbnail overlay. Did you make it?');
+                error('Cannot load thumbnail overlay. ' + err);
             });
         });
     }
