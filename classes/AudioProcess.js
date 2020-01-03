@@ -33,31 +33,29 @@ module.exports = class AudioProcess {
                     success(output);
                 } else {
                     const extra = data.extra || null;
-                    data.text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                     setTimeout(function () {
                         self.debug('Generating audio file #' + index + '...');
-                        const text_to_pronounce = data.text.replace(/é/g, "ai").replace(/è/g, "ai"); //Removing french accents
-                        tts.saveMP3(text_to_pronounce, path.join(self.Folder, 'vocal' + index + '.mp3'), data.lang).then((absoluteFilePath) => {
-                                self.debug('Calculating mp3 duration...')
-                                setTimeout(function () {
-                                    mp3Duration(absoluteFilePath, function (err2, duration) {
-                                        if (err2 || duration == 0) {
-                                            self.debug('The file has a problem, error ' + err2 + ', duration: ' + duration);
-                                            success(null);
-                                        } else {
-                                            self.debug('File saved with a duration of ' + duration + ' seconds.')
-                                            const output = {
-                                                id: index,
-                                                duration: duration,
-                                                text: data.text,
-                                                extra: extra
-                                            };
-                                            fs.writeFile(path.join(self.Folder, 'vocal' + index + '.json'), JSON.stringify(output), function (errfile) {
-                                                success(output);
-                                            });
+                        tts.saveMP3(data.text, path.join(self.Folder, 'vocal' + index + '.mp3'), data.lang).then((absoluteFilePath) => {
+                            self.debug('Calculating mp3 duration...')
+                            setTimeout(function () {
+                                mp3Duration(absoluteFilePath, function (err2, duration) {
+                                    if (err2 || duration == 0) {
+                                        self.debug('The file has a problem, error ' + err2 + ', duration: ' + duration);
+                                        success(null);
+                                    } else {
+                                        self.debug('File saved with a duration of ' + duration + ' seconds.')
+                                        const output = {
+                                            id: index,
+                                            duration: duration,
+                                            text: data.text,
+                                            extra: extra
                                         };
-                                    });
-                                }, 1000);
+                                        fs.writeFile(path.join(self.Folder, 'vocal' + index + '.json'), JSON.stringify(output), function (errfile) {
+                                            success(output);
+                                        });
+                                    };
+                                });
+                            }, 1000);
                         }).catch((error) => {
                             self.debug(error);
                             console.log('Error while downloading, returning a null value');
