@@ -1,4 +1,4 @@
 ﻿@echo off
 :restart
-call node Actubot.js
+call node actubot.js
 goto restart

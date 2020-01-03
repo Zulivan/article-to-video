@@ -1,24 +1,13 @@
-const Config = {
-    LocalPort: 5000,
-    oAuth: {
-        Public: '370774627054-dl9pkp0f4ktnp4k46drueucvv7lenj0o.apps.googleusercontent.com',
-        Private: 'xbC5kRQV00HT28iStA0rH28V'
-    },
-    Video: {
-        CompliationLoop: false
-    },
-    Folder: 'actus',
-    Name: 'FRANCE INFOS 24/7',
-    Tags: ['#news'],
-    Intro: {
-        Time: 5,
-        Text: 'Afin d\'être informé veuillez vous abonner et cliquez sur la cloche pour être notifié!'
-    },
-    LCode: 'Fr-fr',
-    Magazines: ['voici', 'gala', 'vminutes-people', 'vminutes-divers', 'vminutes-sports', 'figaro', 'valeursactuelles']
-};
+// CONFIG FOR THE BOOOOOOOT !!!!
 
-const Bot = require('./classes/Bot.js');
-const Actubot = new Bot(__dirname, Config);
+localport = 5000
+oauthpublic = "207370561013-gcj05ndhd1j8lj0tkl8lrpbtrcnj7jr4.apps.googleusercontent.com";
+oauthprivate = "-TRuLdAPJay-EFGPD2xarF4j";
+resourcesfolder = "actus" // Nom du dossier.
+videointro = "Afin d'être informé veuillez vous abonner et cliquez sur la cloche pour être notifié! A"
+videointrotime = 5.2
+langcode = "Fr-fr"
 
-// Actubot
+// END CONFIG !!!
+
+require('./youtubot.js');
