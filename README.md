@@ -1,3 +1,3 @@
-# YoutuBot V1
+# YoutuBot V2
 
-this version is messy
+The second version that is more upgradeable.
