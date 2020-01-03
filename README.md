@@ -1,2 +1,3 @@
-# youtubot
-Somebot
+# YoutuBot V1
+
+this version is messy
