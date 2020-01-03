@@ -11,7 +11,7 @@
     "google-apis": "^1.0.0",
     "google-images": "^2.1.0",
     "googleapis": "^46.0.0",
-    "got": "^10.2.0",
+    "got": "^10.2.1",
     "gtranslate-tts": "^1.0.1",
     "image-downloader": "^3.5.0",
     "jimp": "^0.9.3",
@@ -21,6 +21,7 @@
     "open": "^7.0.0",
     "pretty-bytes": "^5.3.0",
     "request": "^2.88.0",
+    "rimraf": "^3.0.0",
     "video-stitch": "^1.6.0",
     "videoshow": "^0.1.11",
     "youtube-api": "^2.0.10"

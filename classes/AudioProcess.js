@@ -33,13 +33,11 @@ module.exports = class AudioProcess {
                     success(output);
                 } else {
                     const extra = data.extra || null;
-                    data.text = data.text.replace(/é/g, "ai");
-                    data.text = data.text.replace(/è/g, "ai");
                     data.text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                     setTimeout(function () {
                         self.debug('Generating audio file #' + index + '...');
-                        try {
-                            tts.saveMP3(data.text, path.join(self.Folder, 'vocal' + index + '.mp3'), data.lang).then((absoluteFilePath) => {
+                        const text_to_pronounce = data.text.replace(/é/g, "ai").replace(/è/g, "ai"); //Removing french accents
+                        tts.saveMP3(text_to_pronounce, path.join(self.Folder, 'vocal' + index + '.mp3'), data.lang).then((absoluteFilePath) => {
                                 self.debug('Calculating mp3 duration...')
                                 setTimeout(function () {
                                     mp3Duration(absoluteFilePath, function (err2, duration) {
@@ -60,15 +58,11 @@ module.exports = class AudioProcess {
                                         };
                                     });
                                 }, 1000);
-                            }, function (err1) {
-                                self.debug(err1)
-                                success(null);
-                            });
-                        } catch (error) {
-                            self.debug(error)
+                        }).catch((error) => {
+                            self.debug(error);
                             console.log('Error while downloading, returning a null value');
                             success(null);
-                        };
+                        });
                     }, 5000 * (index - self.MinusIndex));
                 };
             });

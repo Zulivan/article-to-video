@@ -1,4 +1,5 @@
 const fs = require('fs');
+const rimraf = require('rimraf');
 const path = require('path');
 const {
     google
@@ -48,7 +49,7 @@ module.exports = class Bot {
      * @param {any} value 
      */
 
-    SaveMagazineProgression(index, value = false) {
+    SaveProgression(index, value = false) {
         const self = this;
         return new Promise((success, error) => {
             if (index) {
@@ -82,8 +83,7 @@ module.exports = class Bot {
                 if (Magazine) {
                     if (Magazine.title && Magazine.content) {
                         self.Progression.magazineloaded = true;
-                        self.SaveMagazineProgression('content', Magazine).then(saved => {
-                            console.log(self.SaveMagazineProgression)
+                        self.SaveProgression('content', Magazine).then(saved => {
                             self.produceVideo(Magazine.title, Magazine.content);
                         });
                     } else {
@@ -92,6 +92,8 @@ module.exports = class Bot {
                 } else {
                     console.log('No magazine found');
                 }
+            }).catch((err) => {
+                console.log('Cannot get magazine, ' + err);
             });
         };
     }
@@ -158,29 +160,34 @@ module.exports = class Bot {
         const IF = new ImageFinder(this.Config, this.Config.Directory, this.Config.Folder);
 
         if (this.Progression.videodone) {
-            const subtitles = fs.createReadStream(captions_path);
             const tagsvid = this.Progression.content.propertitle.concat(this.Progression.content.propertitle.split(' '));
             const thumbnail = this.Progression.imagedownloaded[Math.floor(Math.random() * this.Progression.imagedownloaded.length)];
             const file = path.join(this.Config.Folder, 'video.mp4');
             const title = this.Progression.content.title;
 
             console.log('Video is done:' + title)
-            this.uploadVideo(file, title, subtitles, tagsvid, thumbnail);
+            console.log(thumbnail)
+            this.uploadVideo(file, title, captions_path, tagsvid, thumbnail);
         } else if (this.Progression.imagedownloaded.length == 0) {
             IF.searchImages(propertitle).then((images, reset) => {
                 if (images) {
                     images = images.filter(v => v != null);
-                    this.SaveMagazineProgression('imagedownloaded', images).then((saved) => {
+                    this.SaveProgression('imagedownloaded', images).then((saved) => {
                         console.log('Downloaded all the required images');
                         this.audioRender(content, images);
                     });
                 } else {
-                    console.log('No images found, running reset')
-                    this.resetFiles().then((success) => {
+                    console.log('No images found, running reset..')
+                    this.resetFiles().finally((output) => {
                         process.exit();
                     });
                 };
 
+            }).catch((err) => {
+                console.log('No images found because ' + err + ', running reset..')
+                this.resetFiles().finally((output) => {
+                    process.exit();
+                });
             });
         } else {
             console.log('All images were previously downloaded, generating audio..');
@@ -233,13 +240,13 @@ module.exports = class Bot {
         const self = this;
         VC.generateVideo(audio, images).then((file, reset) => {
             if (file) {
-                const subtitles = fs.createReadStream('./' + self.Config.Folder + '/temp/captions.txt');
+                const captions = path.join(self.Config.Folder, 'temp', 'captions.txt');
                 const tagsvid = self.Progression.content.propertitle.concat(self.Progression.content.propertitle.split(' '));
                 const thumbnail = images[Math.floor(Math.random() * images.length)];
-
-                self.SaveMagazineProgression('videodone', file).then((saved) => {
+                console.log(thumbnail)
+                self.SaveProgression('videodone', file).then((saved) => {
                     console.log('Video has been made');
-                    self.uploadVideo(file, self.Progression.content.title, subtitles, tagsvid, thumbnail);
+                    self.uploadVideo(file, self.Progression.content.title, captions, tagsvid, thumbnail);
                 });
             } else {
                 process.exit();
@@ -251,30 +258,30 @@ module.exports = class Bot {
      * Uploads a video on youtube
      * @param {file} file Video file
      * @param {string} title Video title
-     * @param {string} subtitles The content of the video which will be used as subtitles
+     * @param {string} subtitles_path The path of the video subtitles
      * @param {object} tags Video tags
      * @param {file} thumbnail Video thumbnail
      */
 
-    uploadVideo(file, title, subtitles, tags, thumbnail) {
+    uploadVideo(file, title, subtitles_path, tags, thumbnail) {
         const YoutubeUploader = require('../tools/YoutubeUploader.js');
         const YU = new YoutubeUploader(this.Config, this.oAuth);
+        const subtitles = fs.createReadStream(subtitles_path);
+
         const self = this;
-        YU.uploadVideo(file, title, subtitles, tags, thumbnail).then((id, reset) => {
-            if (id) {
-                console.log('Uploaded video on youtube with id:' + id);
-                self.resetFiles().then((success) => {
-                    console.log('Reset done another video is going to be made in 5 minutes');
-                    setTimeout(function () {
-                        process.exit();
-                    }, 5 * 60 * 1000)
-                });
-            } else {
-                console.log('Video upload returned an error, retrying in 5 minutes..')
+        YU.uploadVideo(file, title, subtitles, tags, thumbnail).then((id) => {
+            console.log('Uploaded video on youtube with id:' + id);
+            self.resetFiles().then((success) => {
+                console.log('Reset done another video is going to be made in 5 minutes');
                 setTimeout(function () {
                     process.exit();
-                }, 5 * 60 * 1000);
-            };
+                }, 5 * 60 * 1000)
+            });
+        }).catch((err) => {
+            console.log('Video upload returned an error: "' + err + '", retrying in 5 minutes..')
+            setTimeout(function () {
+                process.exit();
+            }, 5 * 60 * 1000);
         });
     }
 
@@ -290,8 +297,8 @@ module.exports = class Bot {
         const AM = new AudioManager(this.Config, this.Config.Directory, this.Config.Folder);
 
         AM.generateAudio(content).then((audio) => {
-            this.SaveMagazineProgression('renderedvoices', audio).then((saved) => {
-                this.SaveMagazineProgression('audiodone', true).then((saved) => {
+            this.SaveProgression('renderedvoices', audio).then((saved) => {
+                this.SaveProgression('audiodone', true).then((saved) => {
                     console.log('Successfully recorded all audio files!')
                     this.makeBackgroundImages(audio, images);
                 });
@@ -301,8 +308,8 @@ module.exports = class Bot {
     }
 
     /**
-     * Resets the temporary files to start up a new working session on another magazine
-     * @param {boolean} NoDeletion Choose wether the files generated to make a video have to be deleted or not
+     * Resets the temporary files to run with another magazine
+     * @param {boolean} NoDeletion Choose whether the generated files have to be deleted or not
      */
 
     resetFiles(NoDeletion = false) {
@@ -316,13 +323,13 @@ module.exports = class Bot {
                 audiodone: false,
                 content: null
             };
-            self.SaveMagazineProgression().then((saved) => {
+            self.SaveProgression().then((saved) => {
                 console.log('Saved progress')
                 if (NoDeletion) {
                     process.exit();
                 }
-                fs.rmdirSync('./' + self.Config.Folder + '/images');
-                fs.rmdirSync('./' + self.Config.Folder + '/audio');
+                rimraf.sync(path.join(self.Config.Folder, 'images'));
+                rimraf.sync(path.join(self.Config.Folder, 'audio'));
                 fs.exists('./' + self.Config.Folder + '/thumbnail.png', (exists0) => {
                     if (exists0) {
                         fs.unlinkSync('./' + self.Config.Folder + '/thumbnail.png');
@@ -339,6 +346,8 @@ module.exports = class Bot {
                         });
                     });
                 });
+            }).catch((err) => {
+                error('Cannot save progression..')
             });
         });
     }
