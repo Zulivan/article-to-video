@@ -1,14 +1,11 @@
 const fs = require('fs');
 const Lien = require('lien');
-const prettyBytes = require('pretty-bytes'); //Not used
+const prettyBytes = require('pretty-bytes');
 const ImageMaker = require('../classes/ImageMaker.js');
-const jimp = require('jimp');
 const open = require('open');
 const {
     google
 } = require('googleapis');
-
-const DEBUG = true;
 
 module.exports = class YoutubeUploader {
     /**
@@ -82,7 +79,7 @@ module.exports = class YoutubeUploader {
                                 if (!errcc) {
                                     console.log('--- Youtube Caption Uploaded! ---')
                                     const IM = new ImageMaker(this.Config);
-                                    console.log(randomimage.name);
+                                    console.log(randomimage);
                                     IM.generateThumbnail(randomimage.name).then((thumbnail_dir, errimg) => {
                                         let req3 = youtube.thumbnails.set({
                                             videoId: video.id,
@@ -112,6 +109,15 @@ module.exports = class YoutubeUploader {
                             success(false);
                         }
                     });
+                    if (this.uploading) {
+                        this.uploading = false;
+                        setInterval(function () {
+                            if (currentbytes !== prettyBytes(req.req.connection._bytesDispatched)) {
+                                currentbytes = prettyBytes(req.req.connection._bytesDispatched);
+                                console.log(prettyBytes(req.req.connection._bytesDispatched) + ' uploaded.');
+                            }
+                        }, 200);
+                    }
                 } else {
                     console.log('Not logged in, restart required.');
                 };

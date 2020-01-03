@@ -20,11 +20,10 @@ module.exports = class Bot {
         this.oAuth = new google.auth.OAuth2(this.Config.oAuth.Public, this.Config.oAuth.Private, 'http://localhost:' + this.Config.LocalPort + '/oauth2callback');
 
         this.Progression = {
-            imagedownloaded: [],
+            downloaded_images: [],
             renderedvoices: [],
             magazineloaded: false,
             videodone: false,
-            audiodone: false,
             content: null
         };
 
@@ -44,7 +43,7 @@ module.exports = class Bot {
     }
 
     /**
-     * Saves current progress
+     * Saves current progression
      * @param {string} index If set: sets an index to the specified value 
      * @param {any} value 
      */
@@ -55,7 +54,7 @@ module.exports = class Bot {
             if (index) {
                 self.Progression[index] = value;
             };
-            fs.writeFile(path.join(self.Config.Directory, self.Config.Folder, 'temp', 'progression.json'), JSON.stringify(self.Progression), function (errfile) {
+            fs.writeFile(path.join(self.Config.Directory, self.Config.Folder, 'temp', 'progression.json'), JSON.stringify(self.Progression, null, 2), function (errfile) {
                 if (errfile) {
                     return error(errfile);
                 }
@@ -161,18 +160,18 @@ module.exports = class Bot {
 
         if (this.Progression.videodone) {
             const tagsvid = this.Progression.content.propertitle.concat(this.Progression.content.propertitle.split(' '));
-            const thumbnail = this.Progression.imagedownloaded[Math.floor(Math.random() * this.Progression.imagedownloaded.length)];
+            const thumbnail = this.Progression.downloaded_images[Math.floor(Math.random() * this.Progression.downloaded_images.length)];
             const file = path.join(this.Config.Folder, 'video.mp4');
             const title = this.Progression.content.title;
 
             console.log('Video is done:' + title)
             console.log(thumbnail)
             this.uploadVideo(file, title, captions_path, tagsvid, thumbnail);
-        } else if (this.Progression.imagedownloaded.length == 0) {
+        } else if (this.Progression.downloaded_images.length == 0) {
             IF.searchImages(propertitle).then((images, reset) => {
                 if (images) {
                     images = images.filter(v => v != null);
-                    this.SaveProgression('imagedownloaded', images).then((saved) => {
+                    this.SaveProgression('downloaded_images', images).then((saved) => {
                         console.log('Downloaded all the required images');
                         this.audioRender(content, images);
                     });
@@ -191,7 +190,7 @@ module.exports = class Bot {
             });
         } else {
             console.log('All images were previously downloaded, generating audio..');
-            this.audioRender(content, this.Progression.imagedownloaded);
+            this.audioRender(content, this.Progression.downloaded_images);
         }
 
     }
@@ -298,10 +297,8 @@ module.exports = class Bot {
 
         AM.generateAudio(content).then((audio) => {
             this.SaveProgression('renderedvoices', audio).then((saved) => {
-                this.SaveProgression('audiodone', true).then((saved) => {
-                    console.log('Successfully recorded all audio files!')
-                    this.makeBackgroundImages(audio, images);
-                });
+                console.log('Successfully recorded all audio files!')
+                this.makeBackgroundImages(audio, images);
             });
         });
 
@@ -316,11 +313,10 @@ module.exports = class Bot {
         const self = this;
         return new Promise((success, error) => {
             self.Progression = {
-                imagedownloaded: [],
+                downloaded_images: [],
                 renderedvoices: [],
                 magazineloaded: false,
                 videodone: false,
-                audiodone: false,
                 content: null
             };
             self.SaveProgression().then((saved) => {

@@ -29,12 +29,12 @@ module.exports = class ImageMaker {
     }
 
     generateThumbnail(image_name) {
+        console.log(image_name);
         const self = this;
-        const thumbnail_final_dir = path.join(self.Config.Directory, self.Config.Folder, 'images', 'final_thumbnail.png');
+        const thumbnail_final_dir = path.join(self.Config.Folder, 'images', 'final_thumbnail.png');
         return new Promise((success, error) => {
-            console.log(path.join(self.Config.Directory, self.Config.Folder, 'preset', 'thumbnail.png'));
-            jimp.read(path.join(self.Config.Directory, self.Config.Folder, 'preset', 'thumbnail.png')).then(overlay => {
-                jimp.read(path.join(self.Config.Directory, self.Config.Folder, 'images', image_name)).then(background => {
+            jimp.read(path.join(self.Config.Folder, 'preset', 'thumbnail.png')).then(overlay => {
+                jimp.read(path.join(self.Config.Folder, 'images', image_name)).then(background => {
                         background.composite(overlay, 0, 0).resize(1280, 720).quality(60).write(thumbnail_final_dir);
                         success(thumbnail_final_dir);
                     })
@@ -72,7 +72,7 @@ module.exports = class ImageMaker {
                     try {
                         output = JSON.parse(fs.readFileSync(jsonsave, 'utf8'));
                     } catch (e) {
-                        error(true)
+                        error(e);
                         self.debug('JSON is corrupted, aborting...')
                     }
                     success(output);
@@ -87,14 +87,14 @@ module.exports = class ImageMaker {
 
                     const randomimage = images[Math.floor(Math.random() * images.length)];
                     const blocktop = 720 - 25 * roundedmultiple - 10;
-
                     const directory = randomimage.path;
-                    const directoryfinal = './' + resourcesfolder + '/images/image' + index + '.jpg';
-                    const directorybgfinal = './' + resourcesfolder + '/images/image' + index + 'bg.jpg';
 
-                    fs.exists('./' + resourcesfolder + '/preset/intro.png', (intro_exists) => {
+                    const directoryimginfo = path.join(resourcesfolder, 'images', 'image' + index + '.json');
+                    const directoryfinal = path.join(resourcesfolder, 'images', 'image' + index + '.jpg');
+
+                    fs.exists(path.join(resourcesfolder, 'preset', 'intro.png'), (intro_exists) => {
                         if (index == 0 && intro_exists) {
-                            jimp.read('./' + resourcesfolder + '/preset/intro.png', function (jimperr1, intro) {
+                            jimp.read(path.join(resourcesfolder, 'preset', 'intro.png')).then((intro) => {
                                 const output = {
                                     vocal: index,
                                     values: {
@@ -105,55 +105,65 @@ module.exports = class ImageMaker {
 
                                 intro.write(directoryfinal);
 
-                                fs.writeFile('./' + resourcesfolder + '/images/image' + index + '.json', JSON.stringify(output), function (errfile) {
+                                fs.writeFile(directoryimginfo, JSON.stringify(output), function (errfile) {
                                     console.log('Vocal #' + index + ' has its video part!');
                                     setTimeout(function () {
                                         success(output);
                                     }, 1000);
                                 });
+                            }).catch((err) => {
+                                console.log('Cannot read image for index = 0: ' + err);
                             });
                         } else {
-                            jimp.loadFont(jimp.FONT_SANS_32_BLACK).then(function (font2) {
-                                jimp.read('./' + resourcesfolder + '/preset/background.png', function (jimperr1, prebackground) {
-                                    prebackground.resize(1080, 25 * roundedmultiple + 10).quality(60).write(directorybgfinal);
-                                    jimp.read(directorybgfinal, function (importerror, background) {
-                                        jimp.read(directory, function (jimperr, imagebuffer) {
-                                            imagebuffer.composite(background, 0, blocktop)
-                                            imagebuffer.quality(60);
-                                            for (let i = 0; i < chars.length; i++) {
-                                                currchars = currchars + 1;
-                                                sentencet += chars[i];
-                                                if (currchars >= maxchars) {
-                                                    imagebuffer.print(font2, 12, blocktop + 25 * loopsdone, sentencet)
-                                                    currchars = 0;
-                                                    loopsdone = loopsdone + 1;
-                                                    sentencet = "";
-                                                    recoveryindex = i;
-                                                };
+                            jimp.loadFont(jimp.FONT_SANS_32_BLACK).then((font2) => {
+
+                                jimp.read(path.join(resourcesfolder, 'preset', 'background.png')).then((prebackground) => {
+
+                                    prebackground.resize(1080, 25 * roundedmultiple + 10).quality(60);
+
+                                    jimp.read(directory).then((imagebuffer) => {
+
+                                        imagebuffer.composite(prebackground, 0, blocktop)
+                                        imagebuffer.quality(60);
+                                        for (let i = 0; i < chars.length; i++) {
+                                            currchars = currchars + 1;
+                                            sentencet += chars[i];
+                                            if (currchars >= maxchars) {
+                                                imagebuffer.print(font2, 12, blocktop + 25 * loopsdone, sentencet)
+                                                currchars = 0;
+                                                loopsdone = loopsdone + 1;
+                                                sentencet = '';
+                                                recoveryindex = i;
                                             };
+                                        };
 
-                                            if (chars.length >= (loopsdone * maxchars)) {
-                                                imagebuffer.print(font2, 12, blocktop + 25 * loopsdone, chars.slice(recoveryindex, chars.length - 1).join("") + ".")
-                                            };
+                                        if (chars.length >= (loopsdone * maxchars)) {
+                                            imagebuffer.print(font2, 12, blocktop + 25 * loopsdone, chars.slice(recoveryindex, chars.length - 1).join("") + ".")
+                                        };
 
-                                            const output = {
-                                                vocal: index,
-                                                values: {
-                                                    path: directoryfinal,
-                                                    loop: duration
-                                                }
-                                            };
+                                        const output = {
+                                            vocal: index,
+                                            values: {
+                                                path: directoryfinal,
+                                                loop: duration
+                                            }
+                                        };
 
-                                            imagebuffer.write(directoryfinal);
+                                        imagebuffer.write(directoryfinal);
 
-                                            fs.writeFile('./' + resourcesfolder + '/images/image' + index + '.json', JSON.stringify(output), function (errfile) {
-                                                fs.unlinkSync(directorybgfinal);
-                                                console.log('Vocal #' + index + ' has its video part!');
-                                                success(output);
-                                            });
+                                        fs.writeFile(directoryimginfo, JSON.stringify(output), function (errfile) {
+                                            console.log('Vocal #' + index + ' has its video part!');
+                                            success(output);
                                         });
+                                    }).catch((err) => {
+                                        console.log('Cannot load background image ' + err);
                                     });
+
+                                }).catch((err) => {
+                                    console.log('Cannot load the subtitle background ' + err);
                                 });
+                            }).catch((err) => {
+                                console.log('Cannot load jimps black font ' + err);
                             });
                         };
                     });
