@@ -111,10 +111,11 @@ module.exports = class YoutubeUploader {
                     });
                     if (this.uploading) {
                         this.uploading = false;
+                        let currentbytes = 0;
                         setInterval(function () {
-                            if (currentbytes !== prettyBytes(req.req.connection._bytesDispatched)) {
-                                currentbytes = prettyBytes(req.req.connection._bytesDispatched);
-                                console.log(prettyBytes(req.req.connection._bytesDispatched) + ' uploaded.');
+                            if (currentbytes !== prettyBytes(videoupload.req.connection._bytesDispatched)) {
+                                currentbytes = prettyBytes(videoupload.req.connection._bytesDispatched);
+                                console.log(prettyBytes(videoupload.req.connection._bytesDispatched) + ' uploaded.');
                             }
                         }, 200);
                     }
