@@ -241,7 +241,7 @@ module.exports = class Bot {
             if (file) {
                 const captions = path.join(self.Config.Folder, 'temp', 'captions.txt');
                 const tagsvid = self.Progression.content.propertitle.concat(self.Progression.content.propertitle.split(' '));
-                const thumbnail = images[Math.floor(Math.random() * images.length)];
+                const thumbnail = this.Progression.downloaded_images[Math.floor(Math.random() * this.Progression.downloaded_images.length)];
                 console.log(thumbnail)
                 self.SaveProgression('videodone', file).then((saved) => {
                     console.log('Video has been made');
