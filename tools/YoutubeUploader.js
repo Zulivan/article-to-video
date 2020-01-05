@@ -36,7 +36,7 @@ module.exports = class YoutubeUploader {
                         version: 'v3',
                         auth: self.oAuth
                     });
-                    const videoupload = youtube.videos.insert({
+                    let req1 = youtube.videos.insert({
                         notifySubscribers: true,
                         resource: {
                             snippet: {
@@ -110,14 +110,14 @@ module.exports = class YoutubeUploader {
                         }
                     });
                     if (this.uploading) {
-                        this.uploading = false;
-                        let currentbytes = 0;
-                        setInterval(function () {
-                            if (currentbytes !== prettyBytes(videoupload.req.connection._bytesDispatched)) {
-                                currentbytes = prettyBytes(videoupload.req.connection._bytesDispatched);
-                                console.log(prettyBytes(videoupload.req.connection._bytesDispatched) + ' uploaded.');
-                            }
-                        }, 200);
+                        // this.uploading = false;
+                        // let currentbytes = 0;
+                        // setInterval(function () {
+                        //     if (currentbytes !== prettyBytes(req1.req.connection._bytesDispatched)) {
+                        //         currentbytes = prettyBytes(req1.req.connection._bytesDispatched);
+                        //       console.log(prettyBytes(req1.req.connection._bytesDispatched) + ' uploaded.');
+                        //    }
+                        //}, 1000);
                     }
                 } else {
                     console.log('Not logged in, restart required.');
