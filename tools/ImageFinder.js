@@ -94,6 +94,8 @@ module.exports = class ImageFinder {
                                 });
                             });
                         }, 2000);
+                    } else {
+                        resolve(null);
                     };
                 }).catch((err) => {
                     console.log('Download failed: ' + err);
