@@ -44,7 +44,7 @@ module.exports = class AudioProcess {
                     setTimeout(function () {
                         self.debug('Generating audio file #' + index + '...');
                         tts.saveMP3(data.text, path.join(self.Folder, 'vocal' + index + '.mp3'), data.lang).then((absoluteFilePath) => {
-                            self.debug('Calculating mp3 duration...')
+                            self.debug('Getting mp3 duration...')
                             setTimeout(function () {
                                 mp3Duration(absoluteFilePath, function (err2, duration) {
                                     if (err2 || duration == 0) {
