@@ -15,6 +15,10 @@ module.exports = class AudioProcess {
             fs.mkdirSync(audioFolder);
         }
 
+        if (!fs.existsSync(path.join(Folder, 'preset', 'music.mp3'))) {
+            throw 'Error: music.mp3 not found in the preset folder.';
+        }
+
         this.Directory = Folder;
         this.Folder = audioFolder;
         this.AudioFiles = [];
@@ -82,7 +86,7 @@ module.exports = class AudioProcess {
                 throw err;
             }).on('end', function () {
                 const proc = new ffmpeg();
-                proc.addInput(path.join(this.Directory, 'preset', 'music.mp3'))
+                proc.addInput(path.join(self.Directory, 'preset', 'music.mp3'))
                 .addInput(path.join(self.Folder, 'compilation.mp3'))
                 .on('start', function() {
                     console.log('All voices are now compiled, adding background music..');

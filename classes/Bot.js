@@ -82,8 +82,8 @@ module.exports = class Bot {
                 if (exists) {
                     try {
                         const preload = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'preload.json'), 'utf8'));
-                    
-                        if (preload.title && preload.content) {
+                        fs.writeFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'preload.json'), JSON.stringify({loaded : true, title: preload.title, content: preload.content}));
+                        if (preload.loaded == false && preload.title && preload.content) {
                             self.Progression.magazineloaded = true;
                             self.SaveProgression('content', preload).then(saved => {
                                 console.log('Successfully loaded preloaded content')
