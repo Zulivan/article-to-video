@@ -76,7 +76,7 @@ module.exports = class Bot {
             console.log('Producing video: ' + self.Progression.content.title);
             self.produceVideo(self.Progression.content.title, self.Progression.content.content);
         } else {
-            console.log('There is no loaded magazine, searching for it..');
+            console.log('There is no loaded magazine, looking for it..');
             let loadMagazine = false;
             fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'preload.json'), (exists) => {
                 if (exists) {
@@ -141,7 +141,7 @@ module.exports = class Bot {
         content = TextEditor.HTMLtoUTF8(content);
         content = TextEditor.clear(content);
         content = TextEditor.replaceByFilter(content, badChars, '');
-        content = content.replace(/PHOTO/g, '').replace(/voici.fr/g, 'FRANCE INFOS 24/7').replace(/closer/g, 'clauzeure').replace(/la mort/g, 'la disparition').replace(/mort/g, 'disparu');
+        content = content.replace(/PHOTO/g, '').replace(/voici.fr/g, 'FRANCE INFOS 24/7').replace(/closer/g, 'france infos').replace(/la mort/g, 'la disparition').replace(/mort/g, 'disparu');
         content = this.Config.Intro.Text + content;
 
         const captions_path = path.join(this.Config.Folder, 'temp', 'captions.txt');
@@ -152,6 +152,7 @@ module.exports = class Bot {
         title = TextEditor.HTMLtoUTF8(title)
         title = TextEditor.clear(title)
         title = TextEditor.replaceByFilter(title, badChars, '\'');
+        title = title.replace(/PHOTO/g, '').replace(/voici.fr/g, 'FRANCE INFOS 24/7').replace(/closer/g, 'FRANCE INFOS').replace(/la mort/g, 'la disparition').replace(/mort/g, 'disparu');
 
         const titleword = title.split(' ');
         let propertitle = [];

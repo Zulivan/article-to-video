@@ -80,8 +80,24 @@ module.exports = class AudioProcess {
                 console.error('Voice compilation Error:', err)
                 console.error('ffmpeg stderr:', stderr)
                 throw err;
-            }).on('end', function (output) {
-                success(output);
+            }).on('end', function () {
+                const proc = new ffmpeg();
+                proc.addInput(path.join(this.Directory, 'preset', 'music.mp3'))
+                .addInput(path.join(self.Folder, 'compilation.mp3'))
+                .on('start', function() {
+                    console.log('All voices are now compiled, adding background music..');
+                })
+                .on('end', function(output) {
+                    success(output);
+                })
+                .on('error', function(error) {
+                    console.error('Voice compilation Error:', error)
+                    throw error;
+                })
+                .addInputOption('-filter_complex amerge')
+                .outputOptions(['-ac 2', '-vbr 4'])
+                .output(path.join(self.Folder, 'final.mp3'))
+                .run();
             })
         });
     }
