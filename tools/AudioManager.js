@@ -17,7 +17,7 @@ module.exports = class AudioManager {
         this.vocalfiles = [];
 
         this.AP = require(path.join(this.Config.Directory, 'classes', 'AudioProcess.js'));
-        this.AudioProcess = new this.AP(path.join(this.Config.Directory, this.Config.Folder, 'audio'))
+        this.AudioProcess = new this.AP(path.join(this.Config.Directory, this.Config.Folder))
 
     }
 

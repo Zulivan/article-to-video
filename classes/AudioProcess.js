@@ -3,16 +3,20 @@ const audioconcat = require('audioconcat');
 const mp3Duration = require('mp3-duration');
 const tts = require('gtranslate-tts');
 const path = require('path');
+const ffmpeg = require('fluent-ffmpeg');
 const DEBUG = true;
 
 module.exports = class AudioProcess {
     constructor(Folder) {
 
-        if (!fs.existsSync(Folder)) {
-            fs.mkdirSync(Folder);
+        const audioFolder = path.join(Folder, 'audio');
+
+        if (!fs.existsSync(audioFolder)) {
+            fs.mkdirSync(audioFolder);
         }
 
-        this.Folder = Folder;
+        this.Directory = Folder;
+        this.Folder = audioFolder;
         this.AudioFiles = [];
         this.MinusIndex = 0;
 

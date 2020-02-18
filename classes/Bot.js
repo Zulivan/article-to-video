@@ -32,7 +32,7 @@ module.exports = class Bot {
                 try {
                     this.Progression = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), 'utf8'));
                 } catch (e) {
-                    console.log('The progression file is corrupted, reset done.')
+                    console.log('The progression file is corrupt, reset done.')
                 }
             } else {
                 console.log('No progression file found, generating one.')
@@ -77,22 +77,52 @@ module.exports = class Bot {
             self.produceVideo(self.Progression.content.title, self.Progression.content.content);
         } else {
             console.log('There is no loaded magazine, searching for it..');
-            MB.getMagazine().then(Magazine => {
-                console.log('Found a fresh magazine..');
-                if (Magazine) {
-                    if (Magazine.title && Magazine.content) {
-                        self.Progression.magazineloaded = true;
-                        self.SaveProgression('content', Magazine).then(saved => {
-                            self.produceVideo(Magazine.title, Magazine.content);
-                        });
-                    } else {
-                        console.log('The loaded magazine doesn\'t have the needed parameters to proceed with it');
+            let loadMagazine = false;
+            fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'preload.json'), (exists) => {
+                if (exists) {
+                    try {
+                        const preload = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'preload.json'), 'utf8'));
+                    
+                        if (preload.title && preload.content) {
+                            self.Progression.magazineloaded = true;
+                            self.SaveProgression('content', preload).then(saved => {
+                                console.log('Successfully loaded preloaded content')
+                                self.produceVideo(preload.title, preload.content);
+                            });
+                        } else {
+                            console.log('The content to preload doesnt have params: title, content');
+                            loadMagazine = true;
+                        }
+                    } catch (e) {
+                        console.log('The preloaded content file is corrupt.');
+                        loadMagazine = true;
                     }
-                } else {
-                    console.log('No magazine found');
+                }else{
+                    loadMagazine = true;
                 }
-            }).catch((err) => {
-                console.log('Cannot get magazine, ' + err);
+
+                if(loadMagazine){
+
+                    MB.getMagazine().then(Magazine => {
+                        console.log('Found a fresh magazine..');
+                        if (Magazine) {
+                            if (Magazine.title && Magazine.content) {
+                                self.Progression.magazineloaded = true;
+                                self.SaveProgression('content', Magazine).then(saved => {
+                                    self.produceVideo(Magazine.title, Magazine.content);
+                                });
+                            } else {
+                                console.log('The loaded magazine doesn\'t have the needed parameters to proceed with it');
+                            }
+                        } else {
+                            console.log('No magazine found');
+                        }
+                    }).catch((err) => {
+                        console.log('Cannot get magazine, ' + err);
+                    });
+        
+                }
+
             });
         };
     }
@@ -111,7 +141,7 @@ module.exports = class Bot {
         content = TextEditor.HTMLtoUTF8(content);
         content = TextEditor.clear(content);
         content = TextEditor.replaceByFilter(content, badChars, '');
-        content = content.replace(/voici.fr/g, 'FRANCE INFOS 24/7').replace(/closer/g, 'clauzeure').replace(/la mort/g, 'la disparition').replace(/mort/g, 'disparu');
+        content = content.replace(/PHOTO/g, '').replace(/voici.fr/g, 'FRANCE INFOS 24/7').replace(/closer/g, 'clauzeure').replace(/la mort/g, 'la disparition').replace(/mort/g, 'disparu');
         content = this.Config.Intro.Text + content;
 
         const captions_path = path.join(this.Config.Folder, 'temp', 'captions.txt');

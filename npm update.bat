@@ -1,2 +1,3 @@
-﻿npm update
+﻿echo
+npm update
 npm outdated
