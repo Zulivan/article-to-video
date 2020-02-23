@@ -14,12 +14,18 @@ module.exports = class Bot {
     constructor(Root, Config = {}) {
         this.Config = Config;
         this.Config.Directory = Root;
-        this.oAuth = new google.auth.OAuth2(this.Config.oAuth.Public, this.Config.oAuth.Private, 'http://localhost:' + this.Config.LocalPort + '/oauth2callback');
+
         this.Progression = {};
 
-        fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), (exists) => {
+        this.wordsfile = JSON.parse(fs.readFileSync(path.join(this.Config.Folder, 'temp', 'words.json'), 'utf8'));
+        
+        console.log('Loaded '+this.wordsfile.length+' words!')
+
+        this.Config.Word = this.wordsfile.shift();
+
+        fs.exists(path.join(this.Config.Folder, 'temp', 'progression.json'), (exists) => {
             if (exists) {
-                this.Progression = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), 'utf8'));
+                this.Progression = JSON.parse(fs.readFileSync(path.join(this.Config.Folder, 'temp', 'progression.json'), 'utf8'));
                 this.start();
             } else {
                 this.resetFiles().then((success) => {
@@ -35,7 +41,7 @@ module.exports = class Bot {
             if (index) {
                 self.Progression[index] = value;
             };
-            fs.writeFile(path.join(self.Config.Directory, self.Config.Folder, 'temp', 'progression.json'), JSON.stringify(self.Progression), function (errfile) {
+            fs.writeFile(path.join(self.Config.Folder, 'temp', 'progression.json'), JSON.stringify(self.Progression), function (errfile) {
                 if (errfile) {
                     return error(errfile);
                 }
@@ -94,16 +100,13 @@ module.exports = class Bot {
         const self = this;
         const VC = new VideoCompiler(this.Config, this.Config.Directory, this.Config.Folder);
 
-        VC.generateVideo(audio, images).then((file, reset) => {
+        VC.generateVideo(path.join(this.Config.Folder, 'audio', 'compilation.mp3'), images, this.Config.Word).then((file, reset) => {
             if (file) {
-                setTimeout(function () {
-                    self.resetFiles().then((success) => {
-                        console.log('Reset done another video is going to be made in 5 minutes');
-                        setTimeout(function () {
-                            process.exit();
-                        }, 5 * 60 * 1000)
-                    });
-                }, 5 * 60 * 1000);
+                self.resetFiles().then((success) => {
+                    fs.writeFileSync(path.join(this.Config.Folder, 'temp', 'words.json'), JSON.stringify(self.wordsfile));
+                    console.log('Reset done another video is going to be made in 5 minutes');
+                    process.exit();
+                });
             } else {
                 process.exit();
             }

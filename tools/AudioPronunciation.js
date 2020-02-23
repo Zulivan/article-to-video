@@ -29,7 +29,7 @@ module.exports = class AudioPronunciation {
         };
 
         this.AP = require(path.join(this.Config.Directory, 'classes', 'AudioProcess.js'));
-        this.AudioProcess = new this.AP(path.join(this.Config.Directory, this.Config.Folder, 'audio'))
+        this.AudioProcess = new this.AP(path.join(this.Config.Directory, this.Config.Folder))
 
     }
 
@@ -41,7 +41,7 @@ module.exports = class AudioPronunciation {
     generateAudio(word) {
         const self = this;
         return new Promise((success, error) => {
-            console.log('Generating ' + Object.keys(self.Accents).length + ' pronounciations for the word "' + word + '"!')
+            console.log('Generating ' + Object.keys(self.Accents).length + ' pronunciations for the word "' + word + '"!')
             console.log('=====================================================')
 
             let vocals = [];

@@ -15,10 +15,6 @@ module.exports = class AudioProcess {
             fs.mkdirSync(audioFolder);
         }
 
-        if (!fs.existsSync(path.join(Folder, 'preset', 'music.mp3'))) {
-            throw 'Error: music.mp3 not found in the preset folder.';
-        }
-
         this.Directory = Folder;
         this.Folder = audioFolder;
         this.AudioFiles = [];
@@ -84,24 +80,28 @@ module.exports = class AudioProcess {
                 console.error('Voice compilation Error:', err)
                 console.error('ffmpeg stderr:', stderr)
                 throw err;
-            }).on('end', function () {
-                const proc = new ffmpeg();
-                proc.addInput(path.join(self.Directory, 'preset', 'music.mp3'))
-                .addInput(path.join(self.Folder, 'compilation.mp3'))
-                .on('start', function() {
-                    console.log('All voices are now compiled, adding background music..');
-                })
-                .on('end', function(output) {
+            }).on('end', function (output) {
+                if (fs.existsSync(path.join(self.Directory, 'preset', 'music.mp3'))) {
+                    const proc = new ffmpeg();
+                    proc.addInput(path.join(self.Directory, 'preset', 'music.mp3'))
+                    .addInput(path.join(self.Folder, 'compilation.mp3'))
+                    .on('start', function() {
+                        console.log('All voices are now compiled, adding background music..');
+                    })
+                    .on('end', function(output1) {
+                        success(output1);
+                    })
+                    .on('error', function(error) {
+                        console.error('Voice compilation Error:', error)
+                        throw error;
+                    })
+                    .addInputOption('-filter_complex amerge')
+                    .outputOptions(['-ac 2', '-vbr 4'])
+                    .output(path.join(self.Folder, 'final.mp3'))
+                    .run();
+                }else{
                     success(output);
-                })
-                .on('error', function(error) {
-                    console.error('Voice compilation Error:', error)
-                    throw error;
-                })
-                .addInputOption('-filter_complex amerge')
-                .outputOptions(['-ac 2', '-vbr 4'])
-                .output(path.join(self.Folder, 'final.mp3'))
-                .run();
+                };
             })
         });
     }

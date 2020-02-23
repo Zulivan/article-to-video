@@ -3,6 +3,7 @@ const concat = videoStitch.concat;
 const videoshow = require('videoshow');
 const mp3Duration = require('mp3-duration');
 const path = require('path');
+const fs = require('fs');
 
 const DEBUG = true;
 
@@ -16,36 +17,47 @@ module.exports = class VideoCompiler {
 
         this.Config = config;
 
+        this.Loop = false;
+
+        if (this.Config.Video.CompliationLoop) {
+            this.Loop = this.Config.Video.CompliationLoop;
+
+        }
+
     }
 
     debug(text) {
         if (DEBUG) console.log(text);
     }
 
-    generateVideo(audio, values) {
+    generateVideo(audio, values, name = 'video') {
         const self = this;
         return new Promise((success, error) => {
             let imgrendered = [];
             for (let i = 0; i < values.length; i++) {
                 imgrendered.push(values[i].values);
             };
-            self.makeVideo(imgrendered).then((file) => {
+            self.makeVideo(audio, imgrendered, name).then((file) => {
                 success(file);
             });
         });
     }
 
-    makeVideo(imgrendered) {
+    makeVideo(audiofile, imgrendered, name) {
         const self = this;
+
+        const compilationName = name+'-c';
+
         return new Promise((success, error) => {
             const resourcesfolder = self.Config.Folder;
-            mp3Duration(path.join(resourcesfolder, 'audio', 'compilation.mp3'), function (err, duration) {
+            // path.join(resourcesfolder, 'audio', 'compilation.mp3')
+            mp3Duration(audiofile, function (err, duration) {
                 const videolength = Math.floor(duration + 10);
                 if (duration < 1) {
                     self.debug('This video length is ' + duration + ' seconds, it is set as suspected of being glitched, resetting...')
                     success(null);
                 } else {
-                    self.debug('The vocals made by synthesized voice were compiled and its duration is ' + videolength + ' seconds!')
+                    self.debug('The duration of the audio file is ' + videolength + ' seconds!')
                 }
                 const options = {
                     fps: 30,
@@ -64,38 +76,39 @@ module.exports = class VideoCompiler {
                 setTimeout(function () {
                     self.debug('Videoshow is starting...')
                     videoshow(imgrendered, options)
-                        .audio(path.join(resourcesfolder, 'audio', 'compilation.mp3'))
-                        .save(path.join(resourcesfolder, 'video.mp4'))
+                        .audio(audiofile)
+                        .save(path.join(resourcesfolder, name + '.mp4'))
                         .on('start', function (command) {
                             self.debug('The video is in preparation...')
                         }).on('error', function (err) {
                             self.debug(err)
                             success(false);
                         }).on('end', function (output) {
-                            if (self.Config.CompliationLoop) {
-
+                            if (self.Loop > 0) {
+                                self.debug('The video is done, now looping it ' + self.Loop + ' times.')
                                 let clipsToConcat = [];
 
-                                for (i = 0; i < self.Config.CompliationLoop; i++) {
+                                for (let i = 0; i < self.Loop; i++) {
                                     clipsToConcat.push({
-                                        'fileName': path.join(resourcesfolder, 'video.mp4')
+                                        'fileName': path.join(resourcesfolder, name + '.mp4')
                                     })
                                 }
-                                self.debug('The video is done, now looping it ' + self.Config.CompliationLoop + ' times.')
+
                                 concat({
-                                        silent: true, // optional. if set to false, gives detailed output on console
-                                        overwrite: true // optional. by default, if file already exists, ffmpeg will ask for overwriting in console and that pause the process. if set to true, it will force overwriting. if set to false it will prevent overwriting.
+                                        silent: true,
+                                        overwrite: true
                                     })
                                     .clips(clipsToConcat)
-                                    .output(path.join(resourcesfolder, 'compilation.mp4')) //optional absolute file name for output file
+                                    .output(path.join(resourcesfolder, compilationName + '.mp4')) //optional absolute file name for output file
                                     .concat().then((outputFileName) => {
                                         self.debug('Merging finished !');
                                         self.debug('Video successfully generated at: ' + outputFileName);
-                                        success(path.join(resourcesfolder, 'compilation.mp4'));
+                                        fs.unlinkSync(path.join(resourcesfolder, name + '.mp4'))
+                                        success(path.join(resourcesfolder, compilationName + '.mp4'));
                                     });
                             } else {
                                 self.debug('Video successfully generated at: ' + output);
-                                success(path.join(resourcesfolder, 'video.mp4'));
+                                success(path.join(resourcesfolder, name + '.mp4'));
                             };
                         })
                 }, 5000)

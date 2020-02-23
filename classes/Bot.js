@@ -268,7 +268,7 @@ module.exports = class Bot {
         const VideoCompiler = require('../tools/VideoCompiler.js');
         const VC = new VideoCompiler(this.Config);
         const self = this;
-        VC.generateVideo(audio, images).then((file, reset) => {
+        VC.generateVideo(path.join(self.Config.Folder, 'audio', 'compilation.mp3'), images).then((file, reset) => {
             if (file) {
                 const captions = path.join(self.Config.Folder, 'temp', 'captions.txt');
                 const tagsvid = self.Progression.content.propertitle.concat(self.Progression.content.propertitle.split(' '));

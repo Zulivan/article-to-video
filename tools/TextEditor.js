@@ -1,6 +1,8 @@
 module.exports = {
 
     htmlCodes: [{
+        '&#039;': '\''
+    },{
         '&#8239;': ' '
     }, {
         '&ocirc;': 'ô'
