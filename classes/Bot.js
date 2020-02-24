@@ -199,7 +199,10 @@ module.exports = class Bot {
             console.log(thumbnail)
             this.uploadVideo(file, title, captions_path, tagsvid, thumbnail);
         } else if (this.Progression.downloaded_images.length == 0) {
-            IF.searchImages(propertitle).then((images, reset) => {
+            
+            const searchterm = title.split(' ');
+
+            IF.searchImages([propertitle, searchterm[0], searchterm[1]]).then((images, reset) => {
                 if (images) {
                     this.SaveProgression('downloaded_images', images).then((saved) => {
                         console.log('Downloaded all the required images');

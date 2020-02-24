@@ -137,14 +137,23 @@ module.exports = class ImageFinder {
         return promise.catch(e => undefined);
     }
 
-    searchImages(title) {
+    /**
+     * Search images using Qwant API
+     * @param {array} queries Queries to run
+     */
+
+    searchImages(queries) {
         const self = this;
+
         return new Promise((success) => {
 
             self.debug('Trying queries to find results...');
 
-            const searchterm = title.split(' ');
-            const TermsToSearchFor = [self.searchImage(title), self.searchImage(searchterm[0]), self.searchImage(searchterm[1])];
+            let TermsToSearchFor = [];
+
+            for (let i = 0; i < queries.length; i++) {
+                TermsToSearchFor.push(self.searchImage(queries[i]))
+            };
 
             Promise.all(TermsToSearchFor.map(p => self.ignore(p))).then((values) => {
 
@@ -158,7 +167,7 @@ module.exports = class ImageFinder {
 
                 result = result.filter(v => v != null);
 
-                self.debug('Found '+result.length+' images ready to be used.');
+                self.debug('Found ' + result.length + ' images ready to be used.');
 
                 success(result);
             });
