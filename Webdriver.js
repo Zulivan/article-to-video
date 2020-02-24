@@ -7,15 +7,7 @@ const Config = {
     Video: {
         CompliationLoop: false
     },
-    Folder: 'webdriver',
-    Name: 'FRANCE INFOS 24/7',
-    Tags: ['#news'],
-    Intro: {
-        Time: 5,
-        Text: 'Afin d\'être informé veuillez vous abonner et cliquez sur la cloche pour être notifié!'
-    },
-    LCode: 'Fr-fr',
-    Magazines: ['voici', 'gala', 'vminutes-people', 'vminutes-divers', 'vminutes-sports', 'figaro', 'valeursactuelles']
+    Folder: 'webdriver'
 };
 
 const Bot = require('./classes/Webdriver.js');

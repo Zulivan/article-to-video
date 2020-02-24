@@ -7,6 +7,7 @@ const Config = {
     Video: {
         CompliationLoop: false
     },
+    WordsPerRecording: 15,
     Folder: 'actus',
     Name: 'FRANCE INFOS 24/7',
     Tags: ['#news'],
