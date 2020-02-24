@@ -73,7 +73,7 @@ module.exports = class ImageMaker {
                         output = JSON.parse(fs.readFileSync(jsonsave, 'utf8'));
                     } catch (e) {
                         error(e);
-                        self.debug('JSON is corrupted, aborting...')
+                        self.debug('JSON is corrupt, aborting...')
                     }
                     success(output);
                 } else {
@@ -222,9 +222,9 @@ module.exports = class ImageMaker {
 
                                   jimp.loadFont(jimp.FONT_SANS_128_BLACK).then((font) => {
                                     jimp.read(background_path, (err, imagebuffer) => {
-                                        imagebuffer.composite(blue_img, getRandomInt(0, 1060), getRandomInt(15, 700))
-                                        .composite(green_img, getRandomInt(0, 1060), getRandomInt(15, 700))
-                                        .composite(red_img, getRandomInt(0, 1060), getRandomInt(15, 700))
+                                        imagebuffer.composite(blue_img, getRandomInt(0, 500), getRandomInt(15, 340))
+                                        .composite(green_img, getRandomInt(0, 500), getRandomInt(15, 340))
+                                        .composite(red_img, getRandomInt(0, 500), getRandomInt(15, 340))
                                         .quality(60).print(font, 10, 10, {
                                             text: text,
                                             alignmentX: jimp.HORIZONTAL_ALIGN_CENTER

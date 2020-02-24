@@ -187,7 +187,7 @@ module.exports = class Bot {
         console.log('--------------------------------');
 
         const ImageFinder = require('../tools/ImageFinder.js');
-        const IF = new ImageFinder(this.Config, this.Config.Directory, this.Config.Folder);
+        const IF = new ImageFinder(this.Config, this.Config.Folder);
 
         if (this.Progression.videodone) {
             const tagsvid = this.Progression.content.propertitle.concat(this.Progression.content.propertitle.split(' '));
@@ -201,7 +201,6 @@ module.exports = class Bot {
         } else if (this.Progression.downloaded_images.length == 0) {
             IF.searchImages(propertitle).then((images, reset) => {
                 if (images) {
-                    images = images.filter(v => v != null);
                     this.SaveProgression('downloaded_images', images).then((saved) => {
                         console.log('Downloaded all the required images');
                         this.audioRender(content, images);

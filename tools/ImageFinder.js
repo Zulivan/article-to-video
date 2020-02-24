@@ -10,14 +10,12 @@ module.exports = class ImageFinder {
     /**
      * Initializes an ImageFinder instance
      * @param {object} config Config array
-     * @param {string} directory Magazines folder
      * @param {string} folder Folder
      */
 
-    constructor(config, directory, folder = 'nothing') {
+    constructor(config, folder = 'nothing') {
 
         this.Config = config || {};
-        this.Config.Directory = directory;
 
         if (!this.Config.Folder) {
             this.Config.Folder = folder;
@@ -69,7 +67,8 @@ module.exports = class ImageFinder {
                     url: link,
                     dest: self.Path
                 }).then(({
-                    filename,img
+                    filename,
+                    img
                 }) => {
                     self.debug('Downloaded image called ' + filename + '..');
 
@@ -110,7 +109,7 @@ module.exports = class ImageFinder {
         return Math.floor(Math.random() * (max - min) + min);
     }
 
-    searchImage(text){
+    searchImage(text) {
         const self = this;
         return new Promise((success) => {
             self.queryImages(text).then((returnedImages) => {
@@ -134,7 +133,7 @@ module.exports = class ImageFinder {
         });
     }
 
-    ignore(promise){
+    ignore(promise) {
         return promise.catch(e => undefined);
     }
 
@@ -146,9 +145,24 @@ module.exports = class ImageFinder {
 
             const searchterm = title.split(' ');
             const TermsToSearchFor = [self.searchImage(title), self.searchImage(searchterm[0]), self.searchImage(searchterm[1])];
-            const values = Promise.all(TermsToSearchFor.map(p => self.ignore(p)));
 
-            success(values);
+            Promise.all(TermsToSearchFor.map(p => self.ignore(p))).then((values) => {
+
+                let result = [];
+
+                for (let i = 0; i < values.length; i++) {
+                    for (let j = 0; j < values[i].length; j++) {
+                        result.push(values[i][j]);
+                    };
+                };
+
+                result = result.filter(v => v != null);
+
+                self.debug('Found '+result.length+' images ready to be used.');
+
+                success(result);
+            });
+
         });
     };
 
