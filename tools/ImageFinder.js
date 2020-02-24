@@ -88,7 +88,7 @@ module.exports = class ImageFinder {
                                         name: NewFileName
                                     });
                                 }).catch((err) => {
-                                    console.log('Cannot read image buffer: ' + err)
+                                    self.debug('Cannot read image buffer: ' + err)
                                     resolve(null);
                                 });
                             });
@@ -97,7 +97,7 @@ module.exports = class ImageFinder {
                         resolve(null);
                     };
                 }).catch((err) => {
-                    console.log('Download failed: ' + err);
+                    self.debug('Download failed: ' + err);
                     resolve(null);
                 });
             } else {
