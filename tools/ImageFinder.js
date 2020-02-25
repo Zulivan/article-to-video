@@ -57,7 +57,7 @@ module.exports = class ImageFinder {
 
     imageProcess(index, array) {
         const self = this;
-        self.debug('Starting..')
+        
         return new Promise((resolve, reject) => {
             const link = array[index].media;
             if (link.indexOf('.jpg') > -1 || link.indexOf('.bmp') > -1 || link.indexOf('.png') > -1) {

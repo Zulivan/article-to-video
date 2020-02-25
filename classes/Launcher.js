@@ -16,9 +16,11 @@ module.exports = class Launcher {
         this.Config = config;
         this.Config.Directory = Directory;
 
-        this.Progression = ProgressionMap;
+        this.Progression = {};
 
         this.Steps = [];
+
+        this.PresetFunctions = ['genImages'];
 
         if (config.oAuth) {
             if (!config.oAuth.Public) throw 'oAuth: Public key missing.';
@@ -45,14 +47,15 @@ module.exports = class Launcher {
 
     /**
      * Adds up a preset step to make the video
-     * @param {function} func Function to add 
+     * @param {text} func Function id to add 
+     * @param {array} argument arguments depending on the function
      * @param {number} index If set: sets an index to the specified value 
      */
 
-    AddPresetStep(func, index) {
+    AddPresetStep(func, argument, index) {
 
         if (index) {
-            this.Steps[index] = {type: 0, func: func};
+            this.Steps[index] = {type: 0, func: func, arg: argument};
         }else{
             this.Steps.push({type: 0, func: func});
         }
@@ -125,7 +128,15 @@ module.exports = class Launcher {
     }
 
     PresetFunction(id){
-        
+        return new Promise((success, error) => {
+
+            const funcPath = path.join(this.Config.Directory, 'functions', id+'.js');
+
+            const func = require(funcPath);
+            
+            func();
+
+        });
     }
 
     /**
