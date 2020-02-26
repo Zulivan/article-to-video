@@ -32,6 +32,12 @@ module.exports = class Launcher {
             console.log('The oAuth credentials are not set up')
         }
 
+        fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp'), (exists) => {
+            if(!exists){
+                fs.mkdirSync(path.join(this.Config.Directory, this.Config.Folder, 'temp'))
+            }
+        });
+
         fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), (exists) => {
             if (exists) {
                 try {
@@ -221,12 +227,21 @@ module.exports = class Launcher {
                 };
             };
 
-            console.log(promises)
+            const promise = promises.reduce(function (prm) {
+                return prm.then(function (res) {
+                  return run().then(function (result) {
+                    res.push(result);
+                    return res;
+                  });
+                });
+              }, Promise.resolve([]));
+              
+              promise.then(console.log);
 
-            Promise.all(promises).then((values) => {
-                success(values);
-                self.debug('I went through all steps!');
-            });
+            // Promise.all(promises).then((values) => {
+            //     success(values);
+            //     self.debug('I went through all steps!');
+            // }).catch(console.error);
         });
 
     }
@@ -249,9 +264,6 @@ module.exports = class Launcher {
                 }else{
                     self.SaveProgression(id, result);
                 }
-
-                console.log('RESULT')
-
 
                 success(true);
             }).catch((err) => {

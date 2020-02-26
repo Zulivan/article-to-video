@@ -1,3 +1,92 @@
+function firstPromise() {
+	return new Promise((success, error) => {
+		setTimeout(function () {
+			success('congrats!');
+		}, 4 * 1000);
+	});
+};
+
+function secondPromise(someArgument) {
+	return new Promise((success, error) => {
+		setTimeout(function () {
+			success(someArgument);
+		}, 100);
+	});
+};
+
+var guid = 0;
+function run() {
+  guid++;
+  var id = guid;
+  return new Promise(resolve => {
+    // resolve in a random amount of time
+    setTimeout(function () {
+      console.log(id);
+      resolve(id);
+    }, (Math.random() * 1.5 | 0) * 1000);
+  });
+}
+
+runWaterfall([firstPromise(), secondPromise('dude!')]).then((result) => {
+	console.log('Waterfall done!');
+	console.log(result);
+});
+
+function runWaterfall(functions) {
+	return new Promise((success, error) => {
+		let index = 0;
+		const promise = functions.reduce(function (acc) {
+			return acc.then(function (res) {
+				return functions[index].then(function (result) {
+					res.push(result);
+					index = index + 1;
+					return res;
+				});
+			});
+		}, Promise.resolve([]));
+
+		promise.then(success);
+	});
+};
+
+
+
+
+// const multiPromises = functions.reduce(function (acc) {
+
+// 	var index = 0;
+
+// 	return acc.then(function (res) {
+// 		index = index + 1;
+// 		console.log(index)
+// 		return functions[index].then(function (result) {
+// 			res.push(result);
+// 			return res;
+// 		});
+// 	});
+// }, Promise.resolve([]));
+
+// multiPromises.then(console.log);
+
+
+function runWaterfall1(functions) {
+	return new Promise((success, error) => {
+
+		let res = [];
+
+		functions.forEach(element => {
+			console.log(element)
+			element.then((result) => {
+				console.log(result)
+				res.push(result);
+			}).catch((err) => {
+				res.push(err);
+			});
+		}, console.log(res));
+	});
+};
+
+
 // const Config = {
 //     Directory: __dirname,
 //     LocalPort: 5000,
@@ -38,23 +127,23 @@
 // };
 //testThumbnailGeneration()
 
-const fs = require('fs');
+// const fs = require('fs');
 
-let words = [];
+// let words = [];
 
-let remaining = fs.readFileSync('words.json').toString();
+// let remaining = fs.readFileSync('words.json').toString();
 
-let index = remaining.indexOf('\n');
-while (index > -1) {  
-  const line = remaining.substr(0, index);
-  console.log(line);
-  words.push(line);
-  remaining = remaining.substr(index + 1);
-  index = remaining.indexOf('\n');
-}
+// let index = remaining.indexOf('\n');
+// while (index > -1) {  
+//   const line = remaining.substr(0, index);
+//   console.log(line);
+//   words.push(line);
+//   remaining = remaining.substr(index + 1);
+//   index = remaining.indexOf('\n');
+// }
 
-fs.writeFileSync('words.json', JSON.stringify(words));
+// fs.writeFileSync('words.json', JSON.stringify(words));
 
-setTimeout(function(){
+// setTimeout(function(){
 
-},999999)
+// },999999)
