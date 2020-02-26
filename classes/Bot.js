@@ -120,9 +120,7 @@ module.exports = class Bot {
                     }).catch((err) => {
                         console.log('Cannot get magazine, ' + err);
                     });
-        
                 }
-
             });
         };
     }

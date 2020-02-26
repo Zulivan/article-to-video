@@ -31,13 +31,13 @@ module.exports = class ImageMaker {
                 values = values.filter(v => v != null);
                 success(values)
             }).catch((err) => {
-                console.log(err)
+                self.debug(err);
             });
         });
     }
 
     generateThumbnail(image_name) {
-        console.log(image_name);
+
         const self = this;
         const thumbnail_final_dir = path.join(self.Config.Folder, 'images', 'final_thumbnail.png');
         return new Promise((success, error) => {
@@ -75,13 +75,11 @@ module.exports = class ImageMaker {
                     }
                 };
 
-                console.log(output);
-
                 fs.writeFile(jsonContentPath, JSON.stringify(output, null, 2), (errfile) => {
                     if (errfile) {
                         error(errfile);
                     } else {
-                        console.log('Image #' + index + ' has its image part!');
+                        self.debug('Image #' + index + ' has its image part!');
                         success(output);
                     }
                 });
@@ -95,14 +93,14 @@ module.exports = class ImageMaker {
                     } catch (e) {
                         self.debug('The JSON content of the image ' + index + ' is corrupt, remaking...');
                         imgCustomFunc(self.Config.Folder, index, data).then((r) => {
-                            recordGeneration(r)
+                            recordGeneration(r);
                         }).catch((err) => {
                             error(err);
                         });
                     }
                 } else {
                     imgCustomFunc(self.Config.Folder, index, data).then((r) => {
-                        recordGeneration(r)
+                        recordGeneration(r);
                     }).catch((err) => {
                         error(err);
                     });

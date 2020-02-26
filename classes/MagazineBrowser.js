@@ -3,14 +3,12 @@ const path = require('path');
 
 module.exports = class MagazineBrowser {
     /**
-     * Initializes a MagazineBrowser instance (only used by Bot.js)
+     * Initializes a MagazineBrowser instance
      * @param {string} directory Root directory
      * @param {string} folder Magazines folder
-     * @param {string} config Config array
-     * @param {string} magazines Magazines
      */
 
-    constructor(config, directory, folder = 'none') {
+    constructor(directory, folder = 'none') {
 
         this.Loader = {
             toLoad: 0,
@@ -18,28 +16,25 @@ module.exports = class MagazineBrowser {
             invalidFiles: 'Invalid files:'
         };
 
-        this.Config = config || {};
-        this.Config.Directory = directory;
-        if (!this.Config.Folder) {
-            this.Config.Folder = folder;
+        this.Config = {
+            Directory: directory,
+            Folder: folder,
+            Temp: path.join(directory, folder, 'temp'),
+            MagHistFName: 'lastmagazines.json'
         };
-        this.MagazinesList = this.Config.Magazines || []; // Magazines éligibles au type de bot
+
+        this.MagazinesList = this.Config.Magazines || []; // Magazines the bot looks for
         this.Magazines = [];
 
-        this.MagazinesHistory = {}; // Historique des magazines déjà lus
+        this.MagazinesHistory = {}; // Magazines that are already read
 
-        let data = '{}';
-
-        fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'lastmagazines.json'), (exists) => {
-            if (exists) {
-                data = fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'lastmagazines.json'), 'utf8');
-            }
-        });
-
-        if (data.length > 5) {
-            this.MagazinesHistory = JSON.parse(data);
-        };
-
+        try {
+            this.MagazinesHistory = JSON.parse(fs.readFileSync(path.join(this.Config.Temp, this.Config.MagazinesHistory), 'utf8'));
+        } catch (error) {
+            console.log(error);
+            this.SaveMagazineHistory();
+        }
+        
         this.LoadMagazines();
     }
 
@@ -105,7 +100,7 @@ module.exports = class MagazineBrowser {
         };
     };
 
-    SaveMagazinesHistory() {
+    SaveMagazineHistory() {
         fs.writeFile(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'lastmagazines.json'), JSON.stringify(this.MagazinesHistory), function (errfile) {
             return 'Saved file!';
         });
@@ -127,7 +122,7 @@ module.exports = class MagazineBrowser {
                         magazine.readArticle(history.uri).then(data => {
                             console.log('Article title: \r\n' + data.title + '\r\nArticle content: \r\n' + data.content);
                             magazine.read = true;
-                            self.SaveMagazinesHistory();
+                            self.SaveMagazineHistory();
                             success(data);
                         });
                     };
@@ -160,7 +155,7 @@ module.exports = class MagazineBrowser {
                     }
                     console.log('Found an article for magazine: ' + self.Magazines[id].id);
                     console.log('Outpoint: ' + resolve);
-                    self.SaveMagazinesHistory();
+                    self.SaveMagazineHistory();
                 }).catch((err) => {
                     console.log(err);
                     self.MagazinesHistory[self.Magazines[id].id].read = false;
@@ -184,7 +179,7 @@ module.exports = class MagazineBrowser {
                 magazinescmd.push(self.getMagazineBy(i));
             });
             Promise.all(magazinescmd).then(values => {
-                self.SaveMagazinesHistory();
+                self.SaveMagazineHistory();
                 success(values);
             });
         });

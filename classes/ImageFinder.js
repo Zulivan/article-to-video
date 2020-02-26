@@ -34,7 +34,7 @@ module.exports = class ImageFinder {
 
     queryImages(query) {
         return new Promise((success, error) => {
-            let requestOptions = {
+            const requestOptions = {
                 encoding: 'utf8',
                 json: true,
                 method: 'GET',
@@ -145,7 +145,7 @@ module.exports = class ImageFinder {
     searchImages(queries) {
         const self = this;
 
-        return new Promise((success) => {
+        return new Promise((success, error) => {
 
             self.debug('Trying queries to find results...');
 
@@ -169,9 +169,11 @@ module.exports = class ImageFinder {
 
                 self.debug('Found ' + result.length + ' images ready to be used.');
 
-                success(result);
-            });
-
+                if(result.length > 0){
+                    success(result);
+                }else{
+                    error('no results were found');
+                }
         });
     };
 

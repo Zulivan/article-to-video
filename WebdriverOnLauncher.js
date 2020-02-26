@@ -21,6 +21,14 @@ const ProgressionMap = {
 const LauncherClass = require('./classes/Launcher.js');
 const Launcher = new LauncherClass(__dirname, Config, ProgressionMap);
 
-Launcher.AddPresetStep('genImages', ['']);
+let image_info = [];
+
+for (let i = -1; i < 15; i++) {
+    image_info.push({
+        type: 'rndimage'
+    });
+};
+
+Launcher.AddPresetStep('genImages', image_info);
 
 Launcher.Run();
