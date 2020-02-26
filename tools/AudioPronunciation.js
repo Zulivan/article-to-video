@@ -55,7 +55,6 @@ module.exports = class AudioPronunciation {
             };
 
             self.AudioProcess.createCompilation(vocals).then((res) => {
-                console.log('success')
                 success(res);
             });
 

@@ -7,9 +7,13 @@ module.exports = function (args) {
         const content = args;
 
         AM.generateAudio(content).then((audio) => {
-            success(audio)
-            // this.SaveProgression('renderedvoices', audio)
-            // this.makeBackgroundImages(audio, images);
+
+            const output = {
+                type: 'generated_audio',
+                values: audio
+            }
+
+            success(output)
         }).catch((err) => {
             error(err)
         });

@@ -25,7 +25,7 @@ module.exports = class AudioManager {
         if (DEBUG) console.log(text);
     }
 
-    getVocalsAmount(content) {
+    getChuncksAmount(content) {
         let amt = 0;
         content = content.split(' ').length;
         const maxwords = this.Config.WordsPerRecording;
@@ -40,8 +40,8 @@ module.exports = class AudioManager {
     generateAudio(content) {
         const self = this;
         return new Promise((success, error) => {
-            self.Content = content;
-            const total = self.getVocalsAmount(content);
+            
+            const total = self.getChuncksAmount(content);
 
             console.log('Generating ~' + total + ' different vocals using Google\'s voice!')
             console.log('=====================================================')

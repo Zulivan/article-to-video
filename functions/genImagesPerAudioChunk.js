@@ -1,7 +1,8 @@
 module.exports = function (args, extradata) {
 
     const type = args[0];
-    const images = extradata.downloaded_images
+    const images = extradata.downloaded_images;
+    const audio = extradata.generated_audio;
 
     return new Promise((success, error) => {
         console.log('Generating ' + audio.length + ' images!');
