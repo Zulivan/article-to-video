@@ -22,13 +22,35 @@ const Config = {
 const LauncherClass = require('./classes/Launcher.js');
 const Launcher = new LauncherClass(__dirname, Config);
 
-Launcher.AddStep('findMagazines', function(){
+// Launcher.AddStep('findMagazines', function(){
 
-});
+// });
 
 // Launcher.AddPresetStep('findMagazines', Arguments);
 
 // Launcher.AddPresetStep('findImages', Arguments);
+
+let vocals = [];
+
+for (let i = 0; i < total; i++) {
+    const WpR = 15;
+
+    const sentence_array = content.split(' ').slice(i * WpR, i * WpR + WpR);
+
+    let sentence = sentence_array.join(' ') + '.';
+    if (sentence_array.length < 12) {
+        sentence = sentence + ' Merci d\'avoir regardé!';
+    }
+
+    vocals.push({
+        lang: self.Config.LCode,
+        text: sentence
+    });
+};
+
+// this.AudioProcess.createCompilation(vocals).then((res) => {
+//     success(res);
+// });
 
 // Launcher.AddPresetStep('genAudio', Arguments);
 

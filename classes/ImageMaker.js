@@ -4,12 +4,15 @@ const jimp = require('jimp');
 const DEBUG = true;
 
 module.exports = class ImageMaker {
-    constructor(Config) {
-        this.Config = Config;
+    constructor(directory, folder) {
+        this.Config = {
+            Directory: directory,
+            Folder: folder
+        };
     }
 
     debug(text) {
-        if (DEBUG) console.log(text);
+        if (DEBUG) console.log('ImageMaker.js : '+text);
     }
 
     generateImages(images) {
@@ -18,16 +21,16 @@ module.exports = class ImageMaker {
             let promises = [];
 
             for (let i = 0; i < images.length; i++) {
-
                 const imgFuncPath = path.join(self.Config.Directory, 'addons', 'ImageGenerator', images[i]['type'] + '.js');
                 if (fs.existsSync(imgFuncPath)) {
                     promises.push(self.runImageGeneration(i, images[i]));
                 } else {
                     error('The type: "' + images[i]['type'] + '" is not a valid preset type');
-                }
+                };
             };
 
             Promise.all(promises).then((values) => {
+                self.debug('All promises are done!')
                 values = values.filter(v => v != null);
                 success(values)
             }).catch((err) => {
@@ -79,18 +82,23 @@ module.exports = class ImageMaker {
                     if (errfile) {
                         error(errfile);
                     } else {
-                        self.debug('Image #' + index + ' has its image part!');
+                        self.debug('Image #' + index + ' is fully made!');
                         success(output);
-                    }
+                    };
                 });
             };
 
             fs.exists(jsonContentPath, (exists) => {
                 if (exists) {
-                    self.debug('File with id ' + index + '.jpg is already done, adding its metadata to the image files to process..');
+                    self.debug('File with id ' + index + '.jpg is already done! Checking contents..');
                     try {
-                        success(JSON.parse(fs.readFileSync(jsonContentPath, 'utf8')));
+                        const output = JSON.parse(fs.readFileSync(jsonContentPath, 'utf8'));
+                        console.log(output)
+                        success(output);
                     } catch (e) {
+
+                        console.log(e);
+
                         self.debug('The JSON content of the image ' + index + ' is corrupt, remaking...');
                         imgCustomFunc(self.Config.Folder, index, data).then((r) => {
                             recordGeneration(r);
@@ -104,7 +112,7 @@ module.exports = class ImageMaker {
                     }).catch((err) => {
                         error(err);
                     });
-                }
+                };
             });
         });
     }

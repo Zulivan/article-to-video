@@ -57,7 +57,7 @@ module.exports = class ImageFinder {
 
     imageProcess(index, array) {
         const self = this;
-        
+
         return new Promise((resolve, reject) => {
             const link = array[index].media;
             if (link.indexOf('.jpg') > -1 || link.indexOf('.bmp') > -1 || link.indexOf('.png') > -1) {
@@ -169,12 +169,12 @@ module.exports = class ImageFinder {
 
                 self.debug('Found ' + result.length + ' images ready to be used.');
 
-                if(result.length > 0){
+                if (result.length > 0) {
                     success(result);
-                }else{
+                } else {
                     error('no results were found');
                 }
+            });
         });
     };
-
 };

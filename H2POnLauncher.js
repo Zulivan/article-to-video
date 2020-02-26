@@ -16,8 +16,34 @@ const Config = {
 const LauncherClass = require('./classes/Launcher.js');
 const Launcher = new LauncherClass(__dirname, Config);
 
-// pour enlever les 2 tools de audio processing on loop 4 fois avec accent différent les parties.
+this.Accents = {
+    australian: {
+        langcode: 'en-AU',
+        name: 'Australian English'
+    },
+    british: {
+        langcode: 'en',
+        name: 'British English'
+    },
+    indian: {
+        langcode: 'en-IN',
+        name: 'Indian English'
+    },
+    american: {
+        langcode: 'en-US',
+        name: 'American English'
+    }
+};
 
+let vocals = [];
+
+for (let i in self.Accents) {
+    vocals.push({
+        lang: self.Accents[i].langcode,
+        text: word,
+        extra: self.Accents[i]
+    });
+};
 
 // Launcher.AddPresetStep('genAudio', Arguments);
 

@@ -70,7 +70,8 @@ module.exports = class Bot {
     start() {
         const self = this;
         const MagazineBrowser = require('../classes/MagazineBrowser.js');
-        const MB = new MagazineBrowser(self.Config, self.Config.Directory, self.Config.Folder);
+
+        const MB = new MagazineBrowser(self.Config.Directory, self.Config.Folder, self.Config.Magazines);
 
         if (self.Progression.magazineloaded) {
             console.log('Producing video: ' + self.Progression.content.title);
@@ -184,7 +185,7 @@ module.exports = class Bot {
         console.log('Content: ' + content);
         console.log('--------------------------------');
 
-        const ImageFinder = require('../tools/ImageFinder.js');
+        const ImageFinder = require('../classes/ImageFinder.js');
         const IF = new ImageFinder(this.Config, this.Config.Folder);
 
         if (this.Progression.videodone) {

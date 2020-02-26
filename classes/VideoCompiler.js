@@ -4,7 +4,6 @@ const videoshow = require('videoshow');
 const mp3Duration = require('mp3-duration');
 const path = require('path');
 const fs = require('fs');
-
 const DEBUG = true;
 
 module.exports = class VideoCompiler {
@@ -13,17 +12,13 @@ module.exports = class VideoCompiler {
      * @param {object} config Config array
      */
 
-    constructor(config = {}) {
+    constructor(folder, loop = false) {
 
-        this.Config = config;
-
-        this.Loop = false;
-
-        if (this.Config.Video.CompliationLoop) {
-            this.Loop = this.Config.Video.CompliationLoop;
-
+        this.Config = {
+            Folder: folder
         }
 
+        this.Loop = loop;
     }
 
     debug(text) {
