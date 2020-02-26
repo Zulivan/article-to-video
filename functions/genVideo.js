@@ -15,10 +15,13 @@ module.exports = function (args, extradata) {
         audioFile = path.join(extradata.Config.Folder, 'preset', audioFile);
     }
 
-    console.log('Called gnVideo')
+    let name = 'video';
+    if (args['fileName']) {
+        name = args['fileName'];
+    }
 
     return new Promise((success, error) => {
-        VC.generateVideo(audioFile, images).then((file) => {
+        VC.generateVideo(audioFile, images, name).then((file) => {
             if (file) {
                 success(file);
                 // const captions = path.join(self.Config.Folder, 'temp', 'captions.txt');

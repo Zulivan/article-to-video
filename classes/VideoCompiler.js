@@ -67,6 +67,9 @@ module.exports = class VideoCompiler {
                     audioChannels: 1,
                     format: 'mp4'
                 };
+
+                console.log(imgrendered)
+
                 imgrendered[imgrendered.length - 1].loop = imgrendered[imgrendered.length - 1].loop + 2
                 setTimeout(function () {
                     self.debug('Videoshow is starting...')

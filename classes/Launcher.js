@@ -1,6 +1,7 @@
 const fs = require('fs');
-const rimraf = require('rimraf');
+// const rimraf = require('rimraf');
 const path = require('path');
+const waterfall = require('promises-waterfall-compact');
 const {
     google
 } = require('googleapis');
@@ -33,43 +34,42 @@ module.exports = class Launcher {
         }
 
         fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp'), (exists) => {
-            if(!exists){
+            if (!exists) {
                 fs.mkdirSync(path.join(this.Config.Directory, this.Config.Folder, 'temp'))
             }
-        });
-
-        fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), (exists) => {
-            if (exists) {
-                try {
-                    this.Progression = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), 'utf8'));
-                } catch (e) {
-                    console.log('The progression file is corrupt, reset done.')
-                }
-            } else {
-                console.log('No progression file found, generating one.')
-            }
-
-            
-            fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'extra.json'), (exists2) => {
-                if (exists2) {
+            fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), (exists1) => {
+                if (exists1) {
                     try {
-                        this.ExtraData = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'extra.json'), 'utf8'));
+                        this.Progression = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), 'utf8'));
                     } catch (e) {
-                        console.log('The extra data file is corrupt, reset done.')
+                        console.log('The progression file is corrupt, reset done.')
                     }
                 } else {
-                    console.log('No extra data file file found, generating one.')
+                    console.log('No progression file found, generating one.')
                 }
-                this.ExtraData['Config'] = this.Config;
 
-                this.Run();
+
+                fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'extra.json'), (exists2) => {
+                    if (exists2) {
+                        try {
+                            this.ExtraData = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'extra.json'), 'utf8'));
+                        } catch (e) {
+                            console.log('The extra data file is corrupt, reset done.')
+                        }
+                    } else {
+                        console.log('No extra data file file found, generating one.')
+                    }
+                    this.ExtraData['Config'] = this.Config;
+
+                    this.Run();
+                });
             });
         });
 
     }
 
-    debug(val){
-        if(DEBUG) console.log(val);
+    debug(val) {
+        if (DEBUG) console.log(val);
     }
 
     /**
@@ -135,9 +135,9 @@ module.exports = class Launcher {
             } catch (e) {
                 return false;
             }
-        }else if(!this.Progression[index]){
+        } else if (!this.Progression[index]) {
             this.Progression[index] = value;
-            this.debug('First time we see the step #'+index+' with values: '+value);
+            this.debug('First time we see the step #' + index + ' with values: ' + value);
             try {
                 fs.writeFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), JSON.stringify(this.Progression, null, 2));
                 return true;
@@ -154,9 +154,9 @@ module.exports = class Launcher {
      */
 
     SaveProgression(index, value = false) {
-        if (index.toString()) {
+        if (typeof index !== 'undefined') {
             this.Progression[index].complete = (value !== false);
-        };
+        }
 
         try {
             fs.writeFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), JSON.stringify(this.Progression, null, 2));
@@ -173,13 +173,13 @@ module.exports = class Launcher {
      */
 
     SetExtraData(type, value) {
-        
-        if(!type) throw 'No type found';
-        if(!value) throw 'No value found';
 
-        if(this.ExtraData[type] && typeof this.ExtraData[type] === 'object'){
+        if (!type) throw 'No type found';
+        if (!value) throw 'No value found';
+
+        if (this.ExtraData[type] && typeof this.ExtraData[type] === 'object') {
             this.ExtraData[type] = this.ExtraData[type].concat(value);
-        }else{
+        } else {
             this.ExtraData[type] = value;
         }
 
@@ -216,11 +216,11 @@ module.exports = class Launcher {
 
                 self.CheckProgression(i, stepData);
 
-                if (self.Progression[i].complete == false) {
+                if (self.Progression[i].complete == false && promises == 0) {
 
                     if (self.Steps[i]['type'] == 0) {
                         promises.push(self.PresetFunction(i, self.Steps[i]['func'], self.Steps[i]['arg']));
-                    } else if(self.Steps[i]['type'] == 2){
+                    } else if (self.Steps[i]['type'] == 2) {
                         promises.push(self[self.Steps[i]['func']]());
                     };
 
@@ -229,19 +229,20 @@ module.exports = class Launcher {
 
             const promise = promises.reduce(function (prm) {
                 return prm.then(function (res) {
-                  return run().then(function (result) {
-                    res.push(result);
-                    return res;
-                  });
+                    return run().then(function (result) {
+                        res.push(result);
+                        return res;
+                    });
                 });
-              }, Promise.resolve([]));
-              
-              promise.then(console.log);
+            }, Promise.resolve([]));
 
-            // Promise.all(promises).then((values) => {
-            //     success(values);
-            //     self.debug('I went through all steps!');
-            // }).catch(console.error);
+            promise.then(console.log);
+
+            waterfall(promises).then((values) => {
+                success(values);
+                self.debug('I went through all steps!');
+                throw values;
+            }).catch(console.error);
         });
 
     }
@@ -256,15 +257,18 @@ module.exports = class Launcher {
             let dataToPass = self.ExtraData;
             dataToPass.StepID = id;
 
+            self.debug('Running ' + funcId);
+
             func(args, dataToPass).then((result) => {
-                
-                if(typeof result === 'object'){
+
+                console.log('RESULT OUTPUT FROM ' + funcId)
+
+                if (typeof result === 'object') {
                     self.SetExtraData(result.type, result.values);
                     self.SaveProgression(id, result.values);
-                }else{
+                } else {
                     self.SaveProgression(id, result);
                 }
-
                 success(true);
             }).catch((err) => {
                 self.debug('Error while using the preset function "' + funcId + '" with arguments "' + args + '": ' + err);
@@ -283,18 +287,24 @@ module.exports = class Launcher {
         const self = this;
         return new Promise((success, error) => {
 
-            console.log('Video done! Reset in 5 minutes!')
+            console.log('Video done! Reset in 1 minute!');
 
-            setTimeout(function() {
+            setTimeout(function () {
                 self.Progression = {};
                 self.SaveProgression();
-                
+
                 if (NoDeletion) {
                     process.exit();
                 }
 
-                rimraf.sync(path.join(self.Config.Folder, 'images'));
-                rimraf.sync(path.join(self.Config.Folder, 'audio'));
+                fs.unlinkSync(path.join(self.Config.Folder, 'temp', 'extra.json'));
+
+                fs.rmdirSync(path.join(self.Config.Folder, 'images'), {
+                    recursive: true
+                });
+                fs.rmdirSync(path.join(self.Config.Folder, 'audio'), {
+                    recursive: true
+                });
 
                 //TODO: CLEARER WAY TO DELETE FILES
 
@@ -314,7 +324,7 @@ module.exports = class Launcher {
                         });
                     });
                 });
-            }, 5 * 60 * 1000);
+            }, 1 * 10 * 1000);
         });
     }
 };
