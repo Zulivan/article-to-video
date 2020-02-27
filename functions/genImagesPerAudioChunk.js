@@ -1,8 +1,12 @@
 module.exports = function (args, extradata) {
 
-    const type = args[0];
-    const images = extradata.downloaded_images;
+    const type = args['type'];
+    const img_srcs = extradata.downloaded_images || [];
+
     const audio = extradata.generated_audio;
+
+    const ImageMaker = require('../classes/ImageMaker.js');
+    const IM = new ImageMaker(extradata.Config.Directory, extradata.Config.Folder);
 
     return new Promise((success, error) => {
         console.log('Generating ' + audio.length + ' images!');
@@ -12,11 +16,13 @@ module.exports = function (args, extradata) {
 
         for (let i in audio) {
             image_info.push({
-                type: 'news',
+                type: type,
+                extra: audio[i].extra,
                 id: audio[i].id,
                 text: audio[i].text,
                 duration: audio[i].duration,
-                array: img_srcs
+                array: img_srcs,
+                background: args['background'] || null
             });
         };
 

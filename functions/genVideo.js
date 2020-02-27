@@ -9,7 +9,7 @@ module.exports = function (args, extradata) {
 
     const images = extradata.generated_images || [];
 
-    let audioFile = extradata.generated_audio || null;
+    let audioFile = path.join(extradata.Config.Folder, 'audio', 'compilation.mp3');
     if (args['audioFile']) {
         audioFile = args['audioFile'];
         audioFile = path.join(extradata.Config.Folder, 'preset', audioFile);

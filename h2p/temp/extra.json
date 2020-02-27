@@ -1,0 +1,89 @@
+{
+  "Config": {
+    "oAuth": {
+      "LocalPort": 5003,
+      "Public": "086080127763-qmrkld41cf5vreqpsb74bncblmt303n6.apps.googleusercontent.com",
+      "Private": "sgPGM3qrMi_zQR3aAsRcSNeP"
+    },
+    "Video": {
+      "CompliationLoop": 3
+    },
+    "Folder": "h2p",
+    "Word": "Aww Man",
+    "Tags": [
+      "pronounce undefined",
+      "say undefined",
+      "how to spell undefined"
+    ],
+    "Directory": "O:\\GIT\\youtubot"
+  },
+  "StepID": 1,
+  "generated_audio": [
+    {
+      "id": 0,
+      "duration": 0.96,
+      "text": "life",
+      "extra": {
+        "langcode": "en-AU",
+        "name": "Australian English"
+      }
+    },
+    {
+      "id": 1,
+      "duration": 0.912,
+      "text": "life",
+      "extra": {
+        "langcode": "en",
+        "name": "British English"
+      }
+    },
+    {
+      "id": 2,
+      "duration": 0.816,
+      "text": "life",
+      "extra": {
+        "langcode": "en-IN",
+        "name": "Indian English"
+      }
+    },
+    {
+      "id": 3,
+      "duration": 0.744,
+      "text": "life",
+      "extra": {
+        "langcode": "en-US",
+        "name": "American English"
+      }
+    }
+  ],
+  "generated_images": [
+    {
+      "vocal": 0,
+      "values": {
+        "path": "h2p\\images\\image0.jpg",
+        "loop": 0.96
+      }
+    },
+    {
+      "vocal": 1,
+      "values": {
+        "path": "h2p\\images\\image1.jpg",
+        "loop": 0.912
+      }
+    },
+    {
+      "vocal": 2,
+      "values": {
+        "path": "h2p\\images\\image2.jpg",
+        "loop": 0.816
+      }
+    },
+    {
+      "vocal": 3,
+      "values": {
+        "path": "h2p\\images\\image3.jpg",
+        "loop": 0.744
+      }
+    }
+  ]
+}

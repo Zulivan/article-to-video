@@ -2,6 +2,8 @@ const Config = {
     WordsPerRecording: 15
 }
 
+const path = require('path');
+
 function getChuncksAmount(content) {
     let amt = 0;
     content = content.split(' ').length;
@@ -14,11 +16,11 @@ function getChuncksAmount(content) {
     return amt;
 };
 
-function convertText2Chunks(content) {
-    const self = this;
+function convertText2Chunks(content, lang) {
+
     return new Promise((success, error) => {
 
-        const total = self.getChuncksAmount(content);
+        const total = getChuncksAmount(content);
 
         console.log('Generating ~' + total + ' different vocals using Google\'s voice!')
         console.log('=====================================================')
@@ -36,7 +38,7 @@ function convertText2Chunks(content) {
             }
 
             vocals.push({
-                lang: self.Config.LCode,
+                lang: lang,
                 text: sentence
             });
         };
@@ -47,17 +49,17 @@ function convertText2Chunks(content) {
     });
 }
 
-function generateVoices(extradata, chunks) {
+function generateVoices(folder, chunks) {
     const AP = require('../classes/AudioProcess.js');
-    const AudioProcess = new AP(path.join(extradata.Folder));
+    const AudioProcess = new AP(path.join(folder));
 
     return new Promise((success, error) => {
-        AudioProcess.createCompilation(content).then((audio) => {
+        AudioProcess.createCompilation(chunks).then((audio) => {
 
             const output = {
                 type: 'generated_audio',
                 values: audio
-            }
+            };
 
             success(output);
         }).catch((err) => {
@@ -68,20 +70,23 @@ function generateVoices(extradata, chunks) {
 
 module.exports = function (args, extradata) {
 
+    console.log('Called twice wtf')
+
     return new Promise((success, error) => {
 
-        const content = args[0];
+        const content = args;
+        const folder = extradata.Config.Folder;
 
         if (Array.isArray(content)) {
 
-            generateVoices(extradata, content).then((res) => {
+            generateVoices(folder, content).then((res) => {
                 success(res);
             });
 
         } else {
-            convertText2Chunks(content).then((chunks) => {
+            convertText2Chunks(content, extradata.Config.LCode).then((chunks) => {
 
-                generateVoices(extradata, chunks).then((res) => {
+                generateVoices(folder, chunks).then((res) => {
                     success(res);
                 });
 

@@ -2,14 +2,13 @@ const path = require('path');
 const fs = require('fs');
 const jimp = require('jimp');
 
-module.exports = function (id, image) {
+module.exports = function (folder, id, image) {
     const text = image.text;
-    const accent = image.accent;
+    const accent = image.extra.name;
     const duration = image.duration;
 
-    const background_path = path.join(folder, 'preset', 'background.jpg');
+    const background_path = image.background;
     const output_path = path.join(folder, 'images', 'image' + id + '.jpg');
-    const save_file = path.join(folder, 'images', 'image' + id + '.json');
 
     return new Promise((success, error) => {
         jimp.loadFont(jimp.FONT_SANS_128_WHITE).then(function (font) {
@@ -22,18 +21,7 @@ module.exports = function (id, image) {
                     alignmentX: jimp.HORIZONTAL_ALIGN_CENTER
                 }, 1100, 720).write(output_path);
 
-                const output = {
-                    vocal: id,
-                    values: {
-                        path: output_path,
-                        loop: duration
-                    }
-                };
-
-                fs.writeFile(save_file, JSON.stringify(output), function (errfile) {
-                    console.log('Vocal #' + id + ' has its video part!');
-                    success(output);
-                });
+                success(output_path);
             });
         });
 

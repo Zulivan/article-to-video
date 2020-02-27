@@ -1,11 +1,11 @@
 const Config = {
-    LocalPort: 5008,
     oAuth: {
+        LocalPort: 5003,
         Public: '086080127763-qmrkld41cf5vreqpsb74bncblmt303n6.apps.googleusercontent.com',
         Private: 'sgPGM3qrMi_zQR3aAsRcSNeP'
     },
     Video: {
-        CompliationLoop: 3
+        CompilationLoop: 3
     },
     Folder: 'h2p',
     Word: 'Aww Man',
@@ -16,7 +16,7 @@ const Config = {
 const LauncherClass = require('./classes/Launcher.js');
 const Launcher = new LauncherClass(__dirname, Config);
 
-this.Accents = {
+const Accents = {
     australian: {
         langcode: 'en-AU',
         name: 'Australian English'
@@ -35,22 +35,43 @@ this.Accents = {
     }
 };
 
+const fs = require('fs');
+const path = require('path');
+
+const wordsfile = JSON.parse(fs.readFileSync(path.join(Config.Folder, 'temp', 'words.json'), 'utf8'));
+console.log('Loaded '+wordsfile.length+' words!');
+const word = wordsfile.shift();
+console.log('The word of today is '+word);
+
 let vocals = [];
 
-for (let i in self.Accents) {
+for (let i in Accents) {
     vocals.push({
-        lang: self.Accents[i].langcode,
+        lang: Accents[i].langcode,
         text: word,
-        extra: self.Accents[i]
+        extra: Accents[i]
     });
 };
 
-// Launcher.AddPresetStep('genAudio', Arguments);
+Launcher.AddPresetStep('genAudio', vocals);
 
-// Launcher.AddPresetStep('genImagesPerAudioChunk', Arguments);
+let Arguments = {
+    type: 'h2p',
+    background: path.join(Config.Folder, 'preset', 'background.jpg')
+}
 
-// Launcher.AddPresetStep('genVideo', Arguments);
+Launcher.AddPresetStep('genImagesPerAudioChunk', Arguments);
+
+Arguments = {
+    fileName: word
+}
+
+Launcher.AddPresetStep('genVideo', Arguments);
 
 // Launcher.AddPresetStep('upload', Arguments);
 
-Launcher.Run();
+//TODO SKIP TO NEXT WORD
+
+Launcher.AddStep(function(){
+    fs.writeFileSync(path.join(Config.Folder, 'temp', 'words.json'), JSON.stringify(self.wordsfile));
+});

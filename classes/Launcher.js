@@ -227,17 +227,6 @@ module.exports = class Launcher {
                 };
             };
 
-            const promise = promises.reduce(function (prm) {
-                return prm.then(function (res) {
-                    return run().then(function (result) {
-                        res.push(result);
-                        return res;
-                    });
-                });
-            }, Promise.resolve([]));
-
-            promise.then(console.log);
-
             waterfall(promises).then((values) => {
                 success(values);
                 self.debug('I went through all steps!');
@@ -255,6 +244,7 @@ module.exports = class Launcher {
             const func = require(funcPath);
 
             let dataToPass = self.ExtraData;
+            dataToPass.Config = self.Config;
             dataToPass.StepID = id;
 
             self.debug('Running ' + funcId);

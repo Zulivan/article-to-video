@@ -1,1 +1,21 @@
-{"audiodone":true,"videodone":false,"images":[],"renderedvoices":[{"id":0,"duration":0.96,"text":"life","extra":{"langcode":"en-AU","name":"Australian English"}},{"id":1,"duration":0.912,"text":"life","extra":{"langcode":"en","name":"British English"}},{"id":2,"duration":0.816,"text":"life","extra":{"langcode":"en-IN","name":"Indian English"}},{"id":3,"duration":0.744,"text":"life","extra":{"langcode":"en-US","name":"American English"}}]}
+{
+  "0": {
+    "output": "genAudio",
+    "complete": true
+  },
+  "1": {
+    "output": "genImagesPerAudioChunk",
+    "complete": true
+  },
+  "2": {
+    "output": "genVideo",
+    "complete": true
+  },
+  "3": {
+    "complete": false
+  },
+  "4": {
+    "output": "resetFiles",
+    "complete": false
+  }
+}
