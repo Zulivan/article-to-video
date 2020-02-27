@@ -1,20 +1,26 @@
-module.exports = function (args) {
-    const ImageFinder = require('../tools/ImageFinder.js');
-    const IF = new ImageFinder(this.Config, this.Config.Folder);
-
-    const query = args;
+module.exports = function (args, extradata) {
     return new Promise((success, error) => {
-        IF.searchImages(query).then((images) => {
-                console.log('Downloaded all the required images');
+        const ImageFinder = require('../classes/ImageFinder.js');
+        const IF = new ImageFinder(extradata.Config.Folder);
+    
+        let query = args['query'] || 'error alert';
 
-                const output = {
-                    type: 'downloaded_images',
-                    values: images
-                }
+        if (args['type'] == 'magazine') {
+            if (extradata.magazine) {
+                query = extradata.magazine.title;
+            } else {
+                error('No magazine found');
+            }
+        }
 
-                success(output);
+        IF.searchImages(query).then(images => {
+            const output = {
+                type: 'downloaded_images',
+                values: images
+            }
+            success(output);
         }).catch((err) => {
-            error('An error occured because ' + err + ', running reset..');
+            error('An error occured because ' + err);
         });
     });
 };

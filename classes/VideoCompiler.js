@@ -22,7 +22,7 @@ module.exports = class VideoCompiler {
     }
 
     debug(text) {
-        if (DEBUG) console.log(text);
+        if (DEBUG) console.log('VideoCompiler.js: '+text);
     }
 
     generateVideo(audio, values, name = 'video') {
@@ -38,10 +38,26 @@ module.exports = class VideoCompiler {
         });
     }
 
+    concatVideos(clipsToConcat, name = 'video'){
+        return new Promise((success, error) => {
+            concat({
+                silent: true,
+                overwrite: true
+            })
+            .clips(clipsToConcat)
+            .output(path.join(this.Config.Folder, name + '.mp4')) //optional absolute file name for output file
+            .concat().then((outputFileName) => {
+                self.debug('Merging finished !');
+                self.debug('Video successfully generated at: ' + outputFileName);
+                success(path.join(this.Config.Folder, name + '.mp4'));
+            });
+        });
+    }
+
     makeVideo(audiofile, imgrendered, name) {
         const self = this;
 
-        const compilationName = name+'-c';
+        const compilationName = name + '-c';
 
         return new Promise((success, error) => {
             const resourcesfolder = self.Config.Folder;
@@ -83,27 +99,19 @@ module.exports = class VideoCompiler {
                             success(false);
                         }).on('end', function (output) {
                             if (self.Loop > 0) {
-                                self.debug('The video is done, now looping it ' + self.Loop + ' times.')
-                                let clipsToConcat = [];
+                                self.debug('The video is done, now looping it ' + self.Loop + ' times.');
 
+                                let clipsToConcat = [];
                                 for (let i = 0; i < self.Loop; i++) {
                                     clipsToConcat.push({
                                         'fileName': path.join(resourcesfolder, name + '.mp4')
                                     })
                                 }
 
-                                concat({
-                                        silent: true,
-                                        overwrite: true
-                                    })
-                                    .clips(clipsToConcat)
-                                    .output(path.join(resourcesfolder, compilationName + '.mp4')) //optional absolute file name for output file
-                                    .concat().then((outputFileName) => {
-                                        self.debug('Merging finished !');
-                                        self.debug('Video successfully generated at: ' + outputFileName);
-                                        fs.unlinkSync(path.join(resourcesfolder, name + '.mp4'))
-                                        success(path.join(resourcesfolder, compilationName + '.mp4'));
-                                    });
+                                self.concatVideos(clipsToConcat, name).then((finalpath) => {
+                                    success(finalpath);
+                                });
+
                             } else {
                                 self.debug('Video successfully generated at: ' + output);
                                 success(path.join(resourcesfolder, name + '.mp4'));

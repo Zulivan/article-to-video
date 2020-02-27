@@ -21,14 +21,14 @@ module.exports = class ImageMaker {
             let promises = [];
 
             for (let i = 0; i < images.length; i++) {
-                const imgFuncPath = path.join(self.Config.Directory, 'addons', 'ImageGenerator', images[i]['type'] + '.js');
+                const imgFuncPath = path.join(self.Config.Folder, 'preset', images[i]['type'] + '.js');
                 if (fs.existsSync(imgFuncPath)) {
                     promises.push(self.runImageGeneration(i, images[i]));
                 } else {
                     error('The type: "' + images[i]['type'] + '" is not a valid preset type');
                 };
             };
-
+            
             Promise.all(promises).then((values) => {
                 self.debug('All promises are done!')
                 values = values.filter(v => v != null);
@@ -61,12 +61,11 @@ module.exports = class ImageMaker {
     runImageGeneration(index, data) {
         const self = this;
 
-        const jsonContentPath = path.join(self.Config.Directory, self.Config.Folder, 'images', 'image' + index + '.json');
-        const imgFuncPath = path.join(self.Config.Directory, 'addons', 'ImageGenerator', data['type'] + '.js');
-        const imgCustomFunc = require(imgFuncPath);
-
         return new Promise((success, error) => {
-
+            const jsonContentPath = path.join(self.Config.Directory, self.Config.Folder, 'images', 'image' + index + '.json');
+            const imgFuncPath = path.join(self.Config.Directory, self.Config.Folder, 'preset', data['type'] + '.js');
+            const imgCustomFunc = require(imgFuncPath);
+    
             function recordGeneration(result) {
 
                 const duration = data.duration || 1;
@@ -93,12 +92,8 @@ module.exports = class ImageMaker {
                     self.debug('File with id ' + index + '.jpg is already done! Checking contents..');
                     try {
                         const output = JSON.parse(fs.readFileSync(jsonContentPath, 'utf8'));
-                        console.log(output)
                         success(output);
                     } catch (e) {
-
-                        console.log(e);
-
                         self.debug('The JSON content of the image ' + index + ' is corrupt, remaking...');
                         imgCustomFunc(self.Config.Folder, index, data).then((r) => {
                             recordGeneration(r);

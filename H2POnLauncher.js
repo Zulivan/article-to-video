@@ -9,7 +9,7 @@ const Config = {
     },
     Folder: 'h2p',
     Word: 'Aww Man',
-    Tags: ['pronounce '+this.Word, 'say '+this.Word, 'how to spell '+this.Word]
+    Tags: ['pronounce ' + this.Word, 'say ' + this.Word, 'how to spell ' + this.Word]
 };
 
 
@@ -38,40 +38,43 @@ const Accents = {
 const fs = require('fs');
 const path = require('path');
 
-const wordsfile = JSON.parse(fs.readFileSync(path.join(Config.Folder, 'temp', 'words.json'), 'utf8'));
-console.log('Loaded '+wordsfile.length+' words!');
-const word = wordsfile.shift();
-console.log('The word of today is '+word);
+Launcher.Load().then(() => {
 
-let vocals = [];
+    const wordsfile = JSON.parse(fs.readFileSync(path.join(Config.Folder, 'temp', 'words.json'), 'utf8'));
+    console.log('Loaded ' + wordsfile.length + ' words!');
+    const word = wordsfile.shift();
+    console.log('The word of today is ' + word);
 
-for (let i in Accents) {
-    vocals.push({
-        lang: Accents[i].langcode,
-        text: word,
-        extra: Accents[i]
+    let vocals = [];
+
+    for (let i in Accents) {
+        vocals.push({
+            lang: Accents[i].langcode,
+            text: word,
+            extra: Accents[i]
+        });
+    };
+
+    Launcher.AddPresetStep('genAudio', vocals);
+
+    let Arguments = {
+        type: 'h2p',
+        background: path.join(Config.Folder, 'preset', 'background.jpg')
+    }
+
+    Launcher.AddPresetStep('genImagesPerAudioChunk', Arguments);
+
+    Arguments = {
+        fileName: word
+    }
+
+    Launcher.AddPresetStep('genVideo', Arguments);
+
+    // Launcher.AddPresetStep('upload', Arguments);
+
+    //TODO SKIP TO NEXT WORD
+
+    Launcher.AddStep(function () {
+        fs.writeFileSync(path.join(Config.Folder, 'temp', 'words.json'), JSON.stringify(self.wordsfile));
     });
-};
-
-Launcher.AddPresetStep('genAudio', vocals);
-
-let Arguments = {
-    type: 'h2p',
-    background: path.join(Config.Folder, 'preset', 'background.jpg')
-}
-
-Launcher.AddPresetStep('genImagesPerAudioChunk', Arguments);
-
-Arguments = {
-    fileName: word
-}
-
-Launcher.AddPresetStep('genVideo', Arguments);
-
-// Launcher.AddPresetStep('upload', Arguments);
-
-//TODO SKIP TO NEXT WORD
-
-Launcher.AddStep(function(){
-    fs.writeFileSync(path.join(Config.Folder, 'temp', 'words.json'), JSON.stringify(self.wordsfile));
 });

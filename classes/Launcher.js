@@ -32,45 +32,51 @@ module.exports = class Launcher {
         } else {
             console.log('The oAuth credentials are not set up')
         }
-
-        fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp'), (exists) => {
-            if (!exists) {
-                fs.mkdirSync(path.join(this.Config.Directory, this.Config.Folder, 'temp'))
-            }
-            fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), (exists1) => {
-                if (exists1) {
-                    try {
-                        this.Progression = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), 'utf8'));
-                    } catch (e) {
-                        console.log('The progression file is corrupt, reset done.')
-                    }
-                } else {
-                    console.log('No progression file found, generating one.')
-                }
-
-
-                fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'extra.json'), (exists2) => {
-                    if (exists2) {
-                        try {
-                            this.ExtraData = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'extra.json'), 'utf8'));
-                        } catch (e) {
-                            console.log('The extra data file is corrupt, reset done.')
-                        }
-                    } else {
-                        console.log('No extra data file file found, generating one.')
-                    }
-                    this.ExtraData['Config'] = this.Config;
-
-                    this.Run();
-                });
-            });
-        });
-
     }
 
     debug(val) {
         if (DEBUG) console.log(val);
     }
+
+    Load(){
+        return new Promise((success, error) => {
+            fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp'), (exists) => {
+                if (!exists) {
+                    fs.mkdirSync(path.join(this.Config.Directory, this.Config.Folder, 'temp'))
+                }
+                fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), (exists1) => {
+                    if (exists1) {
+                        try {
+                            this.Progression = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), 'utf8'));
+                        } catch (e) {
+                            console.log('The progression file is corrupt, reset done.')
+                        }
+                    } else {
+                        console.log('No progression file found, generating one.')
+                    }
+
+                    fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'extra.json'), (exists2) => {
+                        if (exists2) {
+                            try {
+                                this.ExtraData = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'extra.json'), 'utf8'));
+                            } catch (e) {
+                                console.log('The extra data file is corrupt, reset done.')
+                            };
+                        } else {
+                            console.log('No extra data file found, generating one.')
+                        };
+                        this.ExtraData['Config'] = this.Config;
+
+                        success(true);
+
+                        setTimeout(() => {
+                            this.Run();
+                        }, 1000);
+                    });
+                });
+            });
+        });
+    };
 
     /**
      * Adds up a preset step to make the video
@@ -168,8 +174,19 @@ module.exports = class Launcher {
 
     /**
      * Saves extra data to communicate with other functions
-     * @param {string} type If set: sets an index to the specified value 
-     * @param {any} value 
+     * @param {string} type If set: sets an index to the specified value
+     */
+
+    GetExtraData(type) {
+        if (!type) throw 'No type found';
+        return this.ExtraData[type] || false;
+    }
+
+
+    /**
+     * Saves extra data to communicate with other functions
+     * @param {string} type If set: sets an index to the specified value
+     * @param {any} value
      */
 
     SetExtraData(type, value) {

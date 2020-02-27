@@ -3,11 +3,11 @@ const fs = require('fs');
 const jimp = require('jimp');
 
 module.exports = function (folder, id, image) {
+
     const text = image.text;
     const accent = image.extra.name;
-    const duration = image.duration;
-
     const background_path = image.background;
+
     const output_path = path.join(folder, 'images', 'image' + id + '.jpg');
 
     return new Promise((success, error) => {
@@ -24,6 +24,5 @@ module.exports = function (folder, id, image) {
                 success(output_path);
             });
         });
-
     });
 };

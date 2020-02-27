@@ -1,22 +1,25 @@
 const fs = require('fs');
 const Lien = require('lien');
-const prettyBytes = require('pretty-bytes');
+// const prettyBytes = require('pretty-bytes');
 const ImageMaker = require('../classes/ImageMaker.js');
 const open = require('open');
+const path = require('path');
 const {
     google
 } = require('googleapis');
 
 module.exports = class YoutubeUploader {
     /**
-     * Initializes Uploader instance
-     * @param {object} config Config array
+     * Initializes a Uploader instance
+     * @param {object} folder Folder 
      * @param {string} client Google's oAuth client 
      */
 
-    constructor(config = {}, client) {
+    constructor(folder, client) {
 
-        this.Config = config;
+        this.Config = {
+            Folder: folder
+        };
 
         this.oAuth = client;
 
@@ -26,9 +29,9 @@ module.exports = class YoutubeUploader {
 
     uploadVideo(file, title, subtitles, tags = ['#news', 'france infos', 'nouvelles', 'actualités'], randomimage, description = 'Les nouvelles les plus palpitantes sur cette chaine youtube gratuitement', magazine = 'FRANCE INFOS 24/7') {
         const self = this;
-        const resourcesfolder = self.Config.Folder;
+        
         return new Promise((success, error) => {
-            self.logIn().then((logged_in, reset) => {
+            self.logIn().then(logged_in => {
                 if (logged_in && !self.uploading) {
                     self.uploading = true;
                     console.log('Uploading...');
@@ -41,7 +44,7 @@ module.exports = class YoutubeUploader {
                         resource: {
                             snippet: {
                                 title: title,
-                                description: title + '\r\n Source: ' + magazine,
+                                description: title + '\r\n'+description+'\r\n Source: ' + magazine,
                                 categoryId: '22',
                                 defaultLanguage: 'fr',
                                 tags: tags
@@ -109,6 +112,7 @@ module.exports = class YoutubeUploader {
                             success(false);
                         }
                     });
+                    console.log(req1)
                     if (this.uploading) {
                         // this.uploading = false;
                         // let currentbytes = 0;
@@ -129,15 +133,20 @@ module.exports = class YoutubeUploader {
     logIn() {
         const self = this;
         return new Promise((success, error) => {
-            const resourcesfolder = self.Config.Folder;
+            
             const oauth = self.oAuth;
+
             const server = new Lien({
                 host: 'localhost',
-                port: self.Config.LocalPort
+                port: oauth.LocalPort
             });
             console.log('Checking oAuth credentials.')
-            fs.readFile('./' + resourcesfolder + '/temp/tokens.json', 'utf8', function (err, tokenfile) {
+
+            const tokensPath = path.join(self.Config.Folder, 'temp', 'tokens.json');
+
+            fs.readFile(tokensPath, 'utf8', (err, tokenfile) => {
                 if (err) tokenfile = '{}';
+
                 if (tokenfile.length > 5) {
                     oauth.setCredentials({
                         refresh_token: JSON.parse(tokenfile).refresh
@@ -148,18 +157,18 @@ module.exports = class YoutubeUploader {
                         access_type: 'offline',
                         scope: ['https://www.googleapis.com/auth/youtube.upload', 'https://www.googleapis.com/auth/youtube.force-ssl', 'https://www.googleapis.com/auth/youtubepartner', 'https://www.googleapis.com/auth/youtube']
                     });
-                    console.log('Please log in with this address:');
+                    console.log('Please log in to YouTube with this link:');
                     open(url);
                     server.addPage('/oauth2callback', lien => {
-                        console.log("Trying to get the token using the following code: " + lien.query.code);
+                        console.log('Trying to get the token using the following code: ' + lien.query.code);
                         oauth.getToken(lien.query.code, (err, tokens) => {
                             if (err) {
                                 // lien.lien(err, 400);
-                                return console.log(err);
+                                error(err);
                             };
                             console.log(tokens)
                             if (tokens.refresh_token) {
-                                fs.writeFile('./' + resourcesfolder + '/temp/tokens.json', JSON.stringify({
+                                fs.writeFile(tokensPath, JSON.stringify({
                                     refresh: tokens.refresh_token,
                                     access: tokens.access_token
                                 }), function (errfile3) {

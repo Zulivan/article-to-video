@@ -73,7 +73,6 @@ module.exports = class AudioProcess {
     makeCompilationFile(files) {
         const self = this;
         return new Promise((success, error) => {
-
             audioconcat(files)
                 .concat(path.join(self.Folder, 'compilation.mp3'))
                 .on('start', function (command) {
@@ -82,7 +81,7 @@ module.exports = class AudioProcess {
                     error('Voice compilation Error: ' + err + ' ffmpeg stderr: ' + stderr);
                 }).on('end', function (output) {
                     if (fs.existsSync(path.join(self.Directory, 'preset', 'music.mp3'))) {
-                        self.addBackgroundAudio(path.join(self.Directory, 'preset', 'music.mp3'), path.join(self.Folder, 'compilation.mp3'))
+                        self.addAudioBackground(path.join(self.Directory, 'preset', 'music.mp3'), path.join(self.Folder, 'compilation.mp3'))
                     } else {
                         success(output);
                     };
@@ -97,7 +96,7 @@ module.exports = class AudioProcess {
      * @param {path} file2Path Contains audio file path
      */
 
-    addBackgroundAudio(file1Path, file2Path) {
+    addAudioBackground(file1Path, file2Path) {
         return new Promise((success, err) => {
             const proc = new ffmpeg();
             proc.addInput(file1Path)

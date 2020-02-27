@@ -1,6 +1,7 @@
 module.exports = function (args, extradata) {
 
     const type = args['type'];
+
     const img_srcs = extradata.downloaded_images || [];
 
     const audio = extradata.generated_audio;
@@ -31,7 +32,7 @@ module.exports = function (args, extradata) {
                 type: 'generated_images',
                 values: images
             }
-            
+
             success(output);
         });
     });

@@ -4,7 +4,7 @@ const Config = {
 
 const path = require('path');
 
-function getChuncksAmount(content) {
+function getChunksAmount(content) {
     let amt = 0;
     content = content.split(' ').length;
     const maxwords = Config.WordsPerRecording;
@@ -16,19 +16,16 @@ function getChuncksAmount(content) {
     return amt;
 };
 
-function convertText2Chunks(content, lang) {
+function convertText2Chunks(content, options) {
 
     return new Promise((success, error) => {
 
-        const total = getChuncksAmount(content);
-
-        console.log('Generating ~' + total + ' different vocals using Google\'s voice!')
-        console.log('=====================================================')
-
         let vocals = [];
 
-        for (let i = 0; i < total; i++) {
-            const WpR = 15;
+        const WpR = options['wpr'] || 15;
+        const lang = options['lang'] || 'En';
+
+        for (let i = 0; i < getChunksAmount(content); i++) {
 
             const sentence_array = content.split(' ').slice(i * WpR, i * WpR + WpR);
             let sentence = sentence_array.join(' ') + ',';
@@ -43,15 +40,16 @@ function convertText2Chunks(content, lang) {
             });
         };
 
-        AudioProcess.createCompilation(vocals).then((res) => {
-            success(res);
-        });
+        success(vocals);
     });
 }
 
 function generateVoices(folder, chunks) {
     const AP = require('../classes/AudioProcess.js');
-    const AudioProcess = new AP(path.join(folder));
+    const AudioProcess = new AP(folder);
+
+    console.log('Generating ~' + chunks.length + ' different vocals using Google\'s voice!')
+    console.log('=====================================================')
 
     return new Promise((success, error) => {
         AudioProcess.createCompilation(chunks).then((audio) => {
@@ -69,28 +67,32 @@ function generateVoices(folder, chunks) {
 }
 
 module.exports = function (args, extradata) {
-
-    console.log('Called twice wtf')
-
     return new Promise((success, error) => {
 
-        const content = args;
+        let content = args;
         const folder = extradata.Config.Folder;
 
         if (Array.isArray(content)) {
 
             generateVoices(folder, content).then((res) => {
                 success(res);
-            });
+            }).catch(error);
 
         } else {
-            convertText2Chunks(content, extradata.Config.LCode).then((chunks) => {
+
+            const options = args;
+
+            console.log(options);
+
+            content = options['text'] || 'What do you want me to say?';
+
+            convertText2Chunks(content, options).then((chunks) => {
 
                 generateVoices(folder, chunks).then((res) => {
                     success(res);
-                });
+                }).catch(error);
 
-            });
+            }).catch(error);
         };
     });
 };
