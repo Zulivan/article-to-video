@@ -1,10 +1,10 @@
 module.exports = function (videosToConcat, extradata) {
-    const VideoCompiler = require('../classes/VideoCompiler.js');
-
-    let loopVideo = false;
-    const VC = new VideoCompiler(extradata.Config.Folder, loopVideo);
-    
     return new Promise((success, error) => {
+        const VideoCompiler = require('../classes/VideoCompiler.js');
+
+        let loopVideo = false;
+        const VC = new VideoCompiler(extradata.Config.Folder, loopVideo);
+        
         VC.concatVideos(videosToConcat, null).then((file) => {
             if (file) {
                 success(file);

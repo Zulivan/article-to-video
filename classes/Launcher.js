@@ -60,6 +60,7 @@ module.exports = class Launcher {
                             try {
                                 this.ExtraData = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'extra.json'), 'utf8'));
                             } catch (e) {
+                                this.ExtraData = {};
                                 console.log('The extra data file is corrupt, reset done.')
                             };
                         } else {

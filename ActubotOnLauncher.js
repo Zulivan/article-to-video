@@ -25,19 +25,25 @@ Launcher.Load().then(() => {
     const Magazines = ['voici', 'gala', 'vminutes-people', 'vminutes-divers', 'vminutes-sports', 'figaro', 'valeursactuelles']
 
     try {
-        const preload = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'preload.json'), 'utf8'));
-        fs.writeFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'preload.json'), JSON.stringify({
+        const preload = JSON.parse(fs.readFileSync(path.join(Config.Directory, Config.Folder, 'temp', 'preload.json'), 'utf8'));
+        
+        fs.writeFileSync(path.join(Config.Directory, Config.Folder, 'temp', 'preload.json'), JSON.stringify({
             title: '',
             content: ''
         }));
 
         if (preload.title && preload.content && preload.title.length > 0) {
+
+            const output = {
+                type = 
+            }
             Launcher.SetExtraData('magazine', preload);
         } else {
             console.log('The content to preload doesnt have one of these options: title, content');
             Launcher.AddPresetStep('findMagazines', Magazines);
         }
     } catch (e) {
+        console.log(e)
         console.log('The preloaded content file is corrupt.');
         Launcher.AddPresetStep('findMagazines', Magazines);
     }
@@ -65,7 +71,8 @@ Launcher.Load().then(() => {
 
     Launcher.AddPresetStep('genVideo');
     
-    let Videos = [path.join(__dirname, Config.Folder, 'preset', 'intro.mp4'), Launcher.GetExtraData('video')];
+    let Videos = [path.join('.', Launcher.GetExtraData('video')), path.join('.', Launcher.GetExtraData('video'))];
+    // let Videos = [path.join(__dirname, Config.Folder, 'preset', 'intro.mp4')];
     Launcher.AddPresetStep('concatVideos', Videos);
     // tags ['#news']
     // Launcher.AddPresetStep('upload', Arguments);
