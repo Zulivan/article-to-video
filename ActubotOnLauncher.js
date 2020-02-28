@@ -33,10 +33,6 @@ Launcher.Load().then(() => {
         }));
 
         if (preload.title && preload.content && preload.title.length > 0) {
-
-            const output = {
-                type = 
-            }
             Launcher.SetExtraData('magazine', preload);
         } else {
             console.log('The content to preload doesnt have one of these options: title, content');
@@ -71,7 +67,7 @@ Launcher.Load().then(() => {
 
     Launcher.AddPresetStep('genVideo');
     
-    let Videos = [path.join('.', Launcher.GetExtraData('video')), path.join('.', Launcher.GetExtraData('video'))];
+    let Videos = [path.join(Config.Directory, Config.Folder, 'preset', 'intro.mp4'), path.join('.', Launcher.GetExtraData('video'))];
     // let Videos = [path.join(__dirname, Config.Folder, 'preset', 'intro.mp4')];
     Launcher.AddPresetStep('concatVideos', Videos);
     // tags ['#news']

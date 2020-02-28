@@ -1,6 +1,7 @@
 const path = require('path');
 
 module.exports = function (args, extradata) {
+
     let loopVideo = false;
     let audioFile = path.join(extradata.Config.Folder, 'audio', 'compilation.mp3');
     let name = 'video';
@@ -23,6 +24,7 @@ module.exports = function (args, extradata) {
     const images = extradata.generated_images || [];
 
     return new Promise((success, error) => {
+
         VC.generateVideo(audioFile, images, name).then((file) => {
             if (file) {
                 const output = {
@@ -39,7 +41,7 @@ module.exports = function (args, extradata) {
                 error('No video generated');
             }
         }).catch((e) => {
-            error(e);
+            error('And error occurred while generating the video: '+e);
         });
     });
 };

@@ -36,20 +36,8 @@ module.exports = class VideoCompiler {
             });
         }
 
-        concatVideos(clipsToConcat, name = 'video') {
+        concatVideos(clipsToConcat, name = 'final') {
             return new Promise((success, error) => {
-                    // console.log(clipsToConcat)
-                    // vidconcat({
-                    //     silent: true,
-                    //     overwrite: true
-                    // })
-                    // .clips(clipsToConcat)
-                    // .output(path.join(this.Config.Folder, name + '.mp4')) //optional absolute file name for output file
-                    // .concat().then((outputFileName) => {
-                    //     self.debug('Merging finished !');
-                    //     self.debug('Video successfully generated at: ' + outputFileName);
-                    //     success(path.join(this.Config.Folder, name + '.mp4'));
-                    // }).catch(error);
                     console.log(clipsToConcat[0])
                     console.log(clipsToConcat[1])
 
@@ -57,20 +45,17 @@ module.exports = class VideoCompiler {
                             output: path.join(this.Config.Folder, name + '.mp4'),
                                 videos: clipsToConcat,
                                 transition: {
-                                    name: 'directionalWipe',
-                                    duration: 500
+                                    name: 'fade',
+                                    duration: 300
                                 }
                             })
 
-                        success(path.join(this.Config.Folder, name + '.mp4'));
+                        success(path.join(this.Config.Folder, 'null.mp4'));
                     });
             }
 
             makeVideo(audiofile, imgrendered, name) {
                 const self = this;
-
-                const compilationName = name + '-c';
-
                 return new Promise((success, error) => {
                     const resourcesfolder = self.Config.Folder;
                     // path.join(resourcesfolder, 'audio', 'compilation.mp3')
