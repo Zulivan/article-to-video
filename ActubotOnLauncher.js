@@ -26,7 +26,7 @@ Launcher.Load().then(() => {
 
     try {
         const preload = JSON.parse(fs.readFileSync(path.join(Config.Directory, Config.Folder, 'temp', 'preload.json'), 'utf8'));
-        
+
         fs.writeFileSync(path.join(Config.Directory, Config.Folder, 'temp', 'preload.json'), JSON.stringify({
             title: '',
             content: ''
@@ -65,11 +65,33 @@ Launcher.Load().then(() => {
 
     Launcher.AddPresetStep('genImagesPerAudioChunk', Arguments);
 
+    Arguments = {
+        overlay: path.join(Config.Folder, 'preset', 'thumbnail.png'),
+        background: path.join(Config.Folder, 'images', 'image0.jpg')
+    }
+
+    Launcher.AddPresetStep('genThumbnail', Arguments);
+
     Launcher.AddPresetStep('genVideo');
-    
-    let Videos = [path.join(Config.Directory, Config.Folder, 'preset', 'intro.mp4'), path.join('.', Launcher.GetExtraData('video'))];
-    // let Videos = [path.join(__dirname, Config.Folder, 'preset', 'intro.mp4')];
+
+    const Videos = [path.join(Config.Folder, 'preset', 'intro.mp4'), Launcher.GetExtraData('video')];
+
+    console.log(Videos)
+
     Launcher.AddPresetStep('concatVideos', Videos);
-    // tags ['#news']
-    // Launcher.AddPresetStep('upload', Arguments);
+
+    let tags = ['#news'];
+    const searchterms = Launcher.GetExtraData('magazine').content;
+
+    tags.concat(searchterms);
+
+    Arguments = {
+        file: Launcher.GetExtraData('video'),
+        title: Launcher.GetExtraData('magazine').title,
+        subtitles: Launcher.GetExtraData('magazine').content,
+        tags: tags,
+        thumbnail: Launcher.GetExtraData('thumbnail')
+    }
+
+    Launcher.AddPresetStep('upload', Arguments);
 });

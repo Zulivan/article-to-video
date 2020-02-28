@@ -4,7 +4,7 @@ module.exports = function (args, extradata) {
 
     const img_srcs = extradata.downloaded_images || [];
 
-    const audio = extradata.generated_audio;
+    const audio = extradata.generated_audio.values;
 
     const ImageMaker = require('../classes/ImageMaker.js');
     const IM = new ImageMaker(extradata.Config.Directory, extradata.Config.Folder);

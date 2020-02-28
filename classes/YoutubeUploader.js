@@ -21,15 +21,22 @@ module.exports = class YoutubeUploader {
             Folder: folder
         };
 
-        this.oAuth = client;
+        this.oAuth = new google.auth.OAuth2(client.Public, client.Private, 'http://localhost:' + client.LocalPort + '/oauth2callback');
 
         this.uploading = false;
 
     }
 
-    uploadVideo(file, title, subtitles, tags = ['#news', 'france infos', 'nouvelles', 'actualités'], randomimage, description = 'Les nouvelles les plus palpitantes sur cette chaine youtube gratuitement', magazine = 'FRANCE INFOS 24/7') {
+    uploadVideo(file, title, subtitles, tags = ['#news', 'france infos', 'nouvelles', 'actualités'], thumbnail, description = 'Les nouvelles les plus palpitantes sur cette chaine youtube gratuitement', magazine = 'FRANCE INFOS 24/7') {
         const self = this;
-        
+        const badChars = ['<', '>', '«', '»'];
+        const TextEditor = require('../tools/TextEditor.js');
+        title = TextEditor.HTMLtoUTF8(title)
+        title = TextEditor.clear(title)
+        title = TextEditor.replaceByFilter(title, badChars, '\'');
+        title = title.replace(/PHOTO/g, '').replace(/voici.fr/g, magazine).replace(/closer/g, magazine).replace(/la mort/g, 'la disparition').replace(/mort/g, 'disparu');
+        if (title.length > 92) title = title.slice(0, 90) + '...';
+
         return new Promise((success, error) => {
             self.logIn().then(logged_in => {
                 if (logged_in && !self.uploading) {
@@ -44,7 +51,7 @@ module.exports = class YoutubeUploader {
                         resource: {
                             snippet: {
                                 title: title,
-                                description: title + '\r\n'+description+'\r\n Source: ' + magazine,
+                                description: title + '\r\n' + description + '\r\n Source: ' + magazine,
                                 categoryId: '22',
                                 defaultLanguage: 'fr',
                                 tags: tags
@@ -81,24 +88,20 @@ module.exports = class YoutubeUploader {
                             }, (errcc, data) => {
                                 if (!errcc) {
                                     console.log('--- Youtube Caption Uploaded! ---')
-                                    const IM = new ImageMaker(this.Config);
-                                    console.log(randomimage);
-                                    IM.generateThumbnail(randomimage.name).then((thumbnail_dir, errimg) => {
-                                        let req3 = youtube.thumbnails.set({
-                                            videoId: video.id,
-                                            media: {
-                                                body: fs.createReadStream(thumbnail_dir)
-                                            }
-                                        }, (errthumbnail, data) => {
-                                            if (!errthumbnail) {
-                                                console.log('---------------------------------');
-                                                console.log('--- Youtube Thumbnail Uploaded! ---');
-                                                success(video.id);
-                                            } else {
-                                                console.log(errthumbnail)
-                                                success(false);
-                                            }
-                                        });
+                                    let req3 = youtube.thumbnails.set({
+                                        videoId: video.id,
+                                        media: {
+                                            body: fs.createReadStream(thumbnail)
+                                        }
+                                    }, (errthumbnail, data) => {
+                                        if (!errthumbnail) {
+                                            console.log('---------------------------------');
+                                            console.log('--- Youtube Thumbnail Uploaded! ---');
+                                            success(video.id);
+                                        } else {
+                                            console.log(errthumbnail)
+                                            success(false);
+                                        }
                                     });
                                 } else {
                                     console.log(errcc)
@@ -112,7 +115,6 @@ module.exports = class YoutubeUploader {
                             success(false);
                         }
                     });
-                    console.log(req1)
                     if (this.uploading) {
                         // this.uploading = false;
                         // let currentbytes = 0;
@@ -133,26 +135,29 @@ module.exports = class YoutubeUploader {
     logIn() {
         const self = this;
         return new Promise((success, error) => {
-            
+
             const oauth = self.oAuth;
 
             const server = new Lien({
                 host: 'localhost',
                 port: oauth.LocalPort
             });
-            console.log('Checking oAuth credentials.')
 
             const tokensPath = path.join(self.Config.Folder, 'temp', 'tokens.json');
+
+            // console.log(tokensPath)
 
             fs.readFile(tokensPath, 'utf8', (err, tokenfile) => {
                 if (err) tokenfile = '{}';
 
                 if (tokenfile.length > 5) {
+                    console.log('Token file is done.')
                     oauth.setCredentials({
                         refresh_token: JSON.parse(tokenfile).refresh
                     });
                     success(true);
                 } else {
+                    console.log('Token file is empty.')
                     const url = oauth.generateAuthUrl({
                         access_type: 'offline',
                         scope: ['https://www.googleapis.com/auth/youtube.upload', 'https://www.googleapis.com/auth/youtube.force-ssl', 'https://www.googleapis.com/auth/youtubepartner', 'https://www.googleapis.com/auth/youtube']

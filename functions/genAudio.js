@@ -51,9 +51,9 @@ function generateVoices(folder, chunks) {
     console.log('Generating ~' + chunks.length + ' different vocals using Google\'s voice!')
     console.log('=====================================================')
 
+    const bgpath = path.join(folder, 'preset', 'music.mp3');
     return new Promise((success, error) => {
-        AudioProcess.createCompilation(chunks).then((audio) => {
-
+        AudioProcess.createCompilation(chunks, bgpath).then((audio) => {
             const output = {
                 type: 'generated_audio',
                 values: audio
@@ -79,19 +79,12 @@ module.exports = function (args, extradata) {
             }).catch(error);
 
         } else {
+            content = args['text'] || 'What do you want me to say?';
 
-            const options = args;
-
-            console.log(options);
-
-            content = options['text'] || 'What do you want me to say?';
-
-            convertText2Chunks(content, options).then((chunks) => {
-
+            convertText2Chunks(content, args).then((chunks) => {
                 generateVoices(folder, chunks).then((res) => {
                     success(res);
                 }).catch(error);
-
             }).catch(error);
         };
     });

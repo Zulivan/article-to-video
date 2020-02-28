@@ -70,7 +70,7 @@ module.exports = class AudioProcess {
         });
     }
 
-    makeCompilationFile(files) {
+    makeCompilationFile(files, backgroundMusicPath) {
         const self = this;
         return new Promise((success, error) => {
             audioconcat(files)
@@ -80,13 +80,14 @@ module.exports = class AudioProcess {
                 }).on('error', function (err, stdout, stderr) {
                     error('Voice compilation Error: ' + err + ' ffmpeg stderr: ' + stderr);
                 }).on('end', function (output) {
-                    if (fs.existsSync(path.join(self.Directory, 'preset', 'music.mp3'))) {
-                        self.addAudioBackground(path.join(self.Directory, 'preset', 'music.mp3'), path.join(self.Folder, 'compilation.mp3'))
+                    if (fs.existsSync(backgroundMusicPath)) {
+                        self.addAudioBackground(backgroundMusicPath, path.join(self.Folder, 'compilation.mp3'), path.join(self.Folder, 'final.mp3')).then((output2) => {
+                            success(output2);
+                        })
                     } else {
-                        success(output);
+                        success(path.join(self.Folder, 'compilation.mp3'));
                     };
                 });
-
         });
     }
 
@@ -96,7 +97,7 @@ module.exports = class AudioProcess {
      * @param {path} file2Path Contains audio file path
      */
 
-    addAudioBackground(file1Path, file2Path) {
+    addAudioBackground(file1Path, file2Path, final = 'final.mp3') {
         return new Promise((success, err) => {
             const proc = new ffmpeg();
             proc.addInput(file1Path)
@@ -105,14 +106,16 @@ module.exports = class AudioProcess {
                     console.log('Adding background audio file');
                 })
                 .on('end', function (output1) {
-                    success(output1);
+                    console.log('Succesfully generated')
+                    success(final);
                 })
                 .on('error', function (error) {
                     err('Audio compilation Error: ' + error);
                 })
                 .addInputOption('-filter_complex amerge')
-                .outputOptions(['-ac 2', '-vbr 4'])
-                .output(file2Path)
+                .addInputOption('-y')
+                .outputOptions(['-y', '-ac 2', '-vbr 4'])
+                .output(final)
                 .run();
         });
     };
@@ -122,7 +125,7 @@ module.exports = class AudioProcess {
      * @param {object} audioToGenerate Contains audio informations to be generated
      */
 
-    createCompilation(audioToGenerate = []) {
+    createCompilation(audioToGenerate = [], backgroundMusicPath) {
         const self = this;
         return new Promise((success, error) => {
             let promises = [];
@@ -150,8 +153,8 @@ module.exports = class AudioProcess {
                                         self.AudioFiles.push(path.join(this.Folder, 'vocal' + i + '.mp3'));
                                     }
 
-                                    self.makeCompilationFile(self.AudioFiles).then((file) => {
-                                        success(values);
+                                    self.makeCompilationFile(self.AudioFiles, backgroundMusicPath).then((file) => {
+                                        success({values, file});
                                     })
                                 } else {
                                     success(values);
@@ -164,8 +167,8 @@ module.exports = class AudioProcess {
                                 self.AudioFiles.push(path.join(this.Folder, 'vocal' + i + '.mp3'));
                             };
 
-                            self.makeCompilationFile(self.AudioFiles).then((file) => {
-                                success(values);
+                            self.makeCompilationFile(self.AudioFiles, backgroundMusicPath).then((file) => {
+                                success({values, file});
                             });
                         };
                     });

@@ -1,19 +1,22 @@
 module.exports = function (args, extradata) {
 
     const file = args['file'];
-    const title = args['title'];
-    const subtitles_path = args['subtitles'];
-    const subtitles = fs.createReadStream(subtitles_path);
+    const title = args['title'] || 'No title';
+    const subtitles = args['subtitles'];
     const tags = args['tags'];
     const thumbnail = args['thumbnail'];
-    // const 
+    
+    return new Promise((success, error) => {
+        
+        const YoutubeUploader = require('../classes/YoutubeUploader.js');
+        const YU = new YoutubeUploader(extradata.Config.Folder, extradata.Config.oAuth);
 
-    const YoutubeUploader = require('../tools/YoutubeUploader.js');
-    const YU = new YoutubeUploader(extradata.Config, extradata.oAuth);
+        console.log(args);
 
-    YU.uploadVideo(file, title, subtitles, tags, thumbnail).then((id) => {
-        success(id)
-    }).catch((err) => {
-        error(err)
+        YU.uploadVideo(file, title, subtitles, tags, thumbnail).then((id) => {
+            success(id)
+        }).catch((err) => {
+            error(err)
+        });
     });
 };

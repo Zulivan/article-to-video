@@ -39,13 +39,12 @@ module.exports = class ImageMaker {
         });
     }
 
-    generateThumbnail(image_name) {
-
+    generateThumbnail(overlayPath, imagePath) {
         const self = this;
-        const thumbnail_final_dir = path.join(self.Config.Folder, 'images', 'final_thumbnail.png');
         return new Promise((success, error) => {
-            jimp.read(path.join(self.Config.Folder, 'preset', 'thumbnail.png')).then(overlay => {
-                jimp.read(path.join(self.Config.Folder, 'images', image_name)).then(background => {
+            const thumbnail_final_dir = path.join(self.Config.Folder, 'images', 'final_thumbnail.png');
+            jimp.read(overlayPath).then(overlay => {
+                jimp.read(imagePath).then(background => {
                         background.composite(overlay, 0, 0).resize(1280, 720).quality(60).write(thumbnail_final_dir);
                         success(thumbnail_final_dir);
                     })

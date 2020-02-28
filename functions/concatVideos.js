@@ -1,5 +1,6 @@
 module.exports = function (videosToConcat, extradata) {
     return new Promise((success, error) => {
+        console.log('Concat videos!')
         const VideoCompiler = require('../classes/VideoCompiler.js');
 
         let loopVideo = false;
@@ -7,12 +8,11 @@ module.exports = function (videosToConcat, extradata) {
         
         VC.concatVideos(videosToConcat, null).then((file) => {
             if (file) {
-                success(file);
-                // const captions = path.join(self.Config.Folder, 'temp', 'captions.txt');
-                // const tagsvid = self.Progression.content.propertitle.concat(self.Progression.content.propertitle.split(' '));
-                // const thumbnail = this.Progression.downloaded_images[Math.floor(Math.random() * this.Progression.downloaded_images.length)];
-                // console.log('Video has been made');
-                // self.uploadVideo(file, self.Progression.content.title, captions, tagsvid, thumbnail);
+                const output = {
+                    type: 'video',
+                    values: file
+                };
+                success(output);
             } else {
                 error('No video generated');
             };

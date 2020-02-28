@@ -27,8 +27,6 @@ module.exports = class Launcher {
             if (!config.oAuth.Public) throw 'oAuth: Public key missing.';
             if (!config.oAuth.Private) throw 'oAuth: Private key missing.';
             if (!config.oAuth.LocalPort) throw 'oAuth: Local port missing.';
-
-            this.oAuth = new google.auth.OAuth2(config.oAuth.Public, config.oAuth.Private, 'http://localhost:' + config.LocalPort + '/oauth2callback');
         } else {
             console.log('The oAuth credentials are not set up')
         }
@@ -38,7 +36,7 @@ module.exports = class Launcher {
         if (DEBUG) console.log(val);
     }
 
-    Load(){
+    Load() {
         return new Promise((success, error) => {
             fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp'), (exists) => {
                 if (!exists) {
@@ -144,7 +142,6 @@ module.exports = class Launcher {
             }
         } else if (!this.Progression[index]) {
             this.Progression[index] = value;
-            this.debug('First time we see the step #' + index + ' with values: ' + value);
             try {
                 fs.writeFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), JSON.stringify(this.Progression, null, 2));
                 return true;
@@ -196,7 +193,11 @@ module.exports = class Launcher {
         if (!value) throw 'No value found';
 
         if (this.ExtraData[type] && typeof this.ExtraData[type] === 'object') {
-            this.ExtraData[type] = this.ExtraData[type].concat(value);
+            try {
+                this.ExtraData[type] = this.ExtraData[type].concat(value);
+            } catch (e) {
+                this.ExtraData[type] = value;
+            }
         } else {
             this.ExtraData[type] = value;
         }
@@ -224,6 +225,8 @@ module.exports = class Launcher {
 
         return new Promise((success, error) => {
             let promises = [];
+
+            console.log(self.Steps.length);
 
             for (let i = 0; i < self.Steps.length; i++) {
 
@@ -305,6 +308,7 @@ module.exports = class Launcher {
                     process.exit();
                 }
 
+                fs.unlinkSync(path.join(self.Config.Folder, 'temp', 'progression.json'));
                 fs.unlinkSync(path.join(self.Config.Folder, 'temp', 'extra.json'));
 
                 fs.rmdirSync(path.join(self.Config.Folder, 'images'), {

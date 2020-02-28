@@ -1,4 +1,4 @@
 ﻿@echo off
 :restart
-call node H2P.js
+call node H2POnLauncher.js
 goto restart

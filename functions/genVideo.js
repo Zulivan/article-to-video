@@ -3,7 +3,8 @@ const path = require('path');
 module.exports = function (args, extradata) {
 
     let loopVideo = false;
-    let audioFile = path.join(extradata.Config.Folder, 'audio', 'compilation.mp3');
+    let audioFile = extradata.generated_audio.file;
+    console.log(extradata.generated_audio);
     let name = 'video';
 
     if(args){
@@ -18,10 +19,11 @@ module.exports = function (args, extradata) {
             loopVideo = args['loop'];
         }
     }
-    const VideoCompiler = require('../classes/VideoCompiler.js');
-    const VC = new VideoCompiler(extradata.Config.Folder, loopVideo);
 
     const images = extradata.generated_images || [];
+
+    const VideoCompiler = require('../classes/VideoCompiler.js');
+    const VC = new VideoCompiler(extradata.Config.Folder, loopVideo);
 
     return new Promise((success, error) => {
 
