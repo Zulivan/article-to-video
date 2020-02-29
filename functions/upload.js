@@ -11,8 +11,6 @@ module.exports = function (args, extradata) {
         const YoutubeUploader = require('../classes/YoutubeUploader.js');
         const YU = new YoutubeUploader(extradata.Config.Folder, extradata.Config.oAuth);
 
-        console.log(args);
-
         YU.uploadVideo(file, title, subtitles, tags, thumbnail).then((id) => {
             success(id)
         }).catch((err) => {

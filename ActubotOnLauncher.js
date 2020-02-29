@@ -8,11 +8,7 @@ const Config = {
         CompliationLoop: false
     },
     Folder: 'actus',
-    Name: 'FRANCE INFOS 24/7',
-    Intro: {
-        Time: 5,
-        Text: 'Afin d\'être informé veuillez vous abonner et cliquez sur la cloche pour être notifié!'
-    },
+    Name: 'FRANCE INFOS 24/7'
 };
 
 const fs = require('fs');

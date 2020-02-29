@@ -1,0 +1,38 @@
+{
+  "0": {
+    "output": "findImages",
+    "complete": true
+  },
+  "1": {
+    "output": "genAudio",
+    "complete": true
+  },
+  "2": {
+    "output": "genImagesPerAudioChunk",
+    "complete": true
+  },
+  "3": {
+    "output": "genThumbnail",
+    "complete": true
+  },
+  "4": {
+    "output": "genVideo",
+    "complete": true
+  },
+  "5": {
+    "output": "concatVideos",
+    "complete": true
+  },
+  "6": {
+    "output": "upload",
+    "complete": true
+  },
+  "7": {
+    "output": "resetFiles",
+    "complete": false
+  },
+  "8": {
+    "output": "resetFiles",
+    "complete": false
+  }
+}

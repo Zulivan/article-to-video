@@ -1,0 +1,208 @@
+{
+  "Config": {
+    "oAuth": {
+      "LocalPort": 5000,
+      "Public": "370774627054-dl9pkp0f4ktnp4k46drueucvv7lenj0o.apps.googleusercontent.com",
+      "Private": "xbC5kRQV00HT28iStA0rH28V"
+    },
+    "Video": {
+      "CompliationLoop": false
+    },
+    "Folder": "actus",
+    "Name": "FRANCE INFOS 24/7",
+    "Intro": {
+      "Time": 5,
+      "Text": "Afin d'être informé veuillez vous abonner et cliquez sur la cloche pour être notifié!"
+    },
+    "Directory": "O:\\GIT\\youtubot"
+  },
+  "magazine": {
+    "title": "Coronavirus: 57 cas confirmés en France",
+    "content": "En France, 20 nouveaux cas de coronavirus ont été diagnostiqués, portant le nombre de malades à 38 sur le sol français. « On a devant nous une épidémie qui arrive » et il faudra « l’affronter au mieux », a déclaré Emmanuel Macron jeudi. Vendredi après-midi, l'Organisation mondiale de la santé (OMS) a élevé le niveau de la menace internationale au statut « très élevée ». Le secrétaire général de l’ONU Antonio Guterres a affirmé vendredi que ce n’était « pas le moment de paniquer mais de se préparer pleinement » à la propagation du coronavirus dans le monde. « Nous voyons des cas dans plusieurs nouveaux pays, incluant maintenant le continent africain », a relevé le chef de l’ONU lors d’une brève déclaration à la presse."
+  },
+  "StepID": 6,
+  "downloaded_images": [
+    {
+      "path": "actus\\images\\456828.jpg",
+      "name": "456828.jpg"
+    },
+    {
+      "path": "actus\\images\\213287.jpg",
+      "name": "213287.jpg"
+    },
+    {
+      "path": "actus\\images\\896660.jpg",
+      "name": "896660.jpg"
+    },
+    {
+      "path": "actus\\images\\753463.jpg",
+      "name": "753463.jpg"
+    },
+    {
+      "path": "actus\\images\\256709.jpg",
+      "name": "256709.jpg"
+    },
+    {
+      "path": "actus\\images\\472873.jpg",
+      "name": "472873.jpg"
+    },
+    {
+      "path": "actus\\images\\34657.jpg",
+      "name": "34657.jpg"
+    },
+    {
+      "path": "actus\\images\\334583.jpg",
+      "name": "334583.jpg"
+    },
+    {
+      "path": "actus\\images\\553139.jpg",
+      "name": "553139.jpg"
+    },
+    {
+      "path": "actus\\images\\415801.jpg",
+      "name": "415801.jpg"
+    },
+    {
+      "path": "actus\\images\\746142.jpg",
+      "name": "746142.jpg"
+    },
+    {
+      "path": "actus\\images\\616434.jpg",
+      "name": "616434.jpg"
+    },
+    {
+      "path": "actus\\images\\976798.jpg",
+      "name": "976798.jpg"
+    },
+    {
+      "path": "actus\\images\\351123.jpg",
+      "name": "351123.jpg"
+    }
+  ],
+  "generated_audio": {
+    "values": [
+      {
+        "id": 0,
+        "duration": 7.128,
+        "text": "En France, 20 nouveaux cas de coronavirus ont été diagnostiqués, portant le nombre de malades,",
+        "extra": null
+      },
+      {
+        "id": 1,
+        "duration": 5.352,
+        "text": "à 38 sur le sol français. « On a devant nous une épidémie qui arrive,",
+        "extra": null
+      },
+      {
+        "id": 2,
+        "duration": 6.36,
+        "text": "» et il faudra « l’affronter au mieux », a déclaré Emmanuel Macron jeudi. Vendredi,",
+        "extra": null
+      },
+      {
+        "id": 3,
+        "duration": 8.136,
+        "text": "après-midi, l'Organisation mondiale de la santé (OMS) a élevé le niveau de la menace internationale,",
+        "extra": null
+      },
+      {
+        "id": 4,
+        "duration": 6.768,
+        "text": "au statut « très élevée ». Le secrétaire général de l’ONU Antonio Guterres a affirmé,",
+        "extra": null
+      },
+      {
+        "id": 5,
+        "duration": 5.736,
+        "text": "vendredi que ce n’était « pas le moment de paniquer mais de se préparer pleinement,",
+        "extra": null
+      },
+      {
+        "id": 6,
+        "duration": 5.304,
+        "text": "» à la propagation du coronavirus dans le monde. « Nous voyons des cas dans,",
+        "extra": null
+      },
+      {
+        "id": 7,
+        "duration": 7.056,
+        "text": "plusieurs nouveaux pays, incluant maintenant le continent africain », a relevé le chef de l’ONU,",
+        "extra": null
+      },
+      {
+        "id": 8,
+        "duration": 4.944,
+        "text": "lors d’une brève déclaration à la presse., Merci d'avoir regardé!",
+        "extra": null
+      }
+    ],
+    "file": "actus\\audio\\final.mp3"
+  },
+  "generated_images": [
+    {
+      "vocal": 0,
+      "values": {
+        "path": "actus\\images\\image0.jpg",
+        "loop": 7.128
+      }
+    },
+    {
+      "vocal": 1,
+      "values": {
+        "path": "actus\\images\\image1.jpg",
+        "loop": 5.352
+      }
+    },
+    {
+      "vocal": 2,
+      "values": {
+        "path": "actus\\images\\image2.jpg",
+        "loop": 6.36
+      }
+    },
+    {
+      "vocal": 3,
+      "values": {
+        "path": "actus\\images\\image3.jpg",
+        "loop": 8.136
+      }
+    },
+    {
+      "vocal": 4,
+      "values": {
+        "path": "actus\\images\\image4.jpg",
+        "loop": 6.768
+      }
+    },
+    {
+      "vocal": 5,
+      "values": {
+        "path": "actus\\images\\image5.jpg",
+        "loop": 5.736
+      }
+    },
+    {
+      "vocal": 6,
+      "values": {
+        "path": "actus\\images\\image6.jpg",
+        "loop": 5.304
+      }
+    },
+    {
+      "vocal": 7,
+      "values": {
+        "path": "actus\\images\\image7.jpg",
+        "loop": 7.056
+      }
+    },
+    {
+      "vocal": 8,
+      "values": {
+        "path": "actus\\images\\image8.jpg",
+        "loop": 6.944
+      }
+    }
+  ],
+  "thumbnail": "actus\\images\\final_thumbnail.png",
+  "video": "actus\\null.mp4"
+}

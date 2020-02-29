@@ -47,10 +47,10 @@ module.exports = class Launcher {
                         try {
                             this.Progression = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), 'utf8'));
                         } catch (e) {
-                            console.log('The progression file is corrupt, reset done.')
+                            this.debug('The progression file is corrupt, reset done.')
                         }
                     } else {
-                        console.log('No progression file found, generating one.')
+                        this.debug('No progression file found, generating one.')
                     }
 
                     fs.exists(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'extra.json'), (exists2) => {
@@ -59,10 +59,10 @@ module.exports = class Launcher {
                                 this.ExtraData = JSON.parse(fs.readFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'extra.json'), 'utf8'));
                             } catch (e) {
                                 this.ExtraData = {};
-                                console.log('The extra data file is corrupt, reset done.')
+                                this.debug('The extra data file is corrupt, reset done.')
                             };
                         } else {
-                            console.log('No extra data file found, generating one.')
+                            this.debug('No extra data file found, generating one.')
                         };
                         this.ExtraData['Config'] = this.Config;
 
@@ -132,22 +132,15 @@ module.exports = class Launcher {
      */
 
     CheckProgression(index, value) {
-
-        if (this.Progression[index] && this.Progression[index].complete) {
-            try {
-                fs.writeFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), JSON.stringify(this.Progression, null, 2));
-                return true;
-            } catch (e) {
-                return false;
-            }
-        } else if (!this.Progression[index]) {
+        if (!this.Progression[index]) {
             this.Progression[index] = value;
-            try {
-                fs.writeFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), JSON.stringify(this.Progression, null, 2));
-                return true;
-            } catch (e) {
-                return false;
-            }
+        }
+
+        try {
+            fs.writeFileSync(path.join(this.Config.Directory, this.Config.Folder, 'temp', 'progression.json'), JSON.stringify(this.Progression, null, 2));
+            return true;
+        } catch (e) {
+            return false;
         }
     }
 
@@ -226,8 +219,6 @@ module.exports = class Launcher {
         return new Promise((success, error) => {
             let promises = [];
 
-            console.log(self.Steps.length);
-
             for (let i = 0; i < self.Steps.length; i++) {
 
                 const stepData = {
@@ -250,8 +241,7 @@ module.exports = class Launcher {
 
             waterfall(promises).then((values) => {
                 success(values);
-                self.debug('I went through all steps!');
-                throw values;
+                throw 'Restarting..';
             }).catch(console.error);
         });
 
@@ -271,9 +261,6 @@ module.exports = class Launcher {
             self.debug('Running ' + funcId);
 
             func(args, dataToPass).then((result) => {
-
-                console.log('RESULT OUTPUT FROM ' + funcId)
-
                 if (typeof result === 'object') {
                     self.SetExtraData(result.type, result.values);
                     self.SaveProgression(id, result.values);
