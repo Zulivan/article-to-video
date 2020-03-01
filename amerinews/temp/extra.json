@@ -8,201 +8,378 @@
     "Video": {
       "CompliationLoop": false
     },
-    "Folder": "actus",
-    "Name": "FRANCE INFOS 24/7",
-    "Intro": {
-      "Time": 5,
-      "Text": "Afin d'être informé veuillez vous abonner et cliquez sur la cloche pour être notifié!"
-    },
+    "Folder": "amerinews",
+    "Name": "AMERICAN NEWS NETWORK",
     "Directory": "O:\\GIT\\youtubot"
   },
   "magazine": {
-    "title": "Coronavirus: 57 cas confirmés en France",
-    "content": "En France, 20 nouveaux cas de coronavirus ont été diagnostiqués, portant le nombre de malades à 38 sur le sol français. « On a devant nous une épidémie qui arrive » et il faudra « l’affronter au mieux », a déclaré Emmanuel Macron jeudi. Vendredi après-midi, l'Organisation mondiale de la santé (OMS) a élevé le niveau de la menace internationale au statut « très élevée ». Le secrétaire général de l’ONU Antonio Guterres a affirmé vendredi que ce n’était « pas le moment de paniquer mais de se préparer pleinement » à la propagation du coronavirus dans le monde. « Nous voyons des cas dans plusieurs nouveaux pays, incluant maintenant le continent africain », a relevé le chef de l’ONU lors d’une brève déclaration à la presse."
+    "title": "'Very Much Alive': Joe Biden Projected To Win South Carolina",
+    "content": "This result totally resets the race. The fact that Joe Biden won big — and the result was clear early in the evening during prime time in the eastern time zone — provides an enormous boost to his campaign. If Joe Biden can ultimately defeat Bernie Sanders for the Democratic nomination, we will look back on this night as a key moment in American political history,\" Republican strategist Whit Ayres told NPR. A majority of Democratic primary voters in South Carolina are African American. And pointing to polls, Biden has long insisted that he has more support from black voters than any other presidential candidate does and that the Democratic nominee will need strong backing from African American voters to win the general election. Biden's win was not a surprise. For months, polls had shown him with a double-digit lead over his opponents, but in recent weeks, the race tightened. In a sign of how vulnerable he was, Biden campaigned exclusively in South Carolina this week, even as a number of his opponents traveled to states that will vote in coming days. Biden also received a last-minute public endorsement from the most influential black Democrat in South Carolina politics, U.S. Rep. James Clyburn. \"I've known for a long time who I was going to vote for,\" Clyburn said at a press conference on Wednesday. \"I'm voting for Biden. South Carolinians should be voting for Joe Biden.\" Biden made a point to credit the congressman with injecting his campaign with a huge jolt at his post-vote event: \"My buddy Jim Clyburn — you brought me back!\""
   },
-  "StepID": 6,
+  "StepID": 5,
   "downloaded_images": [
     {
-      "path": "actus\\images\\456828.jpg",
-      "name": "456828.jpg"
+      "path": "amerinews\\images\\84730.jpg",
+      "name": "84730.jpg"
     },
     {
-      "path": "actus\\images\\213287.jpg",
-      "name": "213287.jpg"
+      "path": "amerinews\\images\\447145.jpg",
+      "name": "447145.jpg"
     },
     {
-      "path": "actus\\images\\896660.jpg",
-      "name": "896660.jpg"
+      "path": "amerinews\\images\\978189.jpg",
+      "name": "978189.jpg"
     },
     {
-      "path": "actus\\images\\753463.jpg",
-      "name": "753463.jpg"
+      "path": "amerinews\\images\\211157.jpg",
+      "name": "211157.jpg"
     },
     {
-      "path": "actus\\images\\256709.jpg",
-      "name": "256709.jpg"
+      "path": "amerinews\\images\\624979.jpg",
+      "name": "624979.jpg"
     },
     {
-      "path": "actus\\images\\472873.jpg",
-      "name": "472873.jpg"
+      "path": "amerinews\\images\\754748.jpg",
+      "name": "754748.jpg"
     },
     {
-      "path": "actus\\images\\34657.jpg",
-      "name": "34657.jpg"
+      "path": "amerinews\\images\\515945.jpg",
+      "name": "515945.jpg"
     },
     {
-      "path": "actus\\images\\334583.jpg",
-      "name": "334583.jpg"
+      "path": "amerinews\\images\\102088.jpg",
+      "name": "102088.jpg"
     },
     {
-      "path": "actus\\images\\553139.jpg",
-      "name": "553139.jpg"
+      "path": "amerinews\\images\\740740.jpg",
+      "name": "740740.jpg"
     },
     {
-      "path": "actus\\images\\415801.jpg",
-      "name": "415801.jpg"
+      "path": "amerinews\\images\\334927.jpg",
+      "name": "334927.jpg"
     },
     {
-      "path": "actus\\images\\746142.jpg",
-      "name": "746142.jpg"
+      "path": "amerinews\\images\\835655.jpg",
+      "name": "835655.jpg"
     },
     {
-      "path": "actus\\images\\616434.jpg",
-      "name": "616434.jpg"
+      "path": "amerinews\\images\\371564.jpg",
+      "name": "371564.jpg"
     },
     {
-      "path": "actus\\images\\976798.jpg",
-      "name": "976798.jpg"
+      "path": "amerinews\\images\\916256.jpg",
+      "name": "916256.jpg"
     },
     {
-      "path": "actus\\images\\351123.jpg",
-      "name": "351123.jpg"
+      "path": "amerinews\\images\\973763.jpg",
+      "name": "973763.jpg"
+    },
+    {
+      "path": "amerinews\\images\\375737.jpg",
+      "name": "375737.jpg"
+    },
+    {
+      "path": "amerinews\\images\\841884.jpg",
+      "name": "841884.jpg"
+    },
+    {
+      "path": "amerinews\\images\\913262.jpg",
+      "name": "913262.jpg"
+    },
+    {
+      "path": "amerinews\\images\\450969.jpg",
+      "name": "450969.jpg"
+    },
+    {
+      "path": "amerinews\\images\\141625.jpg",
+      "name": "141625.jpg"
+    },
+    {
+      "path": "amerinews\\images\\158690.jpg",
+      "name": "158690.jpg"
+    },
+    {
+      "path": "amerinews\\images\\222539.jpg",
+      "name": "222539.jpg"
+    },
+    {
+      "path": "amerinews\\images\\622358.jpg",
+      "name": "622358.jpg"
+    },
+    {
+      "path": "amerinews\\images\\458700.jpg",
+      "name": "458700.jpg"
+    },
+    {
+      "path": "amerinews\\images\\267980.jpg",
+      "name": "267980.jpg"
+    },
+    {
+      "path": "amerinews\\images\\266391.jpg",
+      "name": "266391.jpg"
+    },
+    {
+      "path": "amerinews\\images\\124376.jpg",
+      "name": "124376.jpg"
+    },
+    {
+      "path": "amerinews\\images\\792200.jpg",
+      "name": "792200.jpg"
+    },
+    {
+      "path": "amerinews\\images\\27139.jpg",
+      "name": "27139.jpg"
+    },
+    {
+      "path": "amerinews\\images\\980459.jpg",
+      "name": "980459.jpg"
+    },
+    {
+      "path": "amerinews\\images\\339205.jpg",
+      "name": "339205.jpg"
     }
   ],
   "generated_audio": {
     "values": [
       {
         "id": 0,
-        "duration": 7.128,
-        "text": "En France, 20 nouveaux cas de coronavirus ont été diagnostiqués, portant le nombre de malades,",
+        "duration": 5.496,
+        "text": "This result totally resets the race. The fact that Joe Biden won big — and,",
         "extra": null
       },
       {
         "id": 1,
-        "duration": 5.352,
-        "text": "à 38 sur le sol français. « On a devant nous une épidémie qui arrive,",
+        "duration": 5.592,
+        "text": "the result was clear early in the evening during prime time in the eastern time,",
         "extra": null
       },
       {
         "id": 2,
-        "duration": 6.36,
-        "text": "» et il faudra « l’affronter au mieux », a déclaré Emmanuel Macron jeudi. Vendredi,",
+        "duration": 6.24,
+        "text": "zone — provides an enormous boost to his campaign. If Joe Biden can ultimately defeat,",
         "extra": null
       },
       {
         "id": 3,
-        "duration": 8.136,
-        "text": "après-midi, l'Organisation mondiale de la santé (OMS) a élevé le niveau de la menace internationale,",
+        "duration": 5.76,
+        "text": "Bernie Sanders for the Democratic nomination, we will look back on this night as a,",
         "extra": null
       },
       {
         "id": 4,
-        "duration": 6.768,
-        "text": "au statut « très élevée ». Le secrétaire général de l’ONU Antonio Guterres a affirmé,",
+        "duration": 7.944,
+        "text": "key moment in American political history,\" Republican strategist Whit Ayres told NPR. A majority of,",
         "extra": null
       },
       {
         "id": 5,
-        "duration": 5.736,
-        "text": "vendredi que ce n’était « pas le moment de paniquer mais de se préparer pleinement,",
+        "duration": 7.536,
+        "text": "Democratic primary voters in South Carolina are African American. And pointing to polls, Biden has,",
         "extra": null
       },
       {
         "id": 6,
-        "duration": 5.304,
-        "text": "» à la propagation du coronavirus dans le monde. « Nous voyons des cas dans,",
+        "duration": 6.12,
+        "text": "long insisted that he has more support from black voters than any other presidential candidate,",
         "extra": null
       },
       {
         "id": 7,
-        "duration": 7.056,
-        "text": "plusieurs nouveaux pays, incluant maintenant le continent africain », a relevé le chef de l’ONU,",
+        "duration": 6.36,
+        "text": "does and that the Democratic nominee will need strong backing from African American voters to,",
         "extra": null
       },
       {
         "id": 8,
-        "duration": 4.944,
-        "text": "lors d’une brève déclaration à la presse., Merci d'avoir regardé!",
+        "duration": 6.744,
+        "text": "win the general election. Biden's win was not a surprise. For months, polls had shown,",
+        "extra": null
+      },
+      {
+        "id": 9,
+        "duration": 5.856,
+        "text": "him with a double-digit lead over his opponents, but in recent weeks, the race tightened.,",
+        "extra": null
+      },
+      {
+        "id": 10,
+        "duration": 6.432,
+        "text": "In a sign of how vulnerable he was, Biden campaigned exclusively in South Carolina this,",
+        "extra": null
+      },
+      {
+        "id": 11,
+        "duration": 5.256,
+        "text": "week, even as a number of his opponents traveled to states that will vote in,",
+        "extra": null
+      },
+      {
+        "id": 12,
+        "duration": 7.608,
+        "text": "coming days. Biden also received a last-minute public endorsement from the most influential black Democrat,",
+        "extra": null
+      },
+      {
+        "id": 13,
+        "duration": 7.032,
+        "text": "in South Carolina politics, U.S. Rep. James Clyburn. \"I've known for a long time who,",
+        "extra": null
+      },
+      {
+        "id": 14,
+        "duration": 5.784,
+        "text": "I was going to vote for,\" Clyburn said at a press conference on Wednesday. \"I'm,",
+        "extra": null
+      },
+      {
+        "id": 15,
+        "duration": 6.096,
+        "text": "voting for Biden. South Carolinians should be voting for Joe Biden.\" Biden made a point,",
+        "extra": null
+      },
+      {
+        "id": 16,
+        "duration": 6.168,
+        "text": "to credit the congressman with injecting his campaign with a huge jolt at his post-vote,",
+        "extra": null
+      },
+      {
+        "id": 17,
+        "duration": 4.968,
+        "text": "event: \"My buddy Jim Clyburn — you brought me back!\", Thanks for watching!",
         "extra": null
       }
     ],
-    "file": "actus\\audio\\final.mp3"
+    "file": "amerinews\\audio\\final.mp3"
   },
   "generated_images": [
     {
       "vocal": 0,
       "values": {
-        "path": "actus\\images\\image0.jpg",
-        "loop": 7.128
+        "path": "amerinews\\images\\image0.jpg",
+        "loop": 5.496
       }
     },
     {
       "vocal": 1,
       "values": {
-        "path": "actus\\images\\image1.jpg",
-        "loop": 5.352
+        "path": "amerinews\\images\\image1.jpg",
+        "loop": 5.592
       }
     },
     {
       "vocal": 2,
       "values": {
-        "path": "actus\\images\\image2.jpg",
-        "loop": 6.36
+        "path": "amerinews\\images\\image2.jpg",
+        "loop": 6.24
       }
     },
     {
       "vocal": 3,
       "values": {
-        "path": "actus\\images\\image3.jpg",
-        "loop": 8.136
+        "path": "amerinews\\images\\image3.jpg",
+        "loop": 5.76
       }
     },
     {
       "vocal": 4,
       "values": {
-        "path": "actus\\images\\image4.jpg",
-        "loop": 6.768
+        "path": "amerinews\\images\\image4.jpg",
+        "loop": 7.944
       }
     },
     {
       "vocal": 5,
       "values": {
-        "path": "actus\\images\\image5.jpg",
-        "loop": 5.736
+        "path": "amerinews\\images\\image5.jpg",
+        "loop": 7.536
       }
     },
     {
       "vocal": 6,
       "values": {
-        "path": "actus\\images\\image6.jpg",
-        "loop": 5.304
+        "path": "amerinews\\images\\image6.jpg",
+        "loop": 6.12
       }
     },
     {
       "vocal": 7,
       "values": {
-        "path": "actus\\images\\image7.jpg",
-        "loop": 7.056
+        "path": "amerinews\\images\\image7.jpg",
+        "loop": 6.36
       }
     },
     {
       "vocal": 8,
       "values": {
-        "path": "actus\\images\\image8.jpg",
-        "loop": 6.944
+        "path": "amerinews\\images\\image8.jpg",
+        "loop": 6.744
+      }
+    },
+    {
+      "vocal": 9,
+      "values": {
+        "path": "amerinews\\images\\image9.jpg",
+        "loop": 5.856
+      }
+    },
+    {
+      "vocal": 10,
+      "values": {
+        "path": "amerinews\\images\\image10.jpg",
+        "loop": 6.432
+      }
+    },
+    {
+      "vocal": 11,
+      "values": {
+        "path": "amerinews\\images\\image11.jpg",
+        "loop": 5.256
+      }
+    },
+    {
+      "vocal": 12,
+      "values": {
+        "path": "amerinews\\images\\image12.jpg",
+        "loop": 7.608
+      }
+    },
+    {
+      "vocal": 13,
+      "values": {
+        "path": "amerinews\\images\\image13.jpg",
+        "loop": 7.032
+      }
+    },
+    {
+      "vocal": 14,
+      "values": {
+        "path": "amerinews\\images\\image14.jpg",
+        "loop": 5.784
+      }
+    },
+    {
+      "vocal": 15,
+      "values": {
+        "path": "amerinews\\images\\image15.jpg",
+        "loop": 6.096
+      }
+    },
+    {
+      "vocal": 16,
+      "values": {
+        "path": "amerinews\\images\\image16.jpg",
+        "loop": 6.168
+      }
+    },
+    {
+      "vocal": 17,
+      "values": {
+        "path": "amerinews\\images\\image17.jpg",
+        "loop": 6.968
       }
     }
   ],
-  "thumbnail": "actus\\images\\final_thumbnail.png",
-  "video": "actus\\null.mp4"
+  "thumbnail": "amerinews\\images\\final_thumbnail.png",
+  "video": "amerinews\\video.mp4"
 }

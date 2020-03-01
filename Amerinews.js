@@ -7,7 +7,7 @@ const Config = {
     Video: {
         CompliationLoop: false
     },
-    Folder: 'actus',
+    Folder: 'amerinews',
     Name: 'AMERICAN NEWS NETWORK'
 };
 
@@ -15,6 +15,7 @@ const fs = require('fs');
 const path = require('path');
 
 const LauncherClass = require('./classes/Launcher.js');
+const TextEditor = require('./classes/TextEditor.js');
 const Launcher = new LauncherClass(__dirname, Config);
 
 Launcher.Load().then(() => {
@@ -31,26 +32,25 @@ Launcher.Load().then(() => {
         if (preload.title && preload.content && preload.title.length > 0) {
             Launcher.SetExtraData('magazine', preload);
         } else {
-            console.log('The content to preload doesnt have one of these options: title, content');
+            // console.log('The content to preload doesnt have one of these options: title, content');
             Launcher.AddPresetStep('findMagazines', Magazines);
         }
     } catch (e) {
-        console.log(e)
-        console.log('The preloaded content file is corrupt.');
+        // console.log('The preloaded content file is corrupt.');
         Launcher.AddPresetStep('findMagazines', Magazines);
     }
 
     let Arguments = {
-        type: 'magazine',
-        query: 'since the kind of the query is the magazine; this option is useless'
+        query: Launcher.GetExtraData('magazine').title
     }
 
     Launcher.AddPresetStep('findImages', Arguments);
 
     Arguments = {
         wpr: 15,
-        text: Launcher.GetExtraData('magazine').content,
-        lang: 'Fr-fr',
+        text: TextEditor.HTMLtoUTF8(Launcher.GetExtraData('magazine').content),
+        lang: 'En-US',
+        fulfill: 'Thanks for watching!'
     };
 
     Launcher.AddPresetStep('genAudio', Arguments);
@@ -71,8 +71,6 @@ Launcher.Load().then(() => {
     Launcher.AddPresetStep('genVideo');
 
     // const Videos = [path.join(Config.Folder, 'preset', 'intro.mp4'), Launcher.GetExtraData('video')];
-
-    // console.log(Videos)
 
     // Launcher.AddPresetStep('concatVideos', Videos);
 

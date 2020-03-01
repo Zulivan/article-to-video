@@ -21,6 +21,7 @@ module.exports = class YoutubeUploader {
             Folder: folder
         };
 
+        this.LocalPort = client.LocalPort
         this.oAuth = new google.auth.OAuth2(client.Public, client.Private, 'http://localhost:' + client.LocalPort + '/oauth2callback');
 
         this.uploading = false;
@@ -140,7 +141,7 @@ module.exports = class YoutubeUploader {
 
             const server = new Lien({
                 host: 'localhost',
-                port: oauth.LocalPort
+                port: this.LocalPort
             });
 
             const tokensPath = path.join(self.Config.Folder, 'temp', 'tokens.json');

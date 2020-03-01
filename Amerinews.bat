@@ -1,4 +1,4 @@
 ﻿@echo off
 :restart
-call node ActubotOnLauncher.js
+call node Amerinews.js
 goto restart

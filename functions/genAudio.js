@@ -24,6 +24,7 @@ function convertText2Chunks(content, options) {
 
         const WpR = options['wpr'] || 15;
         const lang = options['lang'] || 'En';
+        const words = options['fulfill'] || 'Thanks for watching';
 
         for (let i = 0; i < getChunksAmount(content); i++) {
 
@@ -31,7 +32,7 @@ function convertText2Chunks(content, options) {
             let sentence = sentence_array.join(' ') + ',';
 
             if (sentence_array.length < 12) {
-                sentence = sentence + ' Merci d\'avoir regardé!';
+                sentence = sentence + ' ' + words;
             }
 
             vocals.push({

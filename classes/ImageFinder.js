@@ -10,13 +10,14 @@ module.exports = class ImageFinder {
     /**
      * Initializes an ImageFinder instance
      * @param {string} folder Folder
+     * @param {string} watermak Text to place over all images
      */
 
-    constructor(folder = 'setup_a_folder') {
+    constructor(folder = 'setup_a_folder', watermak) {
 
         this.Config = {
             Folder: folder,
-            Name: 'FRANCE INFOS 24/7'
+            Name: watermak
         }
 
         this.Path = path.join(this.Config.Folder, 'images');

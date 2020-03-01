@@ -35,14 +35,12 @@ Launcher.Load().then(() => {
             Launcher.AddPresetStep('findMagazines', Magazines);
         }
     } catch (e) {
-        console.log(e)
         console.log('The preloaded content file is corrupt.');
         Launcher.AddPresetStep('findMagazines', Magazines);
     }
 
     let Arguments = {
-        type: 'magazine',
-        query: 'since the kind of the query is the magazine; this option is useless'
+        query: Launcher.GetExtraData('magazine').title
     }
 
     Launcher.AddPresetStep('findImages', Arguments);
@@ -51,6 +49,7 @@ Launcher.Load().then(() => {
         wpr: 15,
         text: Launcher.GetExtraData('magazine').content,
         lang: 'Fr-fr',
+        fulfill: 'Merci d\'avoir regardé !'
     };
 
     Launcher.AddPresetStep('genAudio', Arguments);
@@ -71,8 +70,6 @@ Launcher.Load().then(() => {
     Launcher.AddPresetStep('genVideo');
 
     const Videos = [path.join(Config.Folder, 'preset', 'intro.mp4'), Launcher.GetExtraData('video')];
-
-    console.log(Videos)
 
     Launcher.AddPresetStep('concatVideos', Videos);
 

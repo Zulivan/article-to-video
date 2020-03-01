@@ -20,18 +20,10 @@
     "complete": true
   },
   "5": {
-    "output": "concatVideos",
+    "output": "resetFiles",
     "complete": true
   },
   "6": {
-    "output": "upload",
-    "complete": true
-  },
-  "7": {
-    "output": "resetFiles",
-    "complete": false
-  },
-  "8": {
     "output": "resetFiles",
     "complete": false
   }

@@ -55,15 +55,9 @@ module.exports = class VideoCompiler {
         const self = this;
         return new Promise((success, error) => {
             const resourcesfolder = self.Config.Folder;
-            // path.join(resourcesfolder, 'audio', 'compilation.mp3')
             mp3Duration(audiofile, function (err, duration) {
+                if(err) error(err);
                 const videolength = Math.floor(duration + 10);
-                if (duration < 1) {
-                    self.debug('This video length is ' + duration + ' seconds, it is set as suspected of being glitched, resetting...')
-                    success(null);
-                } else {
-                    self.debug('The duration of the audio file is ' + videolength + ' seconds!')
-                }
                 const options = {
                     fps: 30,
                     loop: (videolength / imgrendered.length),
@@ -77,8 +71,6 @@ module.exports = class VideoCompiler {
                     audioChannels: 1,
                     format: 'mp4'
                 };
-
-                console.log(imgrendered)
 
                 imgrendered[imgrendered.length - 1].loop = imgrendered[imgrendered.length - 1].loop + 2
                 setTimeout(function () {
