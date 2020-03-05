@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Lien = require('lien');
+const TextEditor = require('../classes/TextEditor.js');
 // const prettyBytes = require('pretty-bytes');
-const ImageMaker = require('../classes/ImageMaker.js');
 const open = require('open');
 const path = require('path');
 const {
@@ -31,7 +31,6 @@ module.exports = class YoutubeUploader {
     uploadVideo(file, title, subtitles, tags = ['#news', 'france infos', 'nouvelles', 'actualités'], thumbnail, description = 'Les nouvelles les plus palpitantes sur cette chaine youtube gratuitement', magazine = 'FRANCE INFOS 24/7') {
         const self = this;
         const badChars = ['<', '>', '«', '»'];
-        const TextEditor = require('../tools/TextEditor.js');
         title = TextEditor.HTMLtoUTF8(title)
         title = TextEditor.clear(title)
         title = TextEditor.replaceByFilter(title, badChars, '\'');

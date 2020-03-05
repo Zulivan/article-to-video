@@ -9,7 +9,7 @@
   },
   "2": {
     "output": "genVideo",
-    "complete": true
+    "complete": false
   },
   "3": {
     "complete": false

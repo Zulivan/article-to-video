@@ -38,6 +38,8 @@ module.exports = {
         '&nbsp;': ' '
     }, {
         '”': '"'
+    }, {
+        '—': ' '
     }],
 
     replaceByFilter(input, filter, replace) {

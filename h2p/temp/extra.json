@@ -6,7 +6,7 @@
       "Private": "sgPGM3qrMi_zQR3aAsRcSNeP"
     },
     "Video": {
-      "CompliationLoop": 3
+      "CompilationLoop": 3
     },
     "Folder": "h2p",
     "Word": "Aww Man",
@@ -56,34 +56,5 @@
       }
     }
   ],
-  "generated_images": [
-    {
-      "vocal": 0,
-      "values": {
-        "path": "h2p\\images\\image0.jpg",
-        "loop": 0.96
-      }
-    },
-    {
-      "vocal": 1,
-      "values": {
-        "path": "h2p\\images\\image1.jpg",
-        "loop": 0.912
-      }
-    },
-    {
-      "vocal": 2,
-      "values": {
-        "path": "h2p\\images\\image2.jpg",
-        "loop": 0.816
-      }
-    },
-    {
-      "vocal": 3,
-      "values": {
-        "path": "h2p\\images\\image3.jpg",
-        "loop": 0.744
-      }
-    }
-  ]
+  "generated_images": []
 }
